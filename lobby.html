@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>Urban Frontline - Lobby</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;}
+
+/* ── AUTH ── */
+#authScreen{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;}
+.title{font-size:44px;font-weight:700;letter-spacing:6px;background:linear-gradient(90deg,#fff,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sub{font-size:12px;color:#00e5ff;letter-spacing:4px;opacity:0.7;margin-bottom:8px;}
+.card{border:1px solid rgba(0,200,255,0.3);border-radius:14px;padding:24px 32px;background:rgba(5,18,35,0.92);display:flex;flex-direction:column;gap:12px;min-width:300px;}
+.tabs{display:flex;border:1px solid rgba(0,200,255,0.3);border-radius:8px;overflow:hidden;}
+.tab{flex:1;background:transparent;color:#4488aa;border:none;padding:9px 0;font-size:13px;font-weight:700;font-family:Rajdhani,monospace;letter-spacing:2px;cursor:pointer;}
+.tab.active{background:rgba(0,180,255,0.2);color:#00e5ff;}
+.inp{background:rgba(0,30,60,0.8);border:1px solid rgba(0,200,255,0.3);border-radius:8px;padding:10px 14px;color:#e0f4ff;font-size:14px;font-family:Rajdhani,monospace;outline:none;text-align:right;width:100%;}
+.inp:focus{border-color:#00e5ff;}
+.btn-main{background:linear-gradient(90deg,#0088cc,#00e5ff);color:#000;border:none;padding:12px 0;font-size:16px;font-weight:700;border-radius:24px;cursor:pointer;font-family:Rajdhani,monospace;letter-spacing:2px;width:100%;}
+.btn-main:hover{opacity:0.9;transform:scale(1.02);}
+.err{color:#ff4466;font-size:12px;text-align:center;display:none;}
+
+/* ── LOBBY ── */
+#lobbyScreen{display:none;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:520px;padding:20px;}
+.lobby-title{font-size:32px;font-weight:700;letter-spacing:4px;color:#00e5ff;}
+.count{font-size:12px;color:rgba(0,200,255,0.6);letter-spacing:2px;}
+.dot{width:8px;height:8px;border-radius:50%;background:#00cc66;display:inline-block;margin-left:5px;box-shadow:0 0 6px #00cc66;}
+.panel{background:rgba(5,18,35,0.9);border:1px solid rgba(0,200,255,0.2);border-radius:14px;padding:20px;width:100%;}
+.panel-title{font-size:13px;font-weight:700;color:#00e5ff;letter-spacing:2px;margin-bottom:12px;}
+.player-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(0,30,60,0.5);border:1px solid rgba(0,200,255,0.1);border-radius:8px;margin-bottom:6px;}
+.player-row:last-child{margin-bottom:0;}
+.pdot{width:8px;height:8px;border-radius:50%;background:#00cc66;flex-shrink:0;}
+.pname{flex:1;font-size:14px;font-weight:600;color:#e0f4ff;}
+.badge{font-size:10px;background:rgba(0,200,255,0.1);color:#00e5ff;border:1px solid rgba(0,200,255,0.3);border-radius:4px;padding:2px 7px;}
+.invite-btn{background:rgba(0,180,255,0.15);border:1px solid rgba(0,200,255,0.3);color:#00cfff;border-radius:6px;padding:5px 12px;font-size:12px;font-family:Rajdhani,monospace;cursor:pointer;font-weight:700;}
+.invite-btn:hover{background:rgba(0,180,255,0.3);}
+.empty{color:#334455;font-size:12px;text-align:center;padding:12px;}
+.btn-red{background:transparent;border:1px solid rgba(255,70,100,0.4);color:#ff4466;border-radius:6px;padding:7px 20px;font-size:12px;font-family:Rajdhani,monospace;cursor:pointer;}
+
+/* ── ROOM ── */
+#roomScreen{display:none;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:520px;padding:20px;}
+.room-title{font-size:28px;font-weight:700;letter-spacing:4px;color:#aa44ff;}
+.room-panel{background:rgba(10,5,30,0.95);border:1px solid rgba(150,0,255,0.3);border-radius:14px;padding:20px;width:100%;}
+.rplayer{display:flex;align-items:center;gap:12px;padding:11px 14px;background:rgba(30,5,60,0.6);border:1px solid rgba(150,0,255,0.2);border-radius:8px;margin-bottom:8px;}
+.rplayer:last-child{margin-bottom:0;}
+.rdot{width:10px;height:10px;border-radius:50%;background:#aa44ff;box-shadow:0 0 8px #aa44ff;}
+.rname{flex:1;font-size:15px;font-weight:700;color:#e0d0ff;}
+.rbadge{font-size:10px;background:rgba(150,0,255,0.2);color:#cc88ff;border:1px solid rgba(150,0,255,0.4);border-radius:4px;padding:2px 8px;}
+.btn-start{background:linear-gradient(90deg,#6600cc,#aa00ff);color:#fff;border:none;padding:14px 0;font-size:16px;font-weight:700;border-radius:30px;cursor:pointer;font-family:Rajdhani,monospace;letter-spacing:2px;width:100%;box-shadow:0 0 20px rgba(120,0,255,0.4);}
+.btn-start:hover{opacity:0.9;}
+
+/* ── INVITE POPUP ── */
+#invitePopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;align-items:center;justify-content:center;}
+.popup{background:#0a1828;border:1px solid rgba(0,200,255,0.4);border-radius:16px;padding:32px 40px;text-align:center;box-shadow:0 0 40px rgba(0,150,255,0.3);}
+.popup h3{font-size:20px;color:#00e5ff;margin-bottom:8px;}
+.popup p{font-size:14px;color:#88aacc;margin-bottom:24px;}
+.popup-btns{display:flex;gap:12px;justify-content:center;}
+.btn-accept{background:linear-gradient(90deg,#00aa44,#00ff66);color:#000;border:none;padding:12px 32px;border-radius:24px;font-size:14px;font-weight:700;cursor:pointer;font-family:Rajdhani,monospace;}
+.btn-decline{background:transparent;border:1px solid #ff4466;color:#ff4466;padding:12px 32px;border-radius:24px;font-size:14px;font-weight:700;cursor:pointer;font-family:Rajdhani,monospace;}
+
+/* ── TOAST ── */
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#0a1828;border:1px solid rgba(0,200,255,0.4);color:#00e5ff;padding:10px 24px;border-radius:24px;font-size:13px;font-weight:600;z-index:1000;display:none;pointer-events:none;}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="authScreen">
+  <div class="title">URBAN FRONTLINE</div>
+  <div class="sub">BATTLE ROYALE</div>
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" id="tabLogin" onclick="showTab('login')">כניסה</button>
+      <button class="tab" id="tabReg" onclick="showTab('register')">הרשמה</button>
+    </div>
+    <!-- Login -->
+    <div id="loginForm">
+      <input class="inp" id="loginName" type="text" placeholder="שם משתמש" maxlength="16">
+      <input class="inp" id="loginPass" type="password" placeholder="סיסמה" maxlength="30" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="err" id="loginErr"></div>
+      <button class="btn-main" onclick="doLogin()">כניסה</button>
+    </div>
+    <!-- Register -->
+    <div id="regForm" style="display:none;">
+      <input class="inp" id="regName" type="text" placeholder="שם משתמש" maxlength="16">
+      <input class="inp" id="regPass" type="password" placeholder="סיסמה (מינ. 4)" maxlength="30">
+      <input class="inp" id="regPass2" type="password" placeholder="אימות סיסמה" maxlength="30" onkeydown="if(event.key==='Enter')doRegister()">
+      <div class="err" id="regErr"></div>
+      <button class="btn-main" onclick="doRegister()">צור חשבון</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOBBY -->
+<div id="lobbyScreen">
+  <div>
+    <div class="lobby-title">LOBBY</div>
+    <div class="count"><span class="dot"></span><span id="playerCount">0</span> שחקנים מחוברים</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">👥 שחקנים אונליין</div>
+    <div id="playerList"><div class="empty">אין שחקנים...</div></div>
+  </div>
+  <button class="btn-red" onclick="logout()">← התנתקות</button>
+</div>
+
+<!-- ROOM -->
+<div id="roomScreen">
+  <div class="room-title">GAME ROOM ⚔️</div>
+  <div class="room-panel">
+    <div class="panel-title" style="color:#cc88ff;">שחקנים בחדר</div>
+    <div id="roomPlayers"></div>
+  </div>
+  <button class="btn-start" id="startBtn" style="display:none;" onclick="startGame()">▶ התחל משחק!</button>
+  <button class="btn-red" onclick="leaveRoom()">← חזור ללובי</button>
+</div>
+
+<!-- INVITE POPUP -->
+<div id="invitePopup">
+  <div class="popup">
+    <h3>🎮 הזמנה למשחק!</h3>
+    <p id="inviteMsg"></p>
+    <div class="popup-btns">
+      <button class="btn-accept" onclick="acceptInvite()">✅ קבל</button>
+      <button class="btn-decline" onclick="declineInvite()">❌ דחה</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+let myName = '';
+let pendingFrom = '';
+let myRoom = null;
+let isHost = false;
+
+// ── STORAGE ──
+function h(p){let v=0;for(let i=0;i<p.length;i++){v=((v<<5)-v)+p.charCodeAt(i);v|=0;}return Math.abs(v).toString(36);}
+function getUsers(){try{return JSON.parse(localStorage.getItem('uf_u')||'{}');}catch(e){return{};}}
+function saveUsers(u){localStorage.setItem('uf_u',JSON.stringify(u));}
+function saveSess(n,hp){localStorage.setItem('uf_s',n);localStorage.setItem('uf_sh',hp);}
+function getSess(){return{n:localStorage.getItem('uf_s'),hp:localStorage.getItem('uf_sh')};}
+function clearSess(){localStorage.removeItem('uf_s');localStorage.removeItem('uf_sh');}
+
+// ── TOAST ──
+function toast(msg, col='#00e5ff'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.borderColor=col;t.style.color=col;t.style.display='block';
+  setTimeout(()=>t.style.display='none',3000);
+}
+
+// ── TABS ──
+function showTab(tab){
+  const isLogin=tab==='login';
+  document.getElementById('loginForm').style.display=isLogin?'flex':'none';
+  document.getElementById('regForm').style.display=isLogin?'none':'flex';
+  document.getElementById('loginForm').style.flexDirection='column';
+  document.getElementById('loginForm').style.gap='10px';
+  document.getElementById('regForm').style.flexDirection='column';
+  document.getElementById('regForm').style.gap='10px';
+  document.getElementById('tabLogin').className='tab'+(isLogin?' active':'');
+  document.getElementById('tabReg').className='tab'+(!isLogin?' active':'');
+}
+
+function showErr(id,msg){const e=document.getElementById(id);e.textContent=msg;e.style.display='block';setTimeout(()=>e.style.display='none',3000);}
+
+// ── AUTH ──
+function doLogin(){
+  const name=document.getElementById('loginName').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  if(!name||!pass){showErr('loginErr','מלא שם וסיסמה');return;}
+  const hp=h(pass);
+  const users=getUsers();
+  if(!users[name]){showErr('loginErr','משתמש לא קיים');return;}
+  if(users[name].p!==hp){showErr('loginErr','סיסמה שגויה');return;}
+  saveSess(name,hp);
+  enterLobby(name);
+}
+
+function doRegister(){
+  const name=document.getElementById('regName').value.trim();
+  const pass=document.getElementById('regPass').value;
+  const pass2=document.getElementById('regPass2').value;
+  if(!name||!pass){showErr('regErr','מלא שם וסיסמה');return;}
+  if(name.length<2){showErr('regErr','שם קצר מדי');return;}
+  if(pass.length<4){showErr('regErr','סיסמה קצרה מדי');return;}
+  if(pass!==pass2){showErr('regErr','הסיסמאות לא תואמות');return;}
+  const users=getUsers();
+  if(users[name]){showErr('regErr','שם תפוס');return;}
+  const hp=h(pass);
+  users[name]={p:hp};
+  saveUsers(users);
+  saveSess(name,hp);
+  enterLobby(name);
+}
+
+function logout(){
+  clearSess();
+  myName='';
+  socket.emit('leave');
+  show('authScreen');
+}
+
+// ── SCREENS ──
+function show(id){
+  ['authScreen','lobbyScreen','roomScreen'].forEach(s=>{
+    document.getElementById(s).style.display='none';
+  });
+  document.getElementById(id).style.display='flex';
+}
+
+// ── LOBBY ──
+function enterLobby(name){
+  myName=name;
+  socket.emit('join', name);
+  show('lobbyScreen');
+}
+
+socket.on('lobbyPlayers', players=>{
+  document.getElementById('playerCount').textContent=players.length;
+  const list=document.getElementById('playerList');
+  if(!players.length){list.innerHTML='<div class="empty">אין שחקנים...</div>';return;}
+  list.innerHTML=players.map(n=>`
+    <div class="player-row">
+      <div class="pdot"></div>
+      <div class="pname">${n}</div>
+      ${n===myName
+        ?'<span class="badge">אתה</span>'
+        :`<button class="invite-btn" onclick="sendInvite('${n}')">🎮 הזמן</button>`}
+    </div>`).join('');
+});
+
+function sendInvite(target){
+  socket.emit('invite', target);
+  toast('הזמנה נשלחה ל-'+target+'...','#00e5ff');
+}
+
+// ── INVITE ──
+socket.on('invited',({from})=>{
+  pendingFrom=from;
+  document.getElementById('inviteMsg').textContent=from+' מזמין אותך למשחק!';
+  document.getElementById('invitePopup').style.display='flex';
+});
+
+function acceptInvite(){
+  document.getElementById('invitePopup').style.display='none';
+  socket.emit('acceptInvite',{from:pendingFrom});
+}
+function declineInvite(){
+  document.getElementById('invitePopup').style.display='none';
+  socket.emit('declineInvite',{from:pendingFrom});
+}
+
+socket.on('inviteDeclined',({by})=>toast(by+' דחה את ההזמנה','#ff4466'));
+
+// ── ROOM ──
+socket.on('enterRoom',({roomId,players,host})=>{
+  myRoom=roomId;
+  isHost=(host===myName);
+  renderRoom(players,host);
+  show('roomScreen');
+  toast('נכנסת לחדר!','#aa44ff');
+});
+
+socket.on('roomUpdate',({players,host})=>{
+  renderRoom(players,host);
+});
+
+socket.on('playerLeft',name=>{
+  toast(name+' עזב','#ff4466');
+});
+
+function renderRoom(players, host){
+  document.getElementById('roomPlayers').innerHTML=players.map(n=>`
+    <div class="rplayer">
+      <div class="rdot"></div>
+      <div class="rname">${n}</div>
+      <span class="rbadge">${n===host?'👑 מארח':n===myName?'אתה':'מחובר'}</span>
+    </div>`).join('');
+  // Show start button only for host
+  const btn=document.getElementById('startBtn');
+  btn.style.display=(myName===host&&players.length>=2)?'block':'none';
+}
+
+function leaveRoom(){
+  socket.emit('leaveRoom');
+  myRoom=null;
+  show('lobbyScreen');
+}
+
+function startGame(){
+  socket.emit('startGame',{roomId:myRoom});
+}
+
+socket.on('gameStarted',({roomId,players})=>{
+  const params = new URLSearchParams({
+    room: roomId,
+    name: myName,
+    players: players.join(',')
+  });
+  window.location.href = '/game?' + params.toString();
+});
+
+// ── AUTO LOGIN ──
+(function(){
+  const sess=getSess();
+  if(sess.n&&sess.hp){
+    const users=getUsers();
+    if(users[sess.n]&&users[sess.n].p===sess.hp){
+      enterLobby(sess.n);
+      return;
+    }
+  }
+  show('authScreen');
+  showTab('login');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "urban-frontline",
+  "version": "2.0.0",
+  "description": "Urban Frontline - Real Multiplayer FPS",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "dependencies": { "socket.io": "^4.7.2" }
+}
