@@ -369,10 +369,11 @@ socket.on('authOk', data => {
   myCoins = data.coins;
   myWins = data.wins;
   myKills = data.kills;
-  mySkin = data.skin || 'rookie';
+  mySkin = data.skin || localStorage.getItem('uf_skin_'+data.name) || 'rookie';
   myOwnedSkins = data.ownedSkins || ['rookie'];
   myBPLevel = data.battlePassLevel || 0;
   myBPXP = data.battlePassXP || 0;
+  localStorage.setItem('uf_skin_'+data.name, mySkin);
   updateTopBar();
   socket.emit('join', myName);
   show('lobbyScreen');
@@ -405,7 +406,12 @@ socket.on('buyResult', data => {
 });
 
 socket.on('equipResult', data => {
-  if(data.ok){ mySkin = data.skin; renderShop(); toast('✅ סקין מצויד!','#00e5ff'); }
+  if(data.ok){ 
+    mySkin = data.skin; 
+    localStorage.setItem('uf_skin_'+myName, mySkin);
+    renderShop(); 
+    toast('✅ סקין מצויד! '+mySkin,'#00e5ff'); 
+  }
 });
 
 function updateTopBar(){
