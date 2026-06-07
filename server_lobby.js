@@ -245,12 +245,12 @@ io.on('connection', socket => {
   });
 
   // ── START GAME ──
-  socket.on('startGame', ({ roomId }) => {
+  socket.on('startGame', ({ roomId, map }) => {
     const room = rooms[roomId];
     if (!room) return;
     if (players[socket.id]?.name !== room.host) return;
     room.open = false;
-    io.to(roomId).emit('gameStarted', { roomId, players: room.players });
+    io.to(roomId).emit('gameStarted', { roomId, players: room.players, map: map||'city' });
     broadcastRooms();
   });
 
