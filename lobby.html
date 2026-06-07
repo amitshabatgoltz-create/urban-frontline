@@ -266,6 +266,21 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
     <div id="roomPlayers"></div>
   </div>
   <div class="waiting-hint" id="waitingHint"></div>
+  <div id="mapSelect" style="display:none;width:100%;">
+    <div class="panel-title" style="color:#cc88ff;text-align:center;margin-bottom:8px;">🗺️ בחר מפה</div>
+    <div style="display:flex;gap:10px;width:100%;">
+      <div id="mapCity" onclick="selectMap('city')" style="flex:1;background:rgba(0,30,60,0.6);border:2px solid #00e5ff;border-radius:10px;padding:12px;text-align:center;cursor:pointer;">
+        <div style="font-size:24px;">🏙️</div>
+        <div style="font-size:13px;font-weight:700;color:#00e5ff;">העיר</div>
+        <div style="font-size:10px;color:#4488aa;">מפה קלאסית</div>
+      </div>
+      <div id="mapAbandoned" onclick="selectMap('abandoned')" style="flex:1;background:rgba(30,10,10,0.6);border:2px solid rgba(150,0,255,0.3);border-radius:10px;padding:12px;text-align:center;cursor:pointer;">
+        <div style="font-size:24px;">🏚️</div>
+        <div style="font-size:13px;font-weight:700;color:#cc88ff;">עיר נטושה</div>
+        <div style="font-size:10px;color:#664488;">אווירה אפוקליפטית</div>
+      </div>
+    </div>
+  </div>
   <button class="btn-start" id="startBtn" style="display:none;" onclick="startGame()">▶ התחל משחק!</button>
   <button class="btn-red" onclick="leaveRoom()">← חזור ללובי</button>
 </div>
@@ -608,20 +623,30 @@ function renderRoom(players,host){
     </div>`).join('');
   const btn=document.getElementById('startBtn');
   const hint=document.getElementById('waitingHint');
+  const mapSel=document.getElementById('mapSelect');
   if(myName===host){
     btn.style.display=players.length>=2?'block':'none';
     hint.textContent=players.length<2?'ממתין לשחקנים...':'';
+    mapSel.style.display='block';
   } else {
     btn.style.display='none';
     hint.textContent='ממתין למארח...';
+    mapSel.style.display='none';
   }
 }
 
-function leaveRoom(){socket.emit('leaveRoom');myRoom=null;show('lobbyScreen');}
-function startGame(){socket.emit('startGame',{roomId:myRoom});}
+let selectedMap = 'city';
+function selectMap(map){
+  selectedMap = map;
+  document.getElementById('mapCity').style.borderColor = map==='city'?'#00e5ff':'rgba(0,200,255,0.2)';
+  document.getElementById('mapAbandoned').style.borderColor = map==='abandoned'?'#aa44ff':'rgba(150,0,255,0.3)';
+}
 
-socket.on('gameStarted',({roomId,players})=>{
-  const params=new URLSearchParams({room:roomId,name:myName,players:players.join(','),skin:mySkin});
+function leaveRoom(){socket.emit('leaveRoom');myRoom=null;show('lobbyScreen');}
+function startGame(){socket.emit('startGame',{roomId:myRoom, map:selectedMap});}
+
+socket.on('gameStarted',({roomId,players,map})=>{
+  const params=new URLSearchParams({room:roomId,name:myName,players:players.join(','),skin:mySkin,map:map||'city'});
   window.location.href='/game?'+params.toString();
 });
 
