@@ -342,6 +342,91 @@ function CYL(r,h,col,x,y,z){
   const rr=r+0.32;colliders.push({minX:x-rr,maxX:x+rr,minZ:z-rr,maxZ:z+rr,topY:y+h});
 }
 
+function buildAbandonedCity(){
+  // Dark foggy atmosphere
+  scene.fog = new THREE.Fog(0x1a1a2a, 20, 120);
+  scene.background = new THREE.Color(0x1a1a2a);
+
+  // Ground — cracked concrete
+  W(300,0.15,300,0x333333,0,-0.08,0,false);
+  // Road markings
+  W(6,0.05,200,0x444422,0,-0.02,0,false);
+  W(200,0.05,6,0x444422,0,-0.02,0,false);
+
+  // ── BUILDINGS ──
+  const bColors = [0x4a4a4a,0x555555,0x4a3a3a,0x3a4a4a,0x404040,0x3a3a4a];
+  const buildings = [
+    // [x, z, w, h, d]
+    [-25,-25, 14,28,12], [25,-25, 10,35,10], [-25,25, 12,22,14], [25,25, 16,40,12],
+    [-50,0,  10,18,10], [50,0,   12,25,10],  [0,-50, 14,32,12],  [0,50,  10,20,14],
+    [-40,-40,8, 15,8],  [40,-40, 10,20,10],  [-40,40,12,28,10],  [40,40, 8,18,12],
+    [-15,-55,10,22,8],  [15,-55, 8, 18,10],  [-15,55,12,30,8],   [15,55, 10,25,10],
+    [-60,-20,8, 12,8],  [60,-20, 10,16,8],   [-60,20,8, 20,10],  [60,20, 12,24,8],
+    [-35,0,  6, 10,6],  [35,0,   8, 14,6],   [0,-30, 6, 12,8],   [0,30,  8, 16,6],
+  ];
+  buildings.forEach(([x,z,w,h,d],i)=>{
+    const col = bColors[i%bColors.length];
+    W(w,h,d,col,x,0,z);
+    // Broken windows
+    for(let wi=0;wi<3;wi++){
+      const wx=x+(Math.random()-0.5)*w*0.6;
+      const wy=2+Math.random()*(h-4);
+      const wz=z+(d/2+0.1);
+      W(1.2,1.0,0.1,0x111122,wx,wy,wz,false);
+    }
+    // Roof details
+    W(w*0.4,1.5,d*0.4,col-0x111111>0?col-0x111111:0x333333,x,h+0.75,z,false);
+  });
+
+  // ── RUBBLE ──
+  for(let i=0;i<60;i++){
+    const rx=(Math.random()-0.5)*160;
+    const rz=(Math.random()-0.5)*160;
+    const rw=1+Math.random()*3, rh=0.5+Math.random()*2, rd=1+Math.random()*3;
+    const m=new THREE.Mesh(new THREE.BoxGeometry(rw,rh,rd),new THREE.MeshLambertMaterial({color:0x444444}));
+    m.position.set(rx,rh/2,rz);
+    m.rotation.y=Math.random()*Math.PI;
+    m.rotation.z=(Math.random()-0.5)*0.3;
+    scene.add(m);
+  }
+
+  // ── ABANDONED CARS ──
+  const carPositions = [[-10,-15],[10,15],[20,-5],[-20,10],[5,-35],[-5,35],[30,10],[-30,-10]];
+  carPositions.forEach(([cx,cz])=>{
+    W(4,1.2,2,0x334433,cx,0.6,cz);   // body
+    W(2.5,0.8,1.9,0x223322,cx,1.5,cz-0.05,false); // cabin
+    W(0.8,0.8,0.8,0x111111,cx-1.4,0.4,cz-0.8); // wheel FL
+    W(0.8,0.8,0.8,0x111111,cx+1.4,0.4,cz-0.8); // wheel FR
+    W(0.8,0.8,0.8,0x111111,cx-1.4,0.4,cz+0.8); // wheel RL
+    W(0.8,0.8,0.8,0x111111,cx+1.4,0.4,cz+0.8); // wheel RR
+  });
+
+  // ── STREET LIGHTS (broken) ──
+  [[-8,0],[8,0],[0,-8],[0,8],[-20,-20],[20,20],[-20,20],[20,-20]].forEach(([lx,lz])=>{
+    W(0.2,7,0.2,0x334455,lx,0,lz,false);
+    W(2,0.1,0.1,0x334455,lx,6.5,lz,false);
+    // Some lights are on (orange glow)
+    if(Math.random()>0.5){
+      const glow=new THREE.Mesh(new THREE.BoxGeometry(0.3,0.3,0.3),new THREE.MeshLambertMaterial({color:0xff8800,emissive:0xff8800,emissiveIntensity:0.8}));
+      glow.position.set(lx+1,6.5,lz);
+      scene.add(glow);
+    }
+  });
+
+  // ── BARRIERS & DEBRIS ──
+  [[-5,0],[5,0],[0,-5],[0,5],[-12,8],[12,-8]].forEach(([bx,bz])=>{
+    W(3,0.8,1,0x884422,bx,0.4,bz);
+    W(0.1,1.2,0.1,0xcc4400,bx-1.4,0,bz,false);
+    W(0.1,1.2,0.1,0xcc4400,bx+1.4,0,bz,false);
+  });
+
+  // Chests
+  [[-22,-22],[22,-22],[-22,22],[22,22],[0,-45],[0,45],[-45,0],[45,0],
+   [-10,-10],[10,10],[-10,10],[10,-10],[0,-20],[0,20],[-20,0],[20,0]].forEach(([cx,cz])=>spawnChest(cx,cz));
+}
+
+const MAP_TYPE = (new URLSearchParams(window.location.search)).get('map') || 'city';
+
 function buildMap(){
   const SAND=0x8a7a60,WALL=0x6a6070,WALL2=0x504858,DARK=0x303038,ROOF=0x484050;
   const FLOOR=0x5a5060,STAIR=0x504858,IRON=0x334455,WOOD=0x4a3828,RED=0xcc2244,CREAM=0x8a8890;
@@ -1047,7 +1132,8 @@ const sp = SPAWNS[mySpawnIdx] || [0,0];
 camera.position.set(sp[0],1.55,sp[1]);
 yaw=Math.atan2(-sp[0],-sp[1]);
 
-buildMap();
+if(MAP_TYPE === 'abandoned') buildAbandonedCity();
+else buildMap();
 buildAllGuns();
 renderInventory();
 animate();
