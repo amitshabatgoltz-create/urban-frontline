@@ -494,7 +494,7 @@ function makePeerMesh(name, skinId){
   sprite.position.y = 1.1; sprite.scale.set(1.5,0.28,1);
   root.add(sprite);
   root.position.y = 0;
-  root.scale.set(3.2, 3.2, 3.2);
+  root.scale.set(2.0, 2.0, 2.0);
   scene.add(root);
   return root;
 }
@@ -732,7 +732,7 @@ socket.on('peerUpdate',({name,x,y,z,yaw:py,pitch:pp,wid,skin})=>{
   }
   const p=peers[name];
   if(p.mesh){
-    p.mesh.position.set(x, y-1.55-2.1, z);
+    p.mesh.position.set(x, y-1.55+0.6, z);
     p.mesh.rotation.y=py+Math.PI;
     if(wid && wid!==p.wid){
       p.wid=wid;
