@@ -66,7 +66,7 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
 .btn-create{background:linear-gradient(90deg,#004466,#0088cc);color:#fff;border:none;padding:11px 0;font-size:15px;font-weight:700;border-radius:24px;cursor:pointer;font-family:Rajdhani,monospace;letter-spacing:2px;width:100%;}
 
 /* SHOP */
-.skin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.skin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .skin-card{background:rgba(0,20,50,0.7);border:2px solid rgba(0,200,255,0.15);border-radius:12px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s;}
 .skin-card:hover{border-color:rgba(0,200,255,0.4);}
 .skin-card.owned{border-color:rgba(0,255,100,0.4);}
@@ -434,31 +434,36 @@ function show(id){
 
 // ── SKINS DATA ──
 const SKINS = [
-  {id:'rookie',    name:'Rookie',        icon:'🧑',  price:0,    rarity:'common',    color:'#888'},
-  {id:'soldier',   name:'Forest Soldier',icon:'🪖',  price:200,  rarity:'common',    color:'#4a6'},
-  {id:'blue',      name:'Blue Warrior',  icon:'💙',  price:500,  rarity:'rare',      color:'#48f'},
-  {id:'shadow',    name:'Shadow Agent',  icon:'🕶️', price:800,  rarity:'rare',      color:'#448'},
-  {id:'ice',       name:'Ice Trooper',   icon:'❄️',  price:1200, rarity:'epic',      color:'#8ef'},
-  {id:'golden',    name:'Golden Fighter',icon:'⭐',  price:2000, rarity:'legendary', color:'#fd0'},
-  {id:'galaxy',    name:'Galaxy Hero',   icon:'🌌',  price:3500, rarity:'legendary', color:'#a4f'},
-  {id:'mythic',    name:'Mythic Champ',  icon:'👑',  price:5000, rarity:'legendary', color:'#f80'},
-  {id:'robot',     name:'Robot',         icon:'🤖',  price:1500, rarity:'epic',      color:'#0ff'},
+  {id:'rookie',   name:'Rookie',          img:'https://i.imgur.com/bLdd0OJ.png', price:0,    rarity:'common',    winsReq:0,   label:'ברירת מחדל'},
+  {id:'street',   name:'שחקן רחוב',       img:'https://i.imgur.com/QefuNIy.png', price:0,    rarity:'common',    winsReq:5,   label:'5 ניצחונות'},
+  {id:'commando', name:'חייל קומנדו',     img:'https://i.imgur.com/3f2ZRyS.png', price:0,    rarity:'common',    winsReq:15,  label:'15 ניצחונות'},
+  {id:'agent',    name:'סוכן מיוחד',      img:'https://i.imgur.com/I2gLpSX.png', price:500,  rarity:'rare',      winsReq:30,  label:'30 ניצחונות'},
+  {id:'desert',   name:'לוחם מדברי',      img:'https://i.imgur.com/5gnNNb3.png', price:800,  rarity:'rare',      winsReq:50,  label:'50 ניצחונות'},
+  {id:'snow',     name:'לוחם שלג',        img:'https://i.imgur.com/NSkNX0q.png', price:1200, rarity:'epic',      winsReq:75,  label:'75 ניצחונות'},
+  {id:'ninja',    name:"נינג'ה",          img:'https://i.imgur.com/a1lK8Jk.png', price:1500, rarity:'epic',      winsReq:100, label:'100 ניצחונות'},
+  {id:'engineer', name:'מהנדס',           img:'https://i.imgur.com/rnwsFDI.png', price:2000, rarity:'epic',      winsReq:150, label:'150 ניצחונות'},
+  {id:'robot',    name:'רובוט',           img:'https://i.imgur.com/xGOx935.png', price:3500, rarity:'legendary', winsReq:250, label:'250 ניצחונות'},
+  {id:'cyber',    name:'סייבר',           img:'https://i.imgur.com/2aZFdIi.png', price:2500, rarity:'epic',      winsReq:0,   label:'2,500 מטבעות'},
+  {id:'medic',    name:'חובש',            img:'https://i.imgur.com/D9d8Vat.png', price:1800, rarity:'rare',      winsReq:0,   label:'1,800 מטבעות'},
+  {id:'firefighter',name:'כבאי',          img:'https://i.imgur.com/qiFaFPQ.png', price:2000, rarity:'rare',      winsReq:0,   label:'2,000 מטבעות'},
 ];
 
 function renderShop(){
   const grid = document.getElementById('skinGrid');
   grid.innerHTML = SKINS.map(s => {
-    const owned = myOwnedSkins.includes(s.id);
+    const owned = myOwnedSkins.includes(s.id) || s.price===0&&myWins>=(s.winsReq||0);
     const equipped = mySkin === s.id;
+    const locked = s.winsReq > 0 && myWins < s.winsReq && !myOwnedSkins.includes(s.id);
     let cls = 'skin-card rarity-'+s.rarity;
     if(equipped) cls += ' equipped';
     else if(owned) cls += ' owned';
     let action = '';
     if(equipped) action = '<div class="skin-equipped-badge">✅ מצויד</div>';
+    else if(locked) action = `<div style="font-size:11px;color:#664466;margin-top:4px;">🔒 ${s.label}</div>`;
     else if(owned) action = `<button onclick="equipSkin('${s.id}')" style="background:rgba(0,180,255,0.2);border:1px solid #00e5ff;color:#00e5ff;border-radius:12px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:Rajdhani,monospace;">צייד</button>`;
     else action = `<div class="skin-price">🪙 ${s.price.toLocaleString()}</div><button onclick="buySkin('${s.id}',${s.price})" style="background:linear-gradient(90deg,#cc8800,#ffd700);color:#000;border:none;border-radius:12px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:Rajdhani,monospace;margin-top:4px;">קנה</button>`;
-    return `<div class="${cls}">
-      <div class="skin-emoji">${s.icon}</div>
+    return `<div class="${cls}" style="${locked?'opacity:0.5':''}">
+      <img src="${s.img}" style="width:80px;height:100px;object-fit:cover;border-radius:8px;margin-bottom:6px;display:block;margin-left:auto;margin-right:auto;">
       <div class="skin-name">${s.name}</div>
       ${action}
     </div>`;
