@@ -283,7 +283,7 @@ io.on('connection', socket => {
     }
     const hpKey = 'hp_' + room;
     if (!rooms[hpKey]) rooms[hpKey] = {};
-    // Init ALL players in room to 150 HP on first hit
+    // Init ALL players in room to 150 HP
     if (rooms[room]) {
       rooms[room].players.forEach(p => { if (rooms[hpKey][p] === undefined) rooms[hpKey][p] = 150; });
     }
@@ -293,10 +293,11 @@ io.on('connection', socket => {
       rooms[hpKey][target] = 0;
       io.to('game_' + room).emit('peerDied', { name: target, killer: shooter });
       const alive = Object.keys(rooms[hpKey]).filter(n => rooms[hpKey][n] > 0);
-      const totalPlayers = rooms[room] ? rooms[room].players.length : 2;
-      // Game over only when 1 player remains out of all players
-      if (alive.length <= 1 && Object.keys(rooms[hpKey]).length >= totalPlayers) {
-        const winner = alive[0] || shooter;
+      const total = Object.keys(rooms[hpKey]).length;
+      // Game over: 1 alive AND all players have been tracked
+      const expectedPlayers = rooms[room] ? rooms[room].players.length : 2;
+      if (alive.length === 1 && total >= expectedPlayers) {
+        const winner = alive[0];
         io.to('game_' + room).emit('gameOver', { winner });
         await addWin(winner);
         await addCoins(winner, 200);
