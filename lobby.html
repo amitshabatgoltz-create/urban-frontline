@@ -8,7 +8,7 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;}
 
-/* ── AUTH ── */
+/* AUTH */
 #authScreen{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;}
 .title{font-size:44px;font-weight:700;letter-spacing:6px;background:linear-gradient(90deg,#fff,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .sub{font-size:12px;color:#00e5ff;letter-spacing:4px;opacity:0.7;margin-bottom:8px;}
@@ -22,12 +22,23 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
 .btn-main:hover{opacity:0.9;transform:scale(1.02);}
 .err{color:#ff4466;font-size:12px;text-align:center;display:none;}
 
-/* ── LOBBY ── */
-#lobbyScreen{display:none;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:520px;padding:20px;}
+/* LOBBY */
+#lobbyScreen{display:none;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:680px;padding:20px;}
 .lobby-title{font-size:32px;font-weight:700;letter-spacing:4px;color:#00e5ff;}
 .count{font-size:12px;color:rgba(0,200,255,0.6);letter-spacing:2px;}
 .dot{width:8px;height:8px;border-radius:50%;background:#00cc66;display:inline-block;margin-left:5px;box-shadow:0 0 6px #00cc66;}
-.panel{background:rgba(5,18,35,0.9);border:1px solid rgba(0,200,255,0.2);border-radius:14px;padding:20px;width:100%;}
+
+/* Lobby tabs */
+.lobby-tabs{display:flex;gap:0;border:1px solid rgba(0,200,255,0.3);border-radius:10px;overflow:hidden;width:100%;}
+.ltab{flex:1;background:transparent;color:#4488aa;border:none;padding:11px 0;font-size:14px;font-weight:700;font-family:Rajdhani,monospace;letter-spacing:2px;cursor:pointer;transition:all 0.2s;}
+.ltab.active{background:rgba(0,180,255,0.18);color:#00e5ff;}
+.ltab:hover:not(.active){background:rgba(0,180,255,0.08);}
+
+.lobby-panes{width:100%;display:flex;gap:0;}
+.pane{display:none;width:100%;flex-direction:column;gap:12px;}
+.pane.active{display:flex;}
+
+.panel{background:rgba(5,18,35,0.9);border:1px solid rgba(0,200,255,0.2);border-radius:14px;padding:18px;width:100%;}
 .panel-title{font-size:13px;font-weight:700;color:#00e5ff;letter-spacing:2px;margin-bottom:12px;}
 .player-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(0,30,60,0.5);border:1px solid rgba(0,200,255,0.1);border-radius:8px;margin-bottom:6px;}
 .player-row:last-child{margin-bottom:0;}
@@ -37,11 +48,31 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
 .invite-btn{background:rgba(0,180,255,0.15);border:1px solid rgba(0,200,255,0.3);color:#00cfff;border-radius:6px;padding:5px 12px;font-size:12px;font-family:Rajdhani,monospace;cursor:pointer;font-weight:700;}
 .invite-btn:hover{background:rgba(0,180,255,0.3);}
 .empty{color:#334455;font-size:12px;text-align:center;padding:12px;}
-.btn-red{background:transparent;border:1px solid rgba(255,70,100,0.4);color:#ff4466;border-radius:6px;padding:7px 20px;font-size:12px;font-family:Rajdhani,monospace;cursor:pointer;}
 
-/* ── ROOM ── */
+/* GROUP LIST */
+.group-row{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(0,20,50,0.6);border:1px solid rgba(0,200,255,0.15);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all 0.2s;}
+.group-row:hover{border-color:rgba(0,200,255,0.4);background:rgba(0,40,80,0.6);}
+.group-row:last-child{margin-bottom:0;}
+.group-icon{font-size:22px;}
+.group-info{flex:1;}
+.group-name{font-size:15px;font-weight:700;color:#e0f4ff;}
+.group-host{font-size:11px;color:#4488aa;margin-top:1px;}
+.group-count{font-size:13px;font-weight:700;color:#00e5ff;white-space:nowrap;}
+.join-btn{background:linear-gradient(90deg,#006699,#00aacc);color:#fff;border:none;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;font-family:Rajdhani,monospace;cursor:pointer;letter-spacing:1px;}
+.join-btn:hover{opacity:0.85;}
+.join-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* CREATE GROUP FORM */
+.create-form{background:rgba(0,10,30,0.8);border:1px solid rgba(0,200,255,0.25);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px;}
+.create-form label{font-size:12px;color:#4488aa;letter-spacing:2px;}
+.select-inp{background:rgba(0,30,60,0.8);border:1px solid rgba(0,200,255,0.3);border-radius:8px;padding:9px 14px;color:#e0f4ff;font-size:14px;font-family:Rajdhani,monospace;outline:none;width:100%;}
+.btn-create{background:linear-gradient(90deg,#004466,#0088cc);color:#fff;border:none;padding:11px 0;font-size:15px;font-weight:700;border-radius:24px;cursor:pointer;font-family:Rajdhani,monospace;letter-spacing:2px;width:100%;}
+.btn-create:hover{opacity:0.9;}
+
+/* ROOM */
 #roomScreen{display:none;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:520px;padding:20px;}
-.room-title{font-size:28px;font-weight:700;letter-spacing:4px;color:#aa44ff;}
+.room-title{font-size:26px;font-weight:700;letter-spacing:4px;color:#aa44ff;}
+.room-subtitle{font-size:13px;color:rgba(170,100,255,0.6);letter-spacing:2px;margin-top:-10px;}
 .room-panel{background:rgba(10,5,30,0.95);border:1px solid rgba(150,0,255,0.3);border-radius:14px;padding:20px;width:100%;}
 .rplayer{display:flex;align-items:center;gap:12px;padding:11px 14px;background:rgba(30,5,60,0.6);border:1px solid rgba(150,0,255,0.2);border-radius:8px;margin-bottom:8px;}
 .rplayer:last-child{margin-bottom:0;}
@@ -50,8 +81,10 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
 .rbadge{font-size:10px;background:rgba(150,0,255,0.2);color:#cc88ff;border:1px solid rgba(150,0,255,0.4);border-radius:4px;padding:2px 8px;}
 .btn-start{background:linear-gradient(90deg,#6600cc,#aa00ff);color:#fff;border:none;padding:14px 0;font-size:16px;font-weight:700;border-radius:30px;cursor:pointer;font-family:Rajdhani,monospace;letter-spacing:2px;width:100%;box-shadow:0 0 20px rgba(120,0,255,0.4);}
 .btn-start:hover{opacity:0.9;}
+.btn-red{background:transparent;border:1px solid rgba(255,70,100,0.4);color:#ff4466;border-radius:6px;padding:7px 20px;font-size:12px;font-family:Rajdhani,monospace;cursor:pointer;}
+.waiting-hint{font-size:12px;color:#664488;text-align:center;letter-spacing:1px;}
 
-/* ── INVITE POPUP ── */
+/* INVITE POPUP */
 #invitePopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;align-items:center;justify-content:center;}
 .popup{background:#0a1828;border:1px solid rgba(0,200,255,0.4);border-radius:16px;padding:32px 40px;text-align:center;box-shadow:0 0 40px rgba(0,150,255,0.3);}
 .popup h3{font-size:20px;color:#00e5ff;margin-bottom:8px;}
@@ -60,7 +93,7 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
 .btn-accept{background:linear-gradient(90deg,#00aa44,#00ff66);color:#000;border:none;padding:12px 32px;border-radius:24px;font-size:14px;font-weight:700;cursor:pointer;font-family:Rajdhani,monospace;}
 .btn-decline{background:transparent;border:1px solid #ff4466;color:#ff4466;padding:12px 32px;border-radius:24px;font-size:14px;font-weight:700;cursor:pointer;font-family:Rajdhani,monospace;}
 
-/* ── TOAST ── */
+/* TOAST */
 #toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#0a1828;border:1px solid rgba(0,200,255,0.4);color:#00e5ff;padding:10px 24px;border-radius:24px;font-size:13px;font-weight:600;z-index:1000;display:none;pointer-events:none;}
 </style>
 </head>
@@ -75,15 +108,13 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
       <button class="tab active" id="tabLogin" onclick="showTab('login')">כניסה</button>
       <button class="tab" id="tabReg" onclick="showTab('register')">הרשמה</button>
     </div>
-    <!-- Login -->
-    <div id="loginForm">
+    <div id="loginForm" style="display:flex;flex-direction:column;gap:10px;">
       <input class="inp" id="loginName" type="text" placeholder="שם משתמש" maxlength="16">
       <input class="inp" id="loginPass" type="password" placeholder="סיסמה" maxlength="30" onkeydown="if(event.key==='Enter')doLogin()">
       <div class="err" id="loginErr"></div>
       <button class="btn-main" onclick="doLogin()">כניסה</button>
     </div>
-    <!-- Register -->
-    <div id="regForm" style="display:none;">
+    <div id="regForm" style="display:none;flex-direction:column;gap:10px;">
       <input class="inp" id="regName" type="text" placeholder="שם משתמש" maxlength="16">
       <input class="inp" id="regPass" type="password" placeholder="סיסמה (מינ. 4)" maxlength="30">
       <input class="inp" id="regPass2" type="password" placeholder="אימות סיסמה" maxlength="30" onkeydown="if(event.key==='Enter')doRegister()">
@@ -95,24 +126,66 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
 
 <!-- LOBBY -->
 <div id="lobbyScreen">
-  <div>
+  <div style="text-align:center;">
     <div class="lobby-title">LOBBY</div>
     <div class="count"><span class="dot"></span><span id="playerCount">0</span> שחקנים מחוברים</div>
   </div>
-  <div class="panel">
-    <div class="panel-title">👥 שחקנים אונליין</div>
-    <div id="playerList"><div class="empty">אין שחקנים...</div></div>
+
+  <!-- Lobby Tabs -->
+  <div class="lobby-tabs">
+    <button class="ltab active" onclick="showLobbyTab('players')">👥 שחקנים</button>
+    <button class="ltab" onclick="showLobbyTab('groups')">🎮 קבוצות</button>
   </div>
+
+  <div class="lobby-panes" style="width:100%;">
+    <!-- Players pane -->
+    <div class="pane active" id="pane-players">
+      <div class="panel">
+        <div class="panel-title">👥 שחקנים אונליין</div>
+        <div id="playerList"><div class="empty">אין שחקנים...</div></div>
+      </div>
+    </div>
+
+    <!-- Groups pane -->
+    <div class="pane" id="pane-groups">
+      <!-- Create group -->
+      <div class="create-form">
+        <div class="panel-title" style="margin-bottom:4px;">➕ צור קבוצה חדשה</div>
+        <input class="inp" id="groupNameInp" placeholder="שם הקבוצה (אופציונלי)" maxlength="24">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <label style="font-size:12px;color:#4488aa;white-space:nowrap;">מקסימום שחקנים:</label>
+          <select class="select-inp" id="groupMaxInp">
+            <option value="2">2</option>
+            <option value="4">4</option>
+            <option value="6">6</option>
+            <option value="8">8</option>
+            <option value="10" selected>10</option>
+          </select>
+        </div>
+        <button class="btn-create" onclick="createGroup()">🚀 פתח קבוצה</button>
+      </div>
+      <!-- Group list -->
+      <div class="panel">
+        <div class="panel-title">🌐 קבוצות פתוחות</div>
+        <div id="groupList"><div class="empty">אין קבוצות פתוחות...</div></div>
+      </div>
+    </div>
+  </div>
+
   <button class="btn-red" onclick="logout()">← התנתקות</button>
 </div>
 
 <!-- ROOM -->
 <div id="roomScreen">
-  <div class="room-title">GAME ROOM ⚔️</div>
+  <div style="text-align:center;">
+    <div class="room-title" id="roomTitle">GAME ROOM ⚔️</div>
+    <div class="room-subtitle" id="roomSubtitle"></div>
+  </div>
   <div class="room-panel">
     <div class="panel-title" style="color:#cc88ff;">שחקנים בחדר</div>
     <div id="roomPlayers"></div>
   </div>
+  <div class="waiting-hint" id="waitingHint"></div>
   <button class="btn-start" id="startBtn" style="display:none;" onclick="startGame()">▶ התחל משחק!</button>
   <button class="btn-red" onclick="leaveRoom()">← חזור ללובי</button>
 </div>
@@ -129,7 +202,6 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
   </div>
 </div>
 
-<!-- TOAST -->
 <div id="toast"></div>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -149,26 +221,30 @@ function getSess(){return{n:localStorage.getItem('uf_s'),hp:localStorage.getItem
 function clearSess(){localStorage.removeItem('uf_s');localStorage.removeItem('uf_sh');}
 
 // ── TOAST ──
-function toast(msg, col='#00e5ff'){
+function toast(msg,col='#00e5ff'){
   const t=document.getElementById('toast');
   t.textContent=msg;t.style.borderColor=col;t.style.color=col;t.style.display='block';
   setTimeout(()=>t.style.display='none',3000);
 }
 
-// ── TABS ──
+// ── AUTH TABS ──
 function showTab(tab){
   const isLogin=tab==='login';
   document.getElementById('loginForm').style.display=isLogin?'flex':'none';
   document.getElementById('regForm').style.display=isLogin?'none':'flex';
-  document.getElementById('loginForm').style.flexDirection='column';
-  document.getElementById('loginForm').style.gap='10px';
-  document.getElementById('regForm').style.flexDirection='column';
-  document.getElementById('regForm').style.gap='10px';
   document.getElementById('tabLogin').className='tab'+(isLogin?' active':'');
   document.getElementById('tabReg').className='tab'+(!isLogin?' active':'');
 }
-
 function showErr(id,msg){const e=document.getElementById(id);e.textContent=msg;e.style.display='block';setTimeout(()=>e.style.display='none',3000);}
+
+// ── LOBBY TABS ──
+function showLobbyTab(tab){
+  document.querySelectorAll('.ltab').forEach((b,i)=>{
+    b.classList.toggle('active', (i===0&&tab==='players')||(i===1&&tab==='groups'));
+  });
+  document.getElementById('pane-players').classList.toggle('active', tab==='players');
+  document.getElementById('pane-groups').classList.toggle('active', tab==='groups');
+}
 
 // ── AUTH ──
 function doLogin(){
@@ -179,10 +255,8 @@ function doLogin(){
   const users=getUsers();
   if(!users[name]){showErr('loginErr','משתמש לא קיים');return;}
   if(users[name].p!==hp){showErr('loginErr','סיסמה שגויה');return;}
-  saveSess(name,hp);
-  enterLobby(name);
+  saveSess(name,hp);enterLobby(name);
 }
-
 function doRegister(){
   const name=document.getElementById('regName').value.trim();
   const pass=document.getElementById('regPass').value;
@@ -193,36 +267,24 @@ function doRegister(){
   if(pass!==pass2){showErr('regErr','הסיסמאות לא תואמות');return;}
   const users=getUsers();
   if(users[name]){showErr('regErr','שם תפוס');return;}
-  const hp=h(pass);
-  users[name]={p:hp};
-  saveUsers(users);
-  saveSess(name,hp);
-  enterLobby(name);
+  const hp=h(pass);users[name]={p:hp};saveUsers(users);saveSess(name,hp);enterLobby(name);
 }
-
-function logout(){
-  clearSess();
-  myName='';
-  socket.emit('leave');
-  show('authScreen');
-}
+function logout(){clearSess();myName='';socket.emit('leave');show('authScreen');}
 
 // ── SCREENS ──
 function show(id){
-  ['authScreen','lobbyScreen','roomScreen'].forEach(s=>{
-    document.getElementById(s).style.display='none';
-  });
+  ['authScreen','lobbyScreen','roomScreen'].forEach(s=>document.getElementById(s).style.display='none');
   document.getElementById(id).style.display='flex';
 }
 
 // ── LOBBY ──
 function enterLobby(name){
   myName=name;
-  socket.emit('join', name);
+  socket.emit('join',name);
   show('lobbyScreen');
 }
 
-socket.on('lobbyPlayers', players=>{
+socket.on('lobbyPlayers',players=>{
   document.getElementById('playerCount').textContent=players.length;
   const list=document.getElementById('playerList');
   if(!players.length){list.innerHTML='<div class="empty">אין שחקנים...</div>';return;}
@@ -236,9 +298,38 @@ socket.on('lobbyPlayers', players=>{
     </div>`).join('');
 });
 
-function sendInvite(target){
-  socket.emit('invite', target);
-  toast('הזמנה נשלחה ל-'+target+'...','#00e5ff');
+socket.on('roomsList', rooms => {
+  const list = document.getElementById('groupList');
+  if(!rooms.length){list.innerHTML='<div class="empty">אין קבוצות פתוחות...</div>';return;}
+  list.innerHTML = rooms.map(r => {
+    const full = r.count >= r.max;
+    return `
+    <div class="group-row" onclick="${full?'':'joinGroup(\''+r.id+'\')'}">
+      <div class="group-icon">⚔️</div>
+      <div class="group-info">
+        <div class="group-name">${r.name}</div>
+        <div class="group-host">מארח: ${r.host}</div>
+      </div>
+      <div class="group-count">${r.count}/${r.max}</div>
+      <button class="join-btn" onclick="event.stopPropagation();joinGroup('${r.id}')" ${full?'disabled':''}>
+        ${full?'מלא':'הצטרף'}
+      </button>
+    </div>`;
+  }).join('');
+});
+
+function sendInvite(target){socket.emit('invite',target);toast('הזמנה נשלחה ל-'+target+'...','#00e5ff');}
+
+// ── CREATE GROUP ──
+function createGroup(){
+  const name = document.getElementById('groupNameInp').value.trim() || (myName + "'s Group");
+  const max  = document.getElementById('groupMaxInp').value;
+  socket.emit('createGroup',{groupName:name, maxPlayers:parseInt(max)});
+}
+
+// ── JOIN GROUP ──
+function joinGroup(roomId){
+  socket.emit('joinGroup',{roomId});
 }
 
 // ── INVITE ──
@@ -247,64 +338,53 @@ socket.on('invited',({from})=>{
   document.getElementById('inviteMsg').textContent=from+' מזמין אותך למשחק!';
   document.getElementById('invitePopup').style.display='flex';
 });
-
-function acceptInvite(){
-  document.getElementById('invitePopup').style.display='none';
-  socket.emit('acceptInvite',{from:pendingFrom});
-}
-function declineInvite(){
-  document.getElementById('invitePopup').style.display='none';
-  socket.emit('declineInvite',{from:pendingFrom});
-}
-
+function acceptInvite(){document.getElementById('invitePopup').style.display='none';socket.emit('acceptInvite',{from:pendingFrom});}
+function declineInvite(){document.getElementById('invitePopup').style.display='none';socket.emit('declineInvite',{from:pendingFrom});}
 socket.on('inviteDeclined',({by})=>toast(by+' דחה את ההזמנה','#ff4466'));
 
 // ── ROOM ──
-socket.on('enterRoom',({roomId,players,host})=>{
-  myRoom=roomId;
-  isHost=(host===myName);
+socket.on('enterRoom',({roomId,players,host,roomName})=>{
+  myRoom=roomId;isHost=(host===myName);
+  document.getElementById('roomTitle').textContent = roomName || 'GAME ROOM ⚔️';
+  document.getElementById('roomSubtitle').textContent = 'מזהה: '+roomId.slice(-6);
   renderRoom(players,host);
   show('roomScreen');
   toast('נכנסת לחדר!','#aa44ff');
 });
 
-socket.on('roomUpdate',({players,host})=>{
+socket.on('roomUpdate',({players,host,roomName})=>{
+  if(roomName) document.getElementById('roomTitle').textContent = roomName;
+  isHost=(host===myName);
   renderRoom(players,host);
 });
 
-socket.on('playerLeft',name=>{
-  toast(name+' עזב','#ff4466');
-});
+socket.on('playerLeft',name=>toast(name+' עזב','#ff4466'));
 
-function renderRoom(players, host){
+function renderRoom(players,host){
+  const maxStr = '';
   document.getElementById('roomPlayers').innerHTML=players.map(n=>`
     <div class="rplayer">
       <div class="rdot"></div>
       <div class="rname">${n}</div>
       <span class="rbadge">${n===host?'👑 מארח':n===myName?'אתה':'מחובר'}</span>
     </div>`).join('');
-  // Show start button only for host
   const btn=document.getElementById('startBtn');
-  btn.style.display=(myName===host&&players.length>=2)?'block':'none';
+  const hint=document.getElementById('waitingHint');
+  if(myName===host){
+    btn.style.display=players.length>=2?'block':'none';
+    hint.textContent=players.length<2?'ממתין לשחקנים נוספים...':'';
+  } else {
+    btn.style.display='none';
+    hint.textContent='ממתין למארח שיתחיל...';
+  }
 }
 
-function leaveRoom(){
-  socket.emit('leaveRoom');
-  myRoom=null;
-  show('lobbyScreen');
-}
-
-function startGame(){
-  socket.emit('startGame',{roomId:myRoom});
-}
+function leaveRoom(){socket.emit('leaveRoom');myRoom=null;show('lobbyScreen');}
+function startGame(){socket.emit('startGame',{roomId:myRoom});}
 
 socket.on('gameStarted',({roomId,players})=>{
-  const params = new URLSearchParams({
-    room: roomId,
-    name: myName,
-    players: players.join(',')
-  });
-  window.location.href = '/game?' + params.toString();
+  const params=new URLSearchParams({room:roomId,name:myName,players:players.join(',')});
+  window.location.href='/game?'+params.toString();
 });
 
 // ── AUTO LOGIN ──
@@ -312,14 +392,10 @@ socket.on('gameStarted',({roomId,players})=>{
   const sess=getSess();
   if(sess.n&&sess.hp){
     const users=getUsers();
-    if(users[sess.n]&&users[sess.n].p===sess.hp){
-      enterLobby(sess.n);
-      return;
-    }
+    if(users[sess.n]&&users[sess.n].p===sess.hp){enterLobby(sess.n);return;}
   }
-  show('authScreen');
-  showTab('login');
+  show('authScreen');showTab('login');
 })();
 </script>
 </body>
-</html>
+</html
