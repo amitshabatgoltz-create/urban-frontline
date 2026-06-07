@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>Urban Frontline - Lobby</title>
+<title>Urban Frontline</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -13,33 +13,37 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
 .title{font-size:44px;font-weight:700;letter-spacing:6px;background:linear-gradient(90deg,#fff,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .sub{font-size:12px;color:#00e5ff;letter-spacing:4px;opacity:0.7;margin-bottom:8px;}
 .card{border:1px solid rgba(0,200,255,0.3);border-radius:14px;padding:24px 32px;background:rgba(5,18,35,0.92);display:flex;flex-direction:column;gap:12px;min-width:300px;}
-.tabs{display:flex;border:1px solid rgba(0,200,255,0.3);border-radius:8px;overflow:hidden;}
-.tab{flex:1;background:transparent;color:#4488aa;border:none;padding:9px 0;font-size:13px;font-weight:700;font-family:Rajdhani,monospace;letter-spacing:2px;cursor:pointer;}
-.tab.active{background:rgba(0,180,255,0.2);color:#00e5ff;}
+.atabs{display:flex;border:1px solid rgba(0,200,255,0.3);border-radius:8px;overflow:hidden;}
+.atab{flex:1;background:transparent;color:#4488aa;border:none;padding:9px 0;font-size:13px;font-weight:700;font-family:Rajdhani,monospace;letter-spacing:2px;cursor:pointer;}
+.atab.active{background:rgba(0,180,255,0.2);color:#00e5ff;}
 .inp{background:rgba(0,30,60,0.8);border:1px solid rgba(0,200,255,0.3);border-radius:8px;padding:10px 14px;color:#e0f4ff;font-size:14px;font-family:Rajdhani,monospace;outline:none;text-align:right;width:100%;}
 .inp:focus{border-color:#00e5ff;}
 .btn-main{background:linear-gradient(90deg,#0088cc,#00e5ff);color:#000;border:none;padding:12px 0;font-size:16px;font-weight:700;border-radius:24px;cursor:pointer;font-family:Rajdhani,monospace;letter-spacing:2px;width:100%;}
-.btn-main:hover{opacity:0.9;transform:scale(1.02);}
+.btn-main:hover{opacity:0.9;}
 .err{color:#ff4466;font-size:12px;text-align:center;display:none;}
 
+/* TOP BAR */
+#topBar{display:none;position:fixed;top:0;left:0;right:0;background:rgba(5,13,26,0.97);border-bottom:1px solid rgba(0,200,255,0.2);padding:10px 20px;z-index:100;align-items:center;gap:16px;}
+.tb-name{font-size:16px;font-weight:700;color:#00e5ff;}
+.tb-coins{font-size:15px;font-weight:700;color:#ffd700;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:20px;padding:4px 14px;}
+.tb-stats{font-size:12px;color:#4488aa;margin-right:auto;}
+
 /* LOBBY */
-#lobbyScreen{display:none;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:680px;padding:20px;}
-.lobby-title{font-size:32px;font-weight:700;letter-spacing:4px;color:#00e5ff;}
-.count{font-size:12px;color:rgba(0,200,255,0.6);letter-spacing:2px;}
-.dot{width:8px;height:8px;border-radius:50%;background:#00cc66;display:inline-block;margin-left:5px;box-shadow:0 0 6px #00cc66;}
+#lobbyScreen{display:none;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:700px;padding:20px;margin-top:60px;}
+.lobby-title{font-size:28px;font-weight:700;letter-spacing:4px;color:#00e5ff;}
 
-/* Lobby tabs */
-.lobby-tabs{display:flex;gap:0;border:1px solid rgba(0,200,255,0.3);border-radius:10px;overflow:hidden;width:100%;}
-.ltab{flex:1;background:transparent;color:#4488aa;border:none;padding:11px 0;font-size:14px;font-weight:700;font-family:Rajdhani,monospace;letter-spacing:2px;cursor:pointer;transition:all 0.2s;}
-.ltab.active{background:rgba(0,180,255,0.18);color:#00e5ff;}
-.ltab:hover:not(.active){background:rgba(0,180,255,0.08);}
+/* NAV TABS */
+.nav-tabs{display:flex;gap:4px;background:rgba(0,10,30,0.8);border:1px solid rgba(0,200,255,0.2);border-radius:12px;padding:6px;width:100%;}
+.ntab{flex:1;background:transparent;color:#4488aa;border:none;padding:10px 0;font-size:13px;font-weight:700;font-family:Rajdhani,monospace;letter-spacing:1px;cursor:pointer;border-radius:8px;transition:all 0.2s;}
+.ntab.active{background:rgba(0,180,255,0.2);color:#00e5ff;}
+.ntab:hover:not(.active){background:rgba(0,180,255,0.08);}
 
-.lobby-panes{width:100%;display:flex;gap:0;}
 .pane{display:none;width:100%;flex-direction:column;gap:12px;}
 .pane.active{display:flex;}
-
 .panel{background:rgba(5,18,35,0.9);border:1px solid rgba(0,200,255,0.2);border-radius:14px;padding:18px;width:100%;}
 .panel-title{font-size:13px;font-weight:700;color:#00e5ff;letter-spacing:2px;margin-bottom:12px;}
+
+/* PLAYERS */
 .player-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(0,30,60,0.5);border:1px solid rgba(0,200,255,0.1);border-radius:8px;margin-bottom:6px;}
 .player-row:last-child{margin-bottom:0;}
 .pdot{width:8px;height:8px;border-radius:50%;background:#00cc66;flex-shrink:0;}
@@ -49,52 +53,87 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
 .invite-btn:hover{background:rgba(0,180,255,0.3);}
 .empty{color:#334455;font-size:12px;text-align:center;padding:12px;}
 
-/* GROUP LIST */
-.group-row{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(0,20,50,0.6);border:1px solid rgba(0,200,255,0.15);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all 0.2s;}
-.group-row:hover{border-color:rgba(0,200,255,0.4);background:rgba(0,40,80,0.6);}
-.group-row:last-child{margin-bottom:0;}
-.group-icon{font-size:22px;}
+/* GROUPS */
+.group-row{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(0,20,50,0.6);border:1px solid rgba(0,200,255,0.15);border-radius:10px;margin-bottom:8px;}
 .group-info{flex:1;}
 .group-name{font-size:15px;font-weight:700;color:#e0f4ff;}
-.group-host{font-size:11px;color:#4488aa;margin-top:1px;}
+.group-host{font-size:11px;color:#4488aa;}
 .group-count{font-size:13px;font-weight:700;color:#00e5ff;white-space:nowrap;}
-.join-btn{background:linear-gradient(90deg,#006699,#00aacc);color:#fff;border:none;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;font-family:Rajdhani,monospace;cursor:pointer;letter-spacing:1px;}
-.join-btn:hover{opacity:0.85;}
+.join-btn{background:linear-gradient(90deg,#006699,#00aacc);color:#fff;border:none;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;font-family:Rajdhani,monospace;cursor:pointer;}
 .join-btn:disabled{opacity:0.4;cursor:not-allowed;}
-
-/* CREATE GROUP FORM */
 .create-form{background:rgba(0,10,30,0.8);border:1px solid rgba(0,200,255,0.25);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px;}
-.create-form label{font-size:12px;color:#4488aa;letter-spacing:2px;}
 .select-inp{background:rgba(0,30,60,0.8);border:1px solid rgba(0,200,255,0.3);border-radius:8px;padding:9px 14px;color:#e0f4ff;font-size:14px;font-family:Rajdhani,monospace;outline:none;width:100%;}
 .btn-create{background:linear-gradient(90deg,#004466,#0088cc);color:#fff;border:none;padding:11px 0;font-size:15px;font-weight:700;border-radius:24px;cursor:pointer;font-family:Rajdhani,monospace;letter-spacing:2px;width:100%;}
-.btn-create:hover{opacity:0.9;}
+
+/* SHOP */
+.skin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.skin-card{background:rgba(0,20,50,0.7);border:2px solid rgba(0,200,255,0.15);border-radius:12px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.skin-card:hover{border-color:rgba(0,200,255,0.4);}
+.skin-card.owned{border-color:rgba(0,255,100,0.4);}
+.skin-card.equipped{border-color:#00e5ff;background:rgba(0,100,200,0.2);}
+.skin-emoji{font-size:36px;margin-bottom:6px;}
+.skin-name{font-size:13px;font-weight:700;color:#e0f4ff;}
+.skin-price{font-size:12px;color:#ffd700;margin-top:4px;}
+.skin-owned{font-size:11px;color:#00cc66;margin-top:4px;}
+.skin-equipped-badge{font-size:10px;color:#00e5ff;margin-top:4px;}
+.rarity-common{border-color:rgba(150,150,150,0.4);}
+.rarity-rare{border-color:rgba(0,100,255,0.4);}
+.rarity-epic{border-color:rgba(150,0,255,0.4);}
+.rarity-legendary{border-color:rgba(255,165,0,0.5);}
+
+/* BATTLE PASS */
+.bp-bar-wrap{background:rgba(0,10,30,0.8);border:1px solid rgba(100,0,200,0.3);border-radius:12px;padding:16px;margin-bottom:12px;}
+.bp-level{font-size:20px;font-weight:700;color:#aa44ff;}
+.bp-bar{height:12px;background:rgba(100,0,200,0.2);border-radius:6px;margin:8px 0;overflow:hidden;}
+.bp-fill{height:100%;background:linear-gradient(90deg,#6600cc,#aa00ff);border-radius:6px;transition:width 0.5s;}
+.bp-xp{font-size:11px;color:#664488;}
+.bp-rewards{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;}
+.bp-reward{min-width:70px;background:rgba(50,0,100,0.4);border:1px solid rgba(150,0,255,0.3);border-radius:8px;padding:8px;text-align:center;flex-shrink:0;}
+.bp-reward.unlocked{border-color:#aa44ff;background:rgba(100,0,200,0.3);}
+.bp-rlevel{font-size:10px;color:#664488;}
+.bp-ricon{font-size:20px;}
+.bp-rdesc{font-size:10px;color:#cc88ff;margin-top:2px;}
+
+/* DAILY */
+.daily-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.day-card{background:rgba(0,20,50,0.6);border:1px solid rgba(0,200,255,0.15);border-radius:8px;padding:8px 4px;text-align:center;}
+.day-card.today{border-color:#00e5ff;background:rgba(0,100,200,0.2);}
+.day-card.done{border-color:rgba(0,200,100,0.4);background:rgba(0,100,50,0.2);}
+.day-num{font-size:10px;color:#4488aa;}
+.day-icon{font-size:20px;margin:4px 0;}
+.day-reward{font-size:10px;color:#ffd700;}
 
 /* ROOM */
-#roomScreen{display:none;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:520px;padding:20px;}
+#roomScreen{display:none;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:520px;padding:20px;margin-top:60px;}
 .room-title{font-size:26px;font-weight:700;letter-spacing:4px;color:#aa44ff;}
-.room-subtitle{font-size:13px;color:rgba(170,100,255,0.6);letter-spacing:2px;margin-top:-10px;}
 .room-panel{background:rgba(10,5,30,0.95);border:1px solid rgba(150,0,255,0.3);border-radius:14px;padding:20px;width:100%;}
 .rplayer{display:flex;align-items:center;gap:12px;padding:11px 14px;background:rgba(30,5,60,0.6);border:1px solid rgba(150,0,255,0.2);border-radius:8px;margin-bottom:8px;}
-.rplayer:last-child{margin-bottom:0;}
 .rdot{width:10px;height:10px;border-radius:50%;background:#aa44ff;box-shadow:0 0 8px #aa44ff;}
 .rname{flex:1;font-size:15px;font-weight:700;color:#e0d0ff;}
 .rbadge{font-size:10px;background:rgba(150,0,255,0.2);color:#cc88ff;border:1px solid rgba(150,0,255,0.4);border-radius:4px;padding:2px 8px;}
 .btn-start{background:linear-gradient(90deg,#6600cc,#aa00ff);color:#fff;border:none;padding:14px 0;font-size:16px;font-weight:700;border-radius:30px;cursor:pointer;font-family:Rajdhani,monospace;letter-spacing:2px;width:100%;box-shadow:0 0 20px rgba(120,0,255,0.4);}
-.btn-start:hover{opacity:0.9;}
 .btn-red{background:transparent;border:1px solid rgba(255,70,100,0.4);color:#ff4466;border-radius:6px;padding:7px 20px;font-size:12px;font-family:Rajdhani,monospace;cursor:pointer;}
-.waiting-hint{font-size:12px;color:#664488;text-align:center;letter-spacing:1px;}
+.waiting-hint{font-size:12px;color:#664488;text-align:center;}
 
 /* INVITE POPUP */
 #invitePopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;align-items:center;justify-content:center;}
-.popup{background:#0a1828;border:1px solid rgba(0,200,255,0.4);border-radius:16px;padding:32px 40px;text-align:center;box-shadow:0 0 40px rgba(0,150,255,0.3);}
+.popup{background:#0a1828;border:1px solid rgba(0,200,255,0.4);border-radius:16px;padding:32px 40px;text-align:center;}
 .popup h3{font-size:20px;color:#00e5ff;margin-bottom:8px;}
 .popup p{font-size:14px;color:#88aacc;margin-bottom:24px;}
 .popup-btns{display:flex;gap:12px;justify-content:center;}
 .btn-accept{background:linear-gradient(90deg,#00aa44,#00ff66);color:#000;border:none;padding:12px 32px;border-radius:24px;font-size:14px;font-weight:700;cursor:pointer;font-family:Rajdhani,monospace;}
 .btn-decline{background:transparent;border:1px solid #ff4466;color:#ff4466;padding:12px 32px;border-radius:24px;font-size:14px;font-weight:700;cursor:pointer;font-family:Rajdhani,monospace;}
 
-/* TOAST */
-#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#0a1828;border:1px solid rgba(0,200,255,0.4);color:#00e5ff;padding:10px 24px;border-radius:24px;font-size:13px;font-weight:600;z-index:1000;display:none;pointer-events:none;}
+/* DAILY REWARD POPUP */
+#dailyPopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:998;align-items:center;justify-content:center;}
+.daily-popup{background:linear-gradient(135deg,#0a1828,#0a0520);border:2px solid #ffd700;border-radius:20px;padding:40px;text-align:center;box-shadow:0 0 60px rgba(255,215,0,0.3);}
+.daily-popup h2{font-size:28px;color:#ffd700;margin-bottom:8px;}
+.daily-popup .day-streak{font-size:14px;color:#88aacc;margin-bottom:20px;}
+.daily-coins{font-size:60px;margin:20px 0;}
+.daily-amount{font-size:32px;font-weight:700;color:#ffd700;}
+.btn-claim{background:linear-gradient(90deg,#cc8800,#ffd700);color:#000;border:none;padding:14px 48px;border-radius:30px;font-size:18px;font-weight:700;cursor:pointer;font-family:Rajdhani,monospace;margin-top:20px;}
+
+#toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#0a1828;border:1px solid rgba(0,200,255,0.4);color:#00e5ff;padding:10px 24px;border-radius:24px;font-size:13px;font-weight:600;z-index:1000;display:none;pointer-events:none;}
 </style>
 </head>
 <body>
@@ -104,9 +143,9 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
   <div class="title">URBAN FRONTLINE</div>
   <div class="sub">BATTLE ROYALE</div>
   <div class="card">
-    <div class="tabs">
-      <button class="tab active" id="tabLogin" onclick="showTab('login')">כניסה</button>
-      <button class="tab" id="tabReg" onclick="showTab('register')">הרשמה</button>
+    <div class="atabs">
+      <button class="atab active" id="tabLogin" onclick="showTab('login')">כניסה</button>
+      <button class="atab" id="tabReg" onclick="showTab('register')">הרשמה</button>
     </div>
     <div id="loginForm" style="display:flex;flex-direction:column;gap:10px;">
       <input class="inp" id="loginName" type="text" placeholder="שם משתמש" maxlength="16">
@@ -124,51 +163,92 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
   </div>
 </div>
 
+<!-- TOP BAR -->
+<div id="topBar">
+  <div class="tb-name" id="tbName"></div>
+  <div class="tb-coins">🪙 <span id="tbCoins">0</span></div>
+  <div class="tb-stats">🏆 <span id="tbWins">0</span> | 💀 <span id="tbKills">0</span></div>
+  <button class="btn-red" onclick="logout()" style="margin-right:0;">יציאה</button>
+</div>
+
 <!-- LOBBY -->
 <div id="lobbyScreen">
-  <div style="text-align:center;">
-    <div class="lobby-title">LOBBY</div>
-    <div class="count"><span class="dot"></span><span id="playerCount">0</span> שחקנים מחוברים</div>
+  <div class="nav-tabs">
+    <button class="ntab active" onclick="showPane('players')">👥 שחקנים</button>
+    <button class="ntab" onclick="showPane('groups')">⚔️ קבוצות</button>
+    <button class="ntab" onclick="showPane('shop')">🛒 חנות</button>
+    <button class="ntab" onclick="showPane('battlepass')">⭐ באטל פאס</button>
+    <button class="ntab" onclick="showPane('daily')">🎁 יומי</button>
   </div>
 
-  <!-- Lobby Tabs -->
-  <div class="lobby-tabs">
-    <button class="ltab active" onclick="showLobbyTab('players')">👥 שחקנים</button>
-    <button class="ltab" onclick="showLobbyTab('groups')">🎮 קבוצות</button>
-  </div>
-
-  <div class="lobby-panes" style="width:100%;">
-    <!-- Players pane -->
-    <div class="pane active" id="pane-players">
-      <div class="panel">
-        <div class="panel-title">👥 שחקנים אונליין</div>
-        <div id="playerList"><div class="empty">אין שחקנים...</div></div>
-      </div>
+  <!-- PLAYERS -->
+  <div class="pane active" id="pane-players">
+    <div class="panel">
+      <div class="panel-title">👥 שחקנים אונליין (<span id="playerCount">0</span>)</div>
+      <div id="playerList"><div class="empty">אין שחקנים...</div></div>
     </div>
+  </div>
 
-    <!-- Groups pane -->
-    <div class="pane" id="pane-groups">
-      <!-- Create group -->
-      <div class="create-form">
-        <div class="panel-title" style="margin-bottom:4px;">➕ צור קבוצה חדשה</div>
-        <input class="inp" id="groupNameInp" placeholder="שם הקבוצה (אופציונלי)" maxlength="24">
-        <div style="display:flex;gap:10px;align-items:center;">
-          <label style="font-size:12px;color:#4488aa;white-space:nowrap;">מקסימום שחקנים:</label>
-          <select class="select-inp" id="groupMaxInp">
-            <option value="2">2</option>
-            <option value="4">4</option>
-            <option value="6">6</option>
-            <option value="8">8</option>
-            <option value="10" selected>10</option>
-          </select>
-        </div>
-        <button class="btn-create" onclick="createGroup()">🚀 פתח קבוצה</button>
+  <!-- GROUPS -->
+  <div class="pane" id="pane-groups">
+    <div class="create-form">
+      <div class="panel-title" style="margin-bottom:4px;">➕ צור קבוצה</div>
+      <input class="inp" id="groupNameInp" placeholder="שם הקבוצה" maxlength="24">
+      <select class="select-inp" id="groupMaxInp">
+        <option value="2">2 שחקנים</option>
+        <option value="4">4 שחקנים</option>
+        <option value="6">6 שחקנים</option>
+        <option value="8">8 שחקנים</option>
+        <option value="10" selected>10 שחקנים</option>
+      </select>
+      <button class="btn-create" onclick="createGroup()">🚀 פתח קבוצה</button>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🌐 קבוצות פתוחות</div>
+      <div id="groupList"><div class="empty">אין קבוצות...</div></div>
+    </div>
+  </div>
+
+  <!-- SHOP -->
+  <div class="pane" id="pane-shop">
+    <div class="panel">
+      <div class="panel-title">🛒 חנות סקינים</div>
+      <div class="skin-grid" id="skinGrid"></div>
+    </div>
+  </div>
+
+  <!-- BATTLE PASS -->
+  <div class="pane" id="pane-battlepass">
+    <div class="bp-bar-wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="bp-level">⭐ רמה <span id="bpLevel">0</span></div>
+        <div class="bp-xp"><span id="bpXP">0</span> / <span id="bpNextXP">500</span> XP</div>
       </div>
-      <!-- Group list -->
-      <div class="panel">
-        <div class="panel-title">🌐 קבוצות פתוחות</div>
-        <div id="groupList"><div class="empty">אין קבוצות פתוחות...</div></div>
-      </div>
+      <div class="bp-bar"><div class="bp-fill" id="bpFill" style="width:0%"></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🎁 פרסים</div>
+      <div class="bp-rewards" id="bpRewards"></div>
+    </div>
+    <div class="panel" style="font-size:12px;color:#4488aa;line-height:1.8;">
+      <div class="panel-title">📋 איך מרוויחים XP?</div>
+      ✅ ניצחון — 150 XP<br>
+      🔫 הרג — 25 XP<br>
+      🎮 כל משחק — XP אוטומטי
+    </div>
+  </div>
+
+  <!-- DAILY -->
+  <div class="pane" id="pane-daily">
+    <div class="panel">
+      <div class="panel-title">🎁 פרס התחברות יומי</div>
+      <div class="daily-grid" id="dailyGrid"></div>
+    </div>
+    <div class="panel" style="font-size:12px;color:#4488aa;line-height:2;">
+      <div class="panel-title">🪙 איך מרוויחים מטבעות?</div>
+      🏆 ניצחון — +200 מטבעות<br>
+      🔫 הרג — +10 מטבעות<br>
+      🎁 כניסה יומית — עד 500 מטבעות
     </div>
   </div>
 
@@ -179,7 +259,7 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
 <div id="roomScreen">
   <div style="text-align:center;">
     <div class="room-title" id="roomTitle">GAME ROOM ⚔️</div>
-    <div class="room-subtitle" id="roomSubtitle"></div>
+    <div style="font-size:12px;color:#664488;" id="roomSubtitle"></div>
   </div>
   <div class="room-panel">
     <div class="panel-title" style="color:#cc88ff;">שחקנים בחדר</div>
@@ -202,23 +282,36 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
   </div>
 </div>
 
+<!-- DAILY REWARD POPUP -->
+<div id="dailyPopup">
+  <div class="daily-popup">
+    <h2>🎁 פרס יומי!</h2>
+    <div class="day-streak" id="dailyStreakText"></div>
+    <div class="daily-coins">🪙</div>
+    <div class="daily-amount" id="dailyAmount">+0</div>
+    <div style="font-size:14px;color:#88aacc;margin-top:8px;">מטבעות נוספו לחשבונך!</div>
+    <button class="btn-claim" onclick="closeDailyPopup()">תבעו! 🎉</button>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = io();
 let myName = '';
+let myCoins = 0;
+let myWins = 0;
+let myKills = 0;
+let mySkin = 'rookie';
+let myOwnedSkins = ['rookie'];
+let myBPLevel = 0;
+let myBPXP = 0;
 let pendingFrom = '';
 let myRoom = null;
-let isHost = false;
 
-// ── STORAGE ──
+// ── HASH ──
 function h(p){let v=0;for(let i=0;i<p.length;i++){v=((v<<5)-v)+p.charCodeAt(i);v|=0;}return Math.abs(v).toString(36);}
-function getUsers(){try{return JSON.parse(localStorage.getItem('uf_u')||'{}');}catch(e){return{};}}
-function saveUsers(u){localStorage.setItem('uf_u',JSON.stringify(u));}
-function saveSess(n,hp){localStorage.setItem('uf_s',n);localStorage.setItem('uf_sh',hp);}
-function getSess(){return{n:localStorage.getItem('uf_s'),hp:localStorage.getItem('uf_sh')};}
-function clearSess(){localStorage.removeItem('uf_s');localStorage.removeItem('uf_sh');}
 
 // ── TOAST ──
 function toast(msg,col='#00e5ff'){
@@ -227,23 +320,25 @@ function toast(msg,col='#00e5ff'){
   setTimeout(()=>t.style.display='none',3000);
 }
 
-// ── AUTH TABS ──
+// ── TABS ──
 function showTab(tab){
   const isLogin=tab==='login';
   document.getElementById('loginForm').style.display=isLogin?'flex':'none';
   document.getElementById('regForm').style.display=isLogin?'none':'flex';
-  document.getElementById('tabLogin').className='tab'+(isLogin?' active':'');
-  document.getElementById('tabReg').className='tab'+(!isLogin?' active':'');
+  document.getElementById('tabLogin').className='atab'+(isLogin?' active':'');
+  document.getElementById('tabReg').className='atab'+(!isLogin?' active':'');
 }
 function showErr(id,msg){const e=document.getElementById(id);e.textContent=msg;e.style.display='block';setTimeout(()=>e.style.display='none',3000);}
 
-// ── LOBBY TABS ──
-function showLobbyTab(tab){
-  document.querySelectorAll('.ltab').forEach((b,i)=>{
-    b.classList.toggle('active', (i===0&&tab==='players')||(i===1&&tab==='groups'));
-  });
-  document.getElementById('pane-players').classList.toggle('active', tab==='players');
-  document.getElementById('pane-groups').classList.toggle('active', tab==='groups');
+function showPane(name){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('pane-'+name).classList.add('active');
+  const idx = ['players','groups','shop','battlepass','daily'].indexOf(name);
+  document.querySelectorAll('.ntab')[idx]?.classList.add('active');
+  if(name==='shop') renderShop();
+  if(name==='battlepass') renderBP();
+  if(name==='daily') renderDaily();
 }
 
 // ── AUTH ──
@@ -251,11 +346,7 @@ function doLogin(){
   const name=document.getElementById('loginName').value.trim();
   const pass=document.getElementById('loginPass').value;
   if(!name||!pass){showErr('loginErr','מלא שם וסיסמה');return;}
-  const hp=h(pass);
-  const users=getUsers();
-  if(!users[name]){showErr('loginErr','משתמש לא קיים');return;}
-  if(users[name].p!==hp){showErr('loginErr','סיסמה שגויה');return;}
-  saveSess(name,hp);enterLobby(name);
+  socket.emit('login',{name,passHash:h(pass)});
 }
 function doRegister(){
   const name=document.getElementById('regName').value.trim();
@@ -265,36 +356,184 @@ function doRegister(){
   if(name.length<2){showErr('regErr','שם קצר מדי');return;}
   if(pass.length<4){showErr('regErr','סיסמה קצרה מדי');return;}
   if(pass!==pass2){showErr('regErr','הסיסמאות לא תואמות');return;}
-  const users=getUsers();
-  if(users[name]){showErr('regErr','שם תפוס');return;}
-  const hp=h(pass);users[name]={p:hp};saveUsers(users);saveSess(name,hp);enterLobby(name);
+  socket.emit('register',{name,passHash:h(pass)});
 }
-function logout(){clearSess();myName='';socket.emit('leave');show('authScreen');}
 
-// ── SCREENS ──
+socket.on('authError', msg => {
+  showErr('loginErr', msg);
+  showErr('regErr', msg);
+});
+
+socket.on('authOk', data => {
+  myName = data.name;
+  myCoins = data.coins;
+  myWins = data.wins;
+  myKills = data.kills;
+  mySkin = data.skin || 'rookie';
+  myOwnedSkins = data.ownedSkins || ['rookie'];
+  myBPLevel = data.battlePassLevel || 0;
+  myBPXP = data.battlePassXP || 0;
+  updateTopBar();
+  socket.emit('join', myName);
+  show('lobbyScreen');
+  document.getElementById('topBar').style.display='flex';
+  if(data.dailyReward > 0){
+    document.getElementById('dailyAmount').textContent = '+'+data.dailyReward;
+    document.getElementById('dailyStreakText').textContent = 'יום '+data.loginStreak+' ברצף!';
+    document.getElementById('dailyPopup').style.display='flex';
+  }
+});
+
+socket.on('statsUpdate', data => {
+  if(data.coins !== undefined) myCoins = data.coins;
+  if(data.wins !== undefined) myWins = data.wins;
+  if(data.kills !== undefined) myKills = data.kills;
+  if(data.battlePassXP !== undefined) myBPXP = data.battlePassXP;
+  updateTopBar();
+});
+
+socket.on('buyResult', data => {
+  if(data.ok){
+    myCoins = data.coins;
+    myOwnedSkins = data.ownedSkins;
+    updateTopBar();
+    renderShop();
+    toast('✅ הסקין נרכש!','#00ff66');
+  } else {
+    toast('❌ '+data.msg,'#ff4466');
+  }
+});
+
+socket.on('equipResult', data => {
+  if(data.ok){ mySkin = data.skin; renderShop(); toast('✅ סקין מצויד!','#00e5ff'); }
+});
+
+function updateTopBar(){
+  document.getElementById('tbName').textContent = myName;
+  document.getElementById('tbCoins').textContent = myCoins.toLocaleString();
+  document.getElementById('tbWins').textContent = myWins;
+  document.getElementById('tbKills').textContent = myKills;
+}
+
+function closeDailyPopup(){
+  document.getElementById('dailyPopup').style.display='none';
+  myCoins += parseInt(document.getElementById('dailyAmount').textContent.replace('+',''));
+  updateTopBar();
+}
+
+function logout(){
+  myName='';socket.emit('leave');
+  document.getElementById('topBar').style.display='none';
+  show('authScreen');
+}
+
 function show(id){
   ['authScreen','lobbyScreen','roomScreen'].forEach(s=>document.getElementById(s).style.display='none');
   document.getElementById(id).style.display='flex';
 }
 
-// ── LOBBY ──
-function enterLobby(name){
-  myName=name;
-  socket.emit('join',name);
-  show('lobbyScreen');
+// ── SKINS DATA ──
+const SKINS = [
+  {id:'rookie',    name:'Rookie',        icon:'🧑',  price:0,    rarity:'common',    color:'#888'},
+  {id:'soldier',   name:'Forest Soldier',icon:'🪖',  price:200,  rarity:'common',    color:'#4a6'},
+  {id:'blue',      name:'Blue Warrior',  icon:'💙',  price:500,  rarity:'rare',      color:'#48f'},
+  {id:'shadow',    name:'Shadow Agent',  icon:'🕶️', price:800,  rarity:'rare',      color:'#448'},
+  {id:'ice',       name:'Ice Trooper',   icon:'❄️',  price:1200, rarity:'epic',      color:'#8ef'},
+  {id:'golden',    name:'Golden Fighter',icon:'⭐',  price:2000, rarity:'legendary', color:'#fd0'},
+  {id:'galaxy',    name:'Galaxy Hero',   icon:'🌌',  price:3500, rarity:'legendary', color:'#a4f'},
+  {id:'mythic',    name:'Mythic Champ',  icon:'👑',  price:5000, rarity:'legendary', color:'#f80'},
+  {id:'robot',     name:'Robot',         icon:'🤖',  price:1500, rarity:'epic',      color:'#0ff'},
+];
+
+function renderShop(){
+  const grid = document.getElementById('skinGrid');
+  grid.innerHTML = SKINS.map(s => {
+    const owned = myOwnedSkins.includes(s.id);
+    const equipped = mySkin === s.id;
+    let cls = 'skin-card rarity-'+s.rarity;
+    if(equipped) cls += ' equipped';
+    else if(owned) cls += ' owned';
+    let action = '';
+    if(equipped) action = '<div class="skin-equipped-badge">✅ מצויד</div>';
+    else if(owned) action = `<button onclick="equipSkin('${s.id}')" style="background:rgba(0,180,255,0.2);border:1px solid #00e5ff;color:#00e5ff;border-radius:12px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:Rajdhani,monospace;">צייד</button>`;
+    else action = `<div class="skin-price">🪙 ${s.price.toLocaleString()}</div><button onclick="buySkin('${s.id}',${s.price})" style="background:linear-gradient(90deg,#cc8800,#ffd700);color:#000;border:none;border-radius:12px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:Rajdhani,monospace;margin-top:4px;">קנה</button>`;
+    return `<div class="${cls}">
+      <div class="skin-emoji">${s.icon}</div>
+      <div class="skin-name">${s.name}</div>
+      ${action}
+    </div>`;
+  }).join('');
 }
 
-socket.on('lobbyPlayers',players=>{
-  document.getElementById('playerCount').textContent=players.length;
-  const list=document.getElementById('playerList');
+function buySkin(skinId, price){
+  socket.emit('buySkin',{name:myName, skinId, price});
+}
+function equipSkin(skinId){
+  socket.emit('equipSkin',{name:myName, skinId});
+}
+
+// ── BATTLE PASS ──
+const BP_REWARDS = [
+  {level:1,  icon:'🪙', desc:'100 מטבעות'},
+  {level:5,  icon:'🎨', desc:'ספריי'},
+  {level:10, icon:'💙', desc:'סקין כחול'},
+  {level:15, icon:'🪙', desc:'300 מטבעות'},
+  {level:20, icon:'🪙', desc:'500 מטבעות'},
+  {level:25, icon:'❄️', desc:'Ice Trooper'},
+  {level:30, icon:'👑', desc:'סקין אפי'},
+  {level:40, icon:'🌌', desc:'Galaxy Hero'},
+  {level:50, icon:'🏆', desc:'סקין אגדי'},
+];
+const XP_PER_LEVEL = 500;
+
+function renderBP(){
+  const xpInLevel = myBPXP % XP_PER_LEVEL;
+  const pct = (xpInLevel / XP_PER_LEVEL * 100).toFixed(1);
+  document.getElementById('bpLevel').textContent = myBPLevel;
+  document.getElementById('bpXP').textContent = xpInLevel;
+  document.getElementById('bpNextXP').textContent = XP_PER_LEVEL;
+  document.getElementById('bpFill').style.width = pct + '%';
+  document.getElementById('bpRewards').innerHTML = BP_REWARDS.map(r => {
+    const unlocked = myBPLevel >= r.level;
+    return `<div class="bp-reward ${unlocked?'unlocked':''}">
+      <div class="bp-rlevel">רמה ${r.level}</div>
+      <div class="bp-ricon">${r.icon}</div>
+      <div class="bp-rdesc">${r.desc}</div>
+      ${unlocked?'<div style="font-size:9px;color:#00cc66;">✅</div>':''}
+    </div>`;
+  }).join('');
+}
+
+// ── DAILY ──
+const DAILY_REWARDS = [
+  {day:1,icon:'🪙',reward:'50'},
+  {day:2,icon:'🪙',reward:'100'},
+  {day:3,icon:'🪙',reward:'150'},
+  {day:4,icon:'🪙',reward:'200'},
+  {day:5,icon:'🪙',reward:'250'},
+  {day:6,icon:'🪙',reward:'300'},
+  {day:7,icon:'🌟',reward:'500'},
+];
+
+function renderDaily(){
+  document.getElementById('dailyGrid').innerHTML = DAILY_REWARDS.map(r => `
+    <div class="day-card">
+      <div class="day-num">יום ${r.day}</div>
+      <div class="day-icon">${r.icon}</div>
+      <div class="day-reward">${r.reward}</div>
+    </div>`).join('');
+}
+
+// ── LOBBY ──
+socket.on('lobbyPlayers', players => {
+  document.getElementById('playerCount').textContent = players.length;
+  const list = document.getElementById('playerList');
   if(!players.length){list.innerHTML='<div class="empty">אין שחקנים...</div>';return;}
-  list.innerHTML=players.map(n=>`
+  list.innerHTML = players.map(n=>`
     <div class="player-row">
       <div class="pdot"></div>
       <div class="pname">${n}</div>
-      ${n===myName
-        ?'<span class="badge">אתה</span>'
-        :`<button class="invite-btn" onclick="sendInvite('${n}')">🎮 הזמן</button>`}
+      ${n===myName?'<span class="badge">אתה</span>':`<button class="invite-btn" onclick="sendInvite('${n}')">🎮 הזמן</button>`}
     </div>`).join('');
 });
 
@@ -303,65 +542,53 @@ socket.on('roomsList', rooms => {
   if(!rooms.length){list.innerHTML='<div class="empty">אין קבוצות פתוחות...</div>';return;}
   list.innerHTML = rooms.map(r => {
     const full = r.count >= r.max;
-    return `
-    <div class="group-row" onclick="${full?'':'joinGroup(\''+r.id+'\')'}">
-      <div class="group-icon">⚔️</div>
+    return `<div class="group-row">
       <div class="group-info">
-        <div class="group-name">${r.name}</div>
+        <div class="group-name">⚔️ ${r.name}</div>
         <div class="group-host">מארח: ${r.host}</div>
       </div>
       <div class="group-count">${r.count}/${r.max}</div>
-      <button class="join-btn" onclick="event.stopPropagation();joinGroup('${r.id}')" ${full?'disabled':''}>
+      <button class="join-btn" onclick="joinGroup('${r.id}')" ${full?'disabled':''}>
         ${full?'מלא':'הצטרף'}
       </button>
     </div>`;
   }).join('');
 });
 
-function sendInvite(target){socket.emit('invite',target);toast('הזמנה נשלחה ל-'+target+'...','#00e5ff');}
-
-// ── CREATE GROUP ──
+function sendInvite(target){socket.emit('invite',target);toast('הזמנה נשלחה ל-'+target);}
 function createGroup(){
-  const name = document.getElementById('groupNameInp').value.trim() || (myName + "'s Group");
-  const max  = document.getElementById('groupMaxInp').value;
-  socket.emit('createGroup',{groupName:name, maxPlayers:parseInt(max)});
+  const name=document.getElementById('groupNameInp').value.trim()||myName+"'s Group";
+  const max=document.getElementById('groupMaxInp').value;
+  socket.emit('createGroup',{groupName:name,maxPlayers:parseInt(max)});
 }
-
-// ── JOIN GROUP ──
-function joinGroup(roomId){
-  socket.emit('joinGroup',{roomId});
-}
+function joinGroup(roomId){socket.emit('joinGroup',{roomId});}
 
 // ── INVITE ──
 socket.on('invited',({from})=>{
   pendingFrom=from;
-  document.getElementById('inviteMsg').textContent=from+' מזמין אותך למשחק!';
+  document.getElementById('inviteMsg').textContent=from+' מזמין אותך!';
   document.getElementById('invitePopup').style.display='flex';
 });
 function acceptInvite(){document.getElementById('invitePopup').style.display='none';socket.emit('acceptInvite',{from:pendingFrom});}
 function declineInvite(){document.getElementById('invitePopup').style.display='none';socket.emit('declineInvite',{from:pendingFrom});}
-socket.on('inviteDeclined',({by})=>toast(by+' דחה את ההזמנה','#ff4466'));
+socket.on('inviteDeclined',({by})=>toast(by+' דחה','#ff4466'));
 
 // ── ROOM ──
 socket.on('enterRoom',({roomId,players,host,roomName})=>{
-  myRoom=roomId;isHost=(host===myName);
-  document.getElementById('roomTitle').textContent = roomName || 'GAME ROOM ⚔️';
-  document.getElementById('roomSubtitle').textContent = 'מזהה: '+roomId.slice(-6);
+  myRoom=roomId;
+  document.getElementById('roomTitle').textContent=roomName||'GAME ROOM';
+  document.getElementById('roomSubtitle').textContent='מזהה: '+roomId.slice(-6);
   renderRoom(players,host);
   show('roomScreen');
   toast('נכנסת לחדר!','#aa44ff');
 });
-
 socket.on('roomUpdate',({players,host,roomName})=>{
-  if(roomName) document.getElementById('roomTitle').textContent = roomName;
-  isHost=(host===myName);
+  if(roomName)document.getElementById('roomTitle').textContent=roomName;
   renderRoom(players,host);
 });
-
 socket.on('playerLeft',name=>toast(name+' עזב','#ff4466'));
 
 function renderRoom(players,host){
-  const maxStr = '';
   document.getElementById('roomPlayers').innerHTML=players.map(n=>`
     <div class="rplayer">
       <div class="rdot"></div>
@@ -372,10 +599,10 @@ function renderRoom(players,host){
   const hint=document.getElementById('waitingHint');
   if(myName===host){
     btn.style.display=players.length>=2?'block':'none';
-    hint.textContent=players.length<2?'ממתין לשחקנים נוספים...':'';
+    hint.textContent=players.length<2?'ממתין לשחקנים...':'';
   } else {
     btn.style.display='none';
-    hint.textContent='ממתין למארח שיתחיל...';
+    hint.textContent='ממתין למארח...';
   }
 }
 
@@ -386,16 +613,6 @@ socket.on('gameStarted',({roomId,players})=>{
   const params=new URLSearchParams({room:roomId,name:myName,players:players.join(',')});
   window.location.href='/game?'+params.toString();
 });
-
-// ── AUTO LOGIN ──
-(function(){
-  const sess=getSess();
-  if(sess.n&&sess.hp){
-    const users=getUsers();
-    if(users[sess.n]&&users[sess.n].p===sess.hp){enterLobby(sess.n);return;}
-  }
-  show('authScreen');showTab('login');
-})();
 </script>
 </body>
-</html
+</html>
