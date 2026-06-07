@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Urban Frontline - Game</title>
+<script src="https://cdn.jsdelivr.net/npm/simplex-noise@2.4.0/simplex-noise.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -426,6 +427,150 @@ function buildAbandonedCity(){
 }
 
 const MAP_TYPE = (new URLSearchParams(window.location.search)).get('map') || 'city';
+
+// ── TERRAIN HEIGHT FUNCTION ──
+let terrainHeightFn = null;
+
+function buildNatureMap(){
+  scene.fog = new THREE.Fog(0x87ceeb, 60, 200);
+  scene.background = new THREE.Color(0x87ceeb);
+
+  // Simplex noise terrain
+  const simplex = new SimplexNoise();
+  const segments = 150;
+  const mapSize = 400;
+  const geo = new THREE.PlaneGeometry(mapSize, mapSize, segments, segments);
+  geo.rotateX(-Math.PI/2);
+
+  const pos = geo.attributes.position;
+  for(let i=0;i<pos.count;i++){
+    const x = pos.getX(i);
+    const z = pos.getZ(i);
+    let y = simplex.noise2D(x*0.008, z*0.008) * 18
+           + simplex.noise2D(x*0.02,  z*0.02)  * 6
+           + simplex.noise2D(x*0.05,  z*0.05)  * 2;
+    // Flatten center spawn area
+    const distCenter = Math.sqrt(x*x+z*z);
+    if(distCenter < 25) y *= (distCenter/25) * 0.3;
+    pos.setY(i, y);
+  }
+  geo.computeVertexNormals();
+
+  // Vertex colors by height
+  const colors = [];
+  for(let i=0;i<pos.count;i++){
+    const y = pos.getY(i);
+    if(y < -2)      colors.push(0.2,0.4,0.8);   // water
+    else if(y < 2)  colors.push(0.76,0.70,0.50); // sand/beach
+    else if(y < 10) colors.push(0.23,0.48,0.23); // grass
+    else if(y < 16) colors.push(0.30,0.40,0.20); // hill
+    else            colors.push(0.55,0.55,0.55); // rock/mountain
+  }
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+  const terrainMat = new THREE.MeshLambertMaterial({vertexColors:true, flatShading:true});
+  const terrainMesh = new THREE.Mesh(geo, terrainMat);
+  terrainMesh.receiveShadow = true;
+  scene.add(terrainMesh);
+
+  // Height function for placement
+  terrainHeightFn = (x,z) => {
+    const y = simplex.noise2D(x*0.008,z*0.008)*18
+             + simplex.noise2D(x*0.02,z*0.02)*6
+             + simplex.noise2D(x*0.05,z*0.05)*2;
+    const d = Math.sqrt(x*x+z*z);
+    return d<25 ? y*(d/25)*0.3 : y;
+  };
+
+  // ── TREES ──
+  function tree(x,z,h,r){
+    const ty = terrainHeightFn(x,z);
+    if(ty < 1 || ty > 15) return;
+    const trunk = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.3,0.5,h,6),
+      new THREE.MeshLambertMaterial({color:0x6B3A2A})
+    );
+    trunk.position.set(x,ty+h/2,z);
+    scene.add(trunk);
+    const leaves = new THREE.Mesh(
+      new THREE.ConeGeometry(r,r*1.5,7),
+      new THREE.MeshLambertMaterial({color:0x1a6b1a,flatShading:true})
+    );
+    leaves.position.set(x,ty+h+r*0.5,z);
+    scene.add(leaves);
+    const leaves2 = new THREE.Mesh(
+      new THREE.ConeGeometry(r*0.7,r*1.2,7),
+      new THREE.MeshLambertMaterial({color:0x228B22,flatShading:true})
+    );
+    leaves2.position.set(x,ty+h+r*1.0,z);
+    scene.add(leaves2);
+  }
+
+  // Scatter trees
+  for(let i=0;i<200;i++){
+    const tx=(Math.random()-0.5)*350;
+    const tz=(Math.random()-0.5)*350;
+    const dist=Math.sqrt(tx*tx+tz*tz);
+    if(dist>20) tree(tx,tz,3+Math.random()*4,2+Math.random()*2);
+  }
+
+  // ── ROCKS ──
+  for(let i=0;i<80;i++){
+    const rx=(Math.random()-0.5)*350;
+    const rz=(Math.random()-0.5)*350;
+    const ry=terrainHeightFn(rx,rz);
+    if(ry<1) continue;
+    const rs=0.5+Math.random()*2;
+    const rock=new THREE.Mesh(
+      new THREE.DodecahedronGeometry(rs,0),
+      new THREE.MeshLambertMaterial({color:0x888877,flatShading:true})
+    );
+    rock.position.set(rx,ry+rs*0.5,rz);
+    rock.rotation.set(Math.random(),Math.random(),Math.random());
+    scene.add(rock);
+    colliders.push({minX:rx-rs,maxX:rx+rs,minZ:rz-rs,maxZ:rz+rs,topY:ry+rs});
+  }
+
+  // ── WOOD CABINS ──
+  function cabin(x,z){
+    const gy=terrainHeightFn(x,z);
+    W(8,3,6,0x6B3A2A,x,gy,z);
+    W(8,0.3,6,0x4a2a1a,x,gy+3.15,z,false);
+    // Roof
+    const roofGeo=new THREE.ConeGeometry(5,3,4);
+    const roof=new THREE.Mesh(roofGeo,new THREE.MeshLambertMaterial({color:0x4a2a1a,flatShading:true}));
+    roof.position.set(x,gy+4.5,z);
+    roof.rotation.y=Math.PI/4;
+    scene.add(roof);
+    // Door
+    W(1.5,2.2,0.1,0x3a1a0a,x,gy+1.1,z-3.05,false);
+    colliders.push({minX:x-4,maxX:x+4,minZ:z-3,maxZ:z+3,topY:gy+3});
+  }
+  [[-40,30],[40,-30],[60,60],[-60,-60],[0,80],[-80,0]].forEach(([cx,cz])=>cabin(cx,cz));
+
+  // ── WATER ──
+  const water=new THREE.Mesh(
+    new THREE.PlaneGeometry(mapSize,mapSize),
+    new THREE.MeshLambertMaterial({color:0x1a5f8a,transparent:true,opacity:0.7})
+  );
+  water.rotation.x=-Math.PI/2;
+  water.position.y=-2.1;
+  scene.add(water);
+
+  // ── CHESTS ──
+  for(let i=0;i<20;i++){
+    const cx=(Math.random()-0.5)*200;
+    const cz=(Math.random()-0.5)*200;
+    const cy=terrainHeightFn(cx,cz);
+    if(cy>0) spawnChest(cx,cz);
+  }
+
+  // Boundary
+  W(1,30,mapSize,0x228822,mapSize/2,0,0);
+  W(1,30,mapSize,0x228822,-mapSize/2,0,0);
+  W(mapSize,30,1,0x228822,0,0,mapSize/2);
+  W(mapSize,30,1,0x228822,0,0,-mapSize/2);
+}
 
 function buildMap(){
   const SAND=0x8a7a60,WALL=0x6a6070,WALL2=0x504858,DARK=0x303038,ROOF=0x484050;
@@ -1133,6 +1278,7 @@ camera.position.set(sp[0],1.55,sp[1]);
 yaw=Math.atan2(-sp[0],-sp[1]);
 
 if(MAP_TYPE === 'abandoned') buildAbandonedCity();
+else if(MAP_TYPE === 'nature') buildNatureMap();
 else buildMap();
 buildAllGuns();
 renderInventory();
