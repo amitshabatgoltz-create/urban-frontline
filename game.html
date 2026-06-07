@@ -272,9 +272,9 @@ G('waiting-msg').textContent = `שלום ${MY_NAME}! שחקנים: ${ALL_PLAYERS
 
 // ── WEAPONS ──
 const WEAPONS = {
-  ak:   {name:'AK',  icon:'🔫',ammo:15,maxAmmo:15,reserve:60, fireRate:250, dmgBody:20,dmgHead:40,spread:0.01,reloadTime:2000,type:'auto'},
-  rpg:  {name:'RPG', icon:'🚀',ammo:1, maxAmmo:1, reserve:3,  fireRate:5000,dmgBody:65,dmgHead:65,spread:0,   reloadTime:5000,type:'rpg'},
-  knife:{name:'סכין',icon:'🔪',ammo:1, maxAmmo:1, reserve:999,fireRate:800, dmgBody:30,dmgHead:30,spread:0,   reloadTime:0,   type:'melee'},
+  ak:   {name:'AK',  icon:'🔫',ammo:15,maxAmmo:15,reserve:60, fireRate:250, dmgBody:20,dmgHead:30,spread:0.01,reloadTime:2000,type:'auto'},
+  rpg:  {name:'RPG', icon:'🚀',ammo:1, maxAmmo:1, reserve:3,  fireRate:5000,dmgBody:65,dmgHead:75,spread:0,   reloadTime:5000,type:'rpg'},
+  knife:{name:'סכין',icon:'🔪',ammo:1, maxAmmo:1, reserve:999,fireRate:800, dmgBody:30,dmgHead:40,spread:0,   reloadTime:0,   type:'melee'},
 };
 const LOOT_POOL = [{wid:'ak',weight:50},{wid:'rpg',weight:10},{wid:'knife',weight:40}];
 
@@ -413,13 +413,13 @@ function buildMap(){
 // ── COLLISION ──
 const PLAYER_R=0.35, STEP_HEIGHT=0.85;
 function resolveCollision(nx,nz){
-  let rx=nx,rz=nz;const feetY=camera.position.y-1.7;
+  let rx=nx,rz=nz;const feetY=camera.position.y-1.55;
   for(const c of colliders){
     const cx2=(c.minX+c.maxX)/2,cz2=(c.minZ+c.maxZ)/2,hw=(c.maxX-c.minX)/2,hd=(c.maxZ-c.minZ)/2;
     const dx=rx-cx2,dz=rz-cz2,ox=hw+PLAYER_R-Math.abs(dx),oz=hd+PLAYER_R-Math.abs(dz);
     if(ox>0&&oz>0){
       const topY=c.topY||99;
-      if(topY-feetY<=STEP_HEIGHT&&isGrounded){const nY=topY+1.7;if(nY>camera.position.y){camera.position.y=nY;velY=0;isGrounded=true;}}
+      if(topY-feetY<=STEP_HEIGHT&&isGrounded){const nY=topY+1.55;if(nY>camera.position.y){camera.position.y=nY;velY=0;isGrounded=true;}}
       else{if(ox<oz)rx+=dx>0?ox:-ox;else rz+=dz>0?oz:-oz;}
     }
   }
@@ -436,7 +436,6 @@ function makePeerMesh(name){
   const skin = new THREE.MeshLambertMaterial({color:skinC});
   const uni  = new THREE.MeshLambertMaterial({color:uniC});
   const helm = new THREE.MeshLambertMaterial({color:0x334422});
-  const boot = new THREE.MeshLambertMaterial({color:0x1a1a14});
   // Torso
   const torso=new THREE.Mesh(new THREE.BoxGeometry(0.46,0.52,0.24),uni);torso.position.y=0;root.add(torso);
   // Head
@@ -453,13 +452,19 @@ function makePeerMesh(name){
   const lArmMesh=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.44,0.12),uni);lArmMesh.position.set(0,-0.18,0);lArm.add(lArmMesh);
   const rArm=new THREE.Group();rArm.position.set(0.30,0.05,0);root.add(rArm);
   const rArmMesh=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.44,0.12),uni);rArmMesh.position.set(0,-0.18,0);rArm.add(rArmMesh);
+  // Weapon in right hand (AK by default, swappable)
+  const peerWeapon = buildAKMesh();
+  peerWeapon.scale.set(1.1,1.1,1.1);
+  peerWeapon.position.set(0.08,-0.38,-0.22);
+  peerWeapon.rotation.set(0,0,0);
+  rArm.add(peerWeapon);
   // Legs
   const lLeg=new THREE.Group();lLeg.position.set(-0.13,-0.40,0);root.add(lLeg);
   const lLegMesh=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.46,0.16),uni);lLegMesh.position.set(0,-0.20,0);lLeg.add(lLegMesh);
   const rLeg=new THREE.Group();rLeg.position.set(0.13,-0.40,0);root.add(rLeg);
   const rLegMesh=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.46,0.16),uni);rLegMesh.position.set(0,-0.20,0);rLeg.add(rLegMesh);
-  root.userData = {lArm,rArm,lLeg,rLeg,walkT:Math.random()*Math.PI*2};
-  // Name label (sprite)
+  root.userData = {lArm,rArm,lLeg,rLeg,walkT:Math.random()*Math.PI*2,peerWeapon};
+  // Name label
   const canvas2 = document.createElement('canvas');canvas2.width=256;canvas2.height=48;
   const ctx = canvas2.getContext('2d');ctx.fillStyle='rgba(0,0,0,0)';ctx.fillRect(0,0,256,48);
   ctx.font='bold 28px Rajdhani,monospace';ctx.textAlign='center';ctx.fillStyle='#00e5ff';ctx.fillText(name,128,34);
@@ -468,7 +473,7 @@ function makePeerMesh(name){
   sprite.position.y = 1.1; sprite.scale.set(1.5,0.28,1);
   root.add(sprite);
   root.position.y = 0;
-  root.scale.set(1.8, 1.8, 1.8); // Scale to proper human size
+  root.scale.set(1.8, 1.8, 1.8);
   scene.add(root);
   return root;
 }
@@ -647,25 +652,40 @@ function shoot(){
   // Recoil
   pitch-=0.005+Math.random()*0.003;yaw+=(Math.random()-0.5)*0.002;
   const dir=new THREE.Vector3((Math.random()-0.5)*wd.spread,(Math.random()-0.5)*wd.spread,-1).applyEuler(new THREE.Euler(pitch,yaw,0,'YXZ')).normalize();
-  // Check multiplayer peer hits — sphere check + ray direction check
+  // Check multiplayer peer hits — body + head zones
   for(const [name,peer] of Object.entries(peers)){
     if(!peer.alive||!peer.mesh)continue;
-    const peerPos = peer.mesh.position.clone().add(new THREE.Vector3(0, 1.2, 0)); // center of body at proper height
-    const toCam = peerPos.clone().sub(camera.position);
-    const dist = toCam.length();
-    if(dist>60)continue;
-    // Check if ray direction points toward peer (dot product)
-    const toNorm = toCam.normalize();
-    const dot = dir.dot(toNorm);
-    if(dot < 0.97)continue; // ~14 degree cone — gets tighter at range
-    // Also check actual distance to ray line for accuracy
-    const cross = new THREE.Vector3().crossVectors(dir, toCam.clone().normalize());
-    const sinAngle = cross.length();
-    const perpDist = sinAngle * dist;
-    if(perpDist > 0.7)continue; // hitbox radius ~0.7m
-    const hmk=G('hmk');if(hmk){hmk.style.display='block';setTimeout(()=>hmk.style.display='none',150);}
-    addKillFeed('פגעת ב-'+name+'!');
-    socket.emit('shootHit',{room:MY_ROOM,target:name,shooter:MY_NAME,dmg:wd.dmgBody});
+    const base = peer.mesh.position.clone(); // feet position
+    const scale = 1.8;
+    // Body center ~0.9m above feet, Head center ~1.7m above feet (with scale 1.8)
+    const bodyPos = base.clone().add(new THREE.Vector3(0, 0.9 * scale, 0));
+    const headPos = base.clone().add(new THREE.Vector3(0, 1.55 * scale, 0));
+    const dist = base.distanceTo(camera.position);
+    if(dist > 80) continue;
+
+    let hit = false;
+    let isHead = false;
+
+    // Check body hit (large hitbox ~1.0m radius)
+    const toBody = bodyPos.clone().sub(camera.position);
+    const bodyDist = toBody.length();
+    const crossBody = new THREE.Vector3().crossVectors(dir, toBody.clone().normalize());
+    if(crossBody.length() * bodyDist < 1.0 && dir.dot(toBody.clone().normalize()) > 0.85){
+      hit = true; isHead = false;
+    }
+    // Check head hit (smaller hitbox ~0.45m radius)
+    const toHead = headPos.clone().sub(camera.position);
+    const headDist = toHead.length();
+    const crossHead = new THREE.Vector3().crossVectors(dir, toHead.clone().normalize());
+    if(crossHead.length() * headDist < 0.45 && dir.dot(toHead.clone().normalize()) > 0.85){
+      hit = true; isHead = true;
+    }
+
+    if(!hit) continue;
+    const dmg = isHead ? wd.dmgHead : wd.dmgBody;
+    const hmk=G('hmk');if(hmk){hmk.style.display='block';hmk.style.color=isHead?'#ff4400':'#ffffff';setTimeout(()=>hmk.style.display='none',150);}
+    addKillFeed((isHead?'🎯 הדשוט! פגעת ב-':'פגעת ב-')+name+'!');
+    socket.emit('shootHit',{room:MY_ROOM,target:name,shooter:MY_NAME,dmg});
     break;
   }
   renderInventory();
@@ -686,14 +706,31 @@ function doReload(){
 const socket = io();
 socket.emit('joinGame',{room:MY_ROOM,name:MY_NAME});
 
-socket.on('peerUpdate',({name,x,y,z,yaw:py,pitch:pp})=>{
+socket.on('peerUpdate',({name,x,y,z,yaw:py,pitch:pp,wid})=>{
   if(name===MY_NAME)return;
   if(!peers[name]){
-    peers[name]={mesh:makePeerMesh(name),hp:100,alive:true};
+    peers[name]={mesh:makePeerMesh(name),hp:100,alive:true,wid:'ak'};
     updateAlive();
   }
   const p=peers[name];
-  if(p.mesh){p.mesh.position.set(x, y-0.05, z);p.mesh.rotation.y=py+Math.PI;}
+  if(p.mesh){
+    p.mesh.position.set(x, y-1.55, z);
+    p.mesh.rotation.y=py+Math.PI;
+    // Swap weapon if changed
+    if(wid && wid!==p.wid){
+      p.wid=wid;
+      const ud=p.mesh.userData;
+      if(ud.peerWeapon)ud.rArm.remove(ud.peerWeapon);
+      let newW;
+      if(wid==='rpg')newW=buildRPGMesh();
+      else if(wid==='knife')newW=buildKnifeMesh();
+      else newW=buildAKMesh();
+      newW.scale.set(1.1,1.1,1.1);
+      newW.position.set(0.08,-0.38,-0.22);
+      ud.rArm.add(newW);
+      ud.peerWeapon=newW;
+    }
+  }
   // Animate walk
   const ud=p.mesh.userData;if(ud){ud.walkT+=0.15;const w=Math.sin(ud.walkT)*0.5;if(ud.lLeg)ud.lLeg.rotation.x=w;if(ud.rLeg)ud.rLeg.rotation.x=-w;}
 });
@@ -792,10 +829,10 @@ function update(){
   camera.position.z=Math.max(-41,Math.min(33,res.z));
   // Jump/gravity
   velY-=22*dt;camera.position.y+=velY*dt;
-  if(camera.position.y<=1.7){camera.position.y=1.7;velY=0;isGrounded=true;}
+  if(camera.position.y<=1.55){camera.position.y=1.55;velY=0;isGrounded=true;}
   else{isGrounded=false;}
   if(!isGrounded&&velY<0){
-    const feetY=camera.position.y-1.7;
+    const feetY=camera.position.y-1.55;
     for(const c of colliders){const cx3=(c.minX+c.maxX)/2,cz3=(c.minZ+c.maxZ)/2,hw3=(c.maxX-c.minX)/2+0.1,hd3=(c.maxZ-c.minZ)/2+0.1,topY3=c.topY||0;if(Math.abs(camera.position.x-cx3)<hw3&&Math.abs(camera.position.z-cz3)<hd3&&feetY<=topY3&&feetY>=topY3-0.5){camera.position.y=topY3+1.7;velY=0;isGrounded=true;break;}}
   }
   if(keys['Space']&&isGrounded){velY=5.5;isGrounded=false;}
@@ -838,7 +875,7 @@ function update(){
   groundItems.forEach(gi=>{gi.mesh.position.y=0.35+Math.sin(Date.now()*0.002+gi.pos.x)*0.06;gi.mesh.rotation.y+=dt*1.2;});
   // Send position
   const now=Date.now();
-  if(now-lastSend>50){lastSend=now;socket.emit('playerMove',{room:MY_ROOM,name:MY_NAME,x:camera.position.x,y:camera.position.y,z:camera.position.z,yaw,pitch});}
+  if(now-lastSend>50){lastSend=now;const aw=getActiveWeapon();socket.emit('playerMove',{room:MY_ROOM,name:MY_NAME,x:camera.position.x,y:camera.position.y,z:camera.position.z,yaw,pitch,wid:aw?.wid||'ak'});}
 }
 
 function animate(){
@@ -857,7 +894,7 @@ window.addEventListener('resize',()=>{
 const SPAWNS=[[-26,24],[26,24],[-26,6],[26,6],[0,10],[-22,-18],[26,-8],[0,-26]];
 const mySpawnIdx = ALL_PLAYERS.indexOf(MY_NAME) % SPAWNS.length;
 const sp = SPAWNS[mySpawnIdx] || [0,0];
-camera.position.set(sp[0],1.7,sp[1]);
+camera.position.set(sp[0],1.55,sp[1]);
 yaw=Math.atan2(-sp[0],-sp[1]);
 
 buildMap();
