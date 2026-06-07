@@ -427,63 +427,203 @@ function resolveCollision(nx,nz){
   return{x:rx,z:rz};
 }
 
-// ── SKIN IMAGE URLS ──
-const SKIN_URLS = {
-  rookie:      'https://i.imgur.com/bLdd0OJ.png',
-  street:      'https://i.imgur.com/QefuNIy.png',
-  commando:    'https://i.imgur.com/3f2ZRyS.png',
-  agent:       'https://i.imgur.com/I2gLpSX.png',
-  desert:      'https://i.imgur.com/5gnNNb3.png',
-  snow:        'https://i.imgur.com/NSkNX0q.png',
-  ninja:       'https://i.imgur.com/a1lK8Jk.png',
-  engineer:    'https://i.imgur.com/rnwsFDI.png',
-  robot:       'https://i.imgur.com/xGOx935.png',
-  cyber:       'https://i.imgur.com/2aZFdIi.png',
-  medic:       'https://i.imgur.com/D9d8Vat.png',
-  firefighter: 'https://i.imgur.com/qiFaFPQ.png',
-};
-
-const skinTextureCache = {};
-function getSkinTexture(skinId){
-  if(skinTextureCache[skinId]) return skinTextureCache[skinId];
-  const url = SKIN_URLS[skinId] || SKIN_URLS.rookie;
-  const tex = new THREE.TextureLoader().load(url);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  skinTextureCache[skinId] = tex;
-  return tex;
-}
-
+// ── PEER MESH — Minecraft Style ──
 function makePeerMesh(name, skinId){
   const root = new THREE.Group();
-  
-  // Skin sprite — billboard that always faces camera
-  const skinTex = getSkinTexture(skinId || 'rookie');
-  const skinMat = new THREE.SpriteMaterial({map: skinTex, transparent: true});
-  const skinSprite = new THREE.Sprite(skinMat);
-  skinSprite.scale.set(1.0, 1.6, 1.0);
-  skinSprite.position.set(0, 0.8, 0);
-  root.add(skinSprite);
+  const s = skinId || 'rookie';
 
-  // Invisible hitbox for collision
-  const hitbox = new THREE.Mesh(
-    new THREE.BoxGeometry(0.6, 1.6, 0.3),
-    new THREE.MeshLambertMaterial({visible: false})
-  );
-  hitbox.position.set(0, 0.8, 0);
-  root.add(hitbox);
+  // Minecraft proportions: head 8x8x8, body 8x12x4, arms 4x12x4, legs 4x12x4
+  // Scale: 1 unit = 1/8 block, so head = 1.0 wide, body = 0.5 wide per arm
+  const M = (c,em,ei) => new THREE.MeshLambertMaterial({color:c, emissive:em||0, emissiveIntensity:ei||0});
+
+  const SKINS = {
+    rookie:      {face:0xd4a574,hair:0x3a2a10,torso:0x2a5c1e,legs:0x1a3a10,boots:0x1a1a0e,eyes:0x111111,mouth:0xaa5533},
+    street:      {face:0xd4a574,hair:0x1a1a1a,torso:0xcc2200,legs:0x111111,boots:0x222222,eyes:0x111111,mouth:0xaa5533,cap:0xcc2200},
+    commando:    {face:0xc8906a,hair:0x1a1a0a,torso:0x4a5a20,legs:0x3a4a15,boots:0x1a1a0a,eyes:0x2a1a0a,mouth:0x885533},
+    agent:       {face:0xc8906a,hair:0x111111,torso:0x111111,legs:0x111111,boots:0x0a0a0a,eyes:0x111111,mouth:0x885533,glasses:0x222222},
+    desert:      {face:0xd4b08a,hair:0x6a4a20,torso:0xc8a060,legs:0xa07840,boots:0x604020,eyes:0x3a2a0a,mouth:0xaa7733},
+    snow:        {face:0xeeeedd,hair:0xffffff,torso:0xdddddd,legs:0xaaaaaa,boots:0x888888,eyes:0x224488,mouth:0xcc8866},
+    ninja:       {face:0x111111,hair:0x111111,torso:0x111111,legs:0x111111,boots:0x0a0a0a,eyes:0xff2200,mouth:0x111111},
+    engineer:    {face:0xd4a574,hair:0xaa7733,torso:0xff8800,legs:0x224488,boots:0x112244,eyes:0x2a1a0a,mouth:0xaa5533,helmet:0xffcc00},
+    robot:       {face:0x888888,hair:0x666666,torso:0x666666,legs:0x555555,boots:0x333333,eyes:0x00ccff,mouth:0x444444},
+    cyber:       {face:0x222233,hair:0x111111,torso:0x111122,legs:0x111111,boots:0x0a0a1a,eyes:0x00ff66,mouth:0x111111,glow:0x00ff66},
+    medic:       {face:0xd4a574,hair:0x224422,torso:0x008866,legs:0x006644,boots:0x004433,eyes:0x111111,mouth:0xaa5533,cross:0xffffff},
+    firefighter: {face:0xd4a574,hair:0x333333,torso:0xcc7700,legs:0xaa5500,boots:0x333333,eyes:0x111111,mouth:0xaa5533},
+  };
+  const sk = SKINS[s] || SKINS.rookie;
+
+  // ── HEAD (8x8x8 = 1.0 x 1.0 x 1.0) ──
+  const headG = new THREE.Group();
+  headG.position.y = 0.75;
+
+  const headMesh = new THREE.Mesh(new THREE.BoxGeometry(1.0,1.0,1.0), M(sk.face));
+  headG.add(headMesh);
+
+  // Hair/top
+  const hairTop = new THREE.Mesh(new THREE.BoxGeometry(1.02,0.45,1.02), M(sk.hair));
+  hairTop.position.y = 0.28; headG.add(hairTop);
+  // Hair back
+  const hairBack = new THREE.Mesh(new THREE.BoxGeometry(1.02,0.70,0.08), M(sk.hair));
+  hairBack.position.set(0,-0.05,-0.55); headG.add(hairBack);
+
+  // Eyes (2 pixels each, 1 apart)
+  const eyeL = new THREE.Mesh(new THREE.BoxGeometry(0.20,0.14,0.02), M(sk.eyes,s==='robot'?0x00ccff:s==='cyber'?0x00ff66:0, s==='robot'||s==='cyber'?0.8:0));
+  eyeL.position.set(-0.22,0.06,0.51); headG.add(eyeL);
+  const eyeR = eyeL.clone(); eyeR.position.set(0.22,0.06,0.51); headG.add(eyeR);
+
+  // Nose
+  const nose = new THREE.Mesh(new THREE.BoxGeometry(0.10,0.10,0.02), M(sk.face-0x151515>0?sk.face-0x151515:0x553322));
+  nose.position.set(0,-0.06,0.51); headG.add(nose);
+
+  // Mouth
+  const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.30,0.08,0.02), M(sk.mouth));
+  mouth.position.set(0,-0.22,0.51); headG.add(mouth);
+
+  // Glasses for agent
+  if(s==='agent'){
+    const gl = new THREE.Mesh(new THREE.BoxGeometry(0.60,0.18,0.02), M(0x111111));
+    gl.position.set(0,0.06,0.52); headG.add(gl);
+    const glB = new THREE.Mesh(new THREE.BoxGeometry(0.04,0.18,0.02), M(0x333333));
+    glB.position.set(0,0.06,0.52); headG.add(glB);
+  }
+  // Robot head override
+  if(s==='robot'){
+    headMesh.material = M(0x888888);
+    const visor = new THREE.Mesh(new THREE.BoxGeometry(0.70,0.22,0.02), M(0x00ccff,0x00ccff,1));
+    visor.position.set(0,0.06,0.52); headG.add(visor);
+  }
+  // Ninja mask
+  if(s==='ninja'){
+    const mask = new THREE.Mesh(new THREE.BoxGeometry(1.02,0.55,0.02), M(0x111111));
+    mask.position.set(0,-0.08,0.52); headG.add(mask);
+  }
+  // Cyber face markings
+  if(s==='cyber'&&sk.glow){
+    const gm = new THREE.Mesh(new THREE.BoxGeometry(0.06,0.60,0.02), M(sk.glow,sk.glow,1));
+    gm.position.set(0.35,0,0.52); headG.add(gm);
+  }
+
+  root.add(headG);
+
+  // ── BODY (8x12x4 = 1.0 x 1.5 x 0.5) ──
+  const bodyMesh = new THREE.Mesh(new THREE.BoxGeometry(1.0,1.5,0.5), M(sk.torso));
+  bodyMesh.position.y=0; root.add(bodyMesh);
+
+  // Body details
+  if(s==='medic'&&sk.cross){
+    const cv = new THREE.Mesh(new THREE.BoxGeometry(0.10,0.35,0.02), M(sk.cross));
+    cv.position.set(0.25,0.20,0.26); root.add(cv);
+    const ch = new THREE.Mesh(new THREE.BoxGeometry(0.28,0.10,0.02), M(sk.cross));
+    ch.position.set(0.25,0.20,0.26); root.add(ch);
+  }
+  if(s==='cyber'&&sk.glow){
+    const cg = new THREE.Mesh(new THREE.BoxGeometry(0.08,0.60,0.02), M(sk.glow,sk.glow,1));
+    cg.position.set(0,0.10,0.26); root.add(cg);
+    const ch2 = new THREE.Mesh(new THREE.BoxGeometry(0.50,0.08,0.02), M(sk.glow,sk.glow,1));
+    ch2.position.set(0,0.30,0.26); root.add(ch2);
+  }
+  if(s==='firefighter'){
+    const fs = new THREE.Mesh(new THREE.BoxGeometry(1.02,0.12,0.52), M(0xffff00));
+    fs.position.set(0,-0.20,0); root.add(fs);
+    const fs2 = new THREE.Mesh(new THREE.BoxGeometry(1.02,0.12,0.52), M(0xffff00));
+    fs2.position.set(0,0.30,0); root.add(fs2);
+  }
+  if(s==='agent'){
+    const tie = new THREE.Mesh(new THREE.BoxGeometry(0.12,0.70,0.02), M(0x333333));
+    tie.position.set(0,0.10,0.26); root.add(tie);
+  }
+  if(s==='commando'){
+    const vest = new THREE.Mesh(new THREE.BoxGeometry(0.96,1.0,0.52), M(0x2a3a10));
+    vest.position.set(0,0.15,0); root.add(vest);
+    for(let i=-1;i<=1;i+=2){
+      const pouch = new THREE.Mesh(new THREE.BoxGeometry(0.18,0.22,0.10), M(0x1a2a08));
+      pouch.position.set(i*0.30,0.0,0.30); root.add(pouch);
+    }
+  }
+
+  // Belt
+  const belt = new THREE.Mesh(new THREE.BoxGeometry(1.02,0.14,0.52), M(sk.boots));
+  belt.position.y=-0.62; root.add(belt);
+  const buckle = new THREE.Mesh(new THREE.BoxGeometry(0.18,0.14,0.02), M(0xd4af37));
+  buckle.position.set(0,-0.62,0.27); root.add(buckle);
+
+  // ── ARMS (4x12x4 = 0.5 x 1.5 x 0.5) ──
+  function makeArm(side){
+    const ag = new THREE.Group();
+    ag.position.set(side*0.75, 0.50, 0);
+    const upper = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.75,0.5), M(sk.torso));
+    upper.position.y=-0.28; ag.add(upper);
+    const lower = new THREE.Mesh(new THREE.BoxGeometry(0.46,0.70,0.46), M(sk.face));
+    lower.position.y=-0.78; ag.add(lower);
+    const glove = new THREE.Mesh(new THREE.BoxGeometry(0.46,0.18,0.46), M(0x222222));
+    glove.position.y=-1.10; ag.add(glove);
+    root.add(ag);
+    return ag;
+  }
+  const lArm = makeArm(-1);
+  const rArm = makeArm(1);
+
+  // Weapon
+  const peerWeapon = buildAKMesh();
+  peerWeapon.scale.set(1.2,1.2,1.2);
+  peerWeapon.position.set(0.10,-1.0,-0.30);
+  rArm.add(peerWeapon);
+
+  // ── LEGS (4x12x4 = 0.5 x 1.5 x 0.5) ──
+  function makeLeg(side){
+    const lg = new THREE.Group();
+    lg.position.set(side*0.25,-0.75,0);
+    const upper = new THREE.Mesh(new THREE.BoxGeometry(0.5,0.75,0.5), M(sk.legs));
+    upper.position.y=-0.28; lg.add(upper);
+    const lower = new THREE.Mesh(new THREE.BoxGeometry(0.48,0.72,0.48), M(sk.legs));
+    lower.position.y=-0.78; lg.add(lower);
+    const boot = new THREE.Mesh(new THREE.BoxGeometry(0.52,0.22,0.60), M(sk.boots));
+    boot.position.set(0,-1.16,0.04); lg.add(boot);
+    root.add(lg);
+    return lg;
+  }
+  const lLeg = makeLeg(-1);
+  const rLeg = makeLeg(1);
+
+  // Helmet/hat
+  if(s==='engineer'){
+    const h = new THREE.Mesh(new THREE.BoxGeometry(1.10,0.40,1.10), M(sk.helmet||0xffcc00));
+    h.position.set(0,1.28,0); root.add(h);
+  } else if(s==='commando'||s==='rookie'||s==='desert'||s==='snow'||s==='firefighter'){
+    const h = new THREE.Mesh(new THREE.BoxGeometry(1.06,0.36,1.06), M(sk.hair));
+    h.position.set(0,1.28,0); root.add(h);
+  } else if(s==='street'){
+    const cap = new THREE.Mesh(new THREE.BoxGeometry(1.06,0.26,1.06), M(sk.cap||0xcc2200));
+    cap.position.set(0,1.24,0); root.add(cap);
+    const brim = new THREE.Mesh(new THREE.BoxGeometry(1.20,0.08,0.60), M(sk.cap||0xcc2200));
+    brim.position.set(0,1.12,-0.30); root.add(brim);
+  } else if(s==='robot'){
+    const rh = new THREE.Mesh(new THREE.BoxGeometry(1.10,1.10,1.10), M(0x888888));
+    rh.position.set(0,0.75,0); root.add(rh);
+    const rv = new THREE.Mesh(new THREE.BoxGeometry(0.80,0.26,0.02), M(0x00ccff,0x00ccff,1));
+    rv.position.set(0,0.78,0.56); root.add(rv);
+  } else if(s==='medic'){
+    const mh = new THREE.Mesh(new THREE.BoxGeometry(1.06,0.30,1.06), M(sk.torso));
+    mh.position.set(0,1.26,0); root.add(mh);
+    const mc = new THREE.Mesh(new THREE.BoxGeometry(0.14,0.28,0.02), M(0xffffff));
+    mc.position.set(0,1.26,0.54); root.add(mc);
+    const mc2 = new THREE.Mesh(new THREE.BoxGeometry(0.28,0.12,0.02), M(0xffffff));
+    mc2.position.set(0,1.26,0.54); root.add(mc2);
+  }
 
   // Name label
-  const canvas2 = document.createElement('canvas');canvas2.width=256;canvas2.height=48;
-  const ctx = canvas2.getContext('2d');ctx.fillStyle='rgba(0,0,0,0)';ctx.fillRect(0,0,256,48);
-  ctx.font='bold 28px Rajdhani,monospace';ctx.textAlign='center';ctx.fillStyle='#00e5ff';ctx.fillText(name,128,34);
-  const tex = new THREE.CanvasTexture(canvas2);
-  const nameSprite = new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true}));
-  nameSprite.position.y = 1.9;
-  nameSprite.scale.set(1.5, 0.28, 1);
+  const canvas2 = document.createElement('canvas'); canvas2.width=320; canvas2.height=56;
+  const ctx2 = canvas2.getContext('2d');
+  ctx2.fillStyle='rgba(0,0,0,0)'; ctx2.fillRect(0,0,320,56);
+  ctx2.font='bold 30px Rajdhani,monospace'; ctx2.textAlign='center';
+  ctx2.fillStyle='#00e5ff'; ctx2.fillText(name,160,40);
+  const ntex = new THREE.CanvasTexture(canvas2);
+  const nameSprite = new THREE.Sprite(new THREE.SpriteMaterial({map:ntex,transparent:true}));
+  nameSprite.position.y=1.65; nameSprite.scale.set(2.0,0.35,1);
   root.add(nameSprite);
 
-  root.userData = {lArm:null, rArm:null, lLeg:null, rLeg:null, walkT:0, peerWeapon:null, skinSprite};
-  root.position.y = 0;
+  root.userData = {lArm, rArm, lLeg, rLeg, walkT:Math.random()*Math.PI*2, peerWeapon, headG};
+  root.scale.set(0.85, 0.85, 0.85);
   scene.add(root);
   return root;
 }
@@ -716,17 +856,32 @@ socket.emit('joinGame',{room:MY_ROOM,name:MY_NAME});
 socket.on('peerUpdate',({name,x,y,z,yaw:py,pitch:pp,wid,skin})=>{
   if(name===MY_NAME)return;
   if(!peers[name]){
-    peers[name]={mesh:makePeerMesh(name,skin||'rookie'),hp:100,alive:true,skin:skin||'rookie'};
+    peers[name]={mesh:makePeerMesh(name,skin||'rookie'),hp:100,alive:true,wid:'ak',skin:skin||'rookie'};
     updateAlive();
   }
   const p=peers[name];
   if(p.mesh){
     p.mesh.position.set(x, y-1.55, z);
-    const ud=p.mesh.userData;
-    if(ud&&ud.skinSprite){
-      ud.walkT=(ud.walkT||0)+0.15;
-      ud.skinSprite.position.y=0.8+Math.sin(ud.walkT)*0.04;
+    p.mesh.rotation.y=py+Math.PI;
+    if(wid && wid!==p.wid){
+      p.wid=wid;
+      const ud=p.mesh.userData;
+      if(ud.peerWeapon&&ud.rArm)ud.rArm.remove(ud.peerWeapon);
+      let newW = wid==='rpg'?buildRPGMesh():wid==='knife'?buildKnifeMesh():buildAKMesh();
+      newW.scale.set(1.1,1.1,1.1);
+      newW.position.set(0.08,-0.38,-0.22);
+      if(ud.rArm)ud.rArm.add(newW);
+      ud.peerWeapon=newW;
     }
+  }
+  const ud=p.mesh.userData;
+  if(ud){
+    ud.walkT+=0.15;
+    const w=Math.sin(ud.walkT)*0.5;
+    if(ud.lLeg)ud.lLeg.rotation.x=w;
+    if(ud.rLeg)ud.rLeg.rotation.x=-w;
+    if(ud.lArm)ud.lArm.rotation.x=-w*0.5;
+    if(ud.rArm)ud.rArm.rotation.x=w*0.5;
   }
 });
 
