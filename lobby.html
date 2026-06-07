@@ -615,8 +615,28 @@ function leaveRoom(){socket.emit('leaveRoom');myRoom=null;show('lobbyScreen');}
 function startGame(){socket.emit('startGame',{roomId:myRoom});}
 
 socket.on('gameStarted',({roomId,players})=>{
-  const params=new URLSearchParams({room:roomId,name:myName,players:players.join(',')});
+  const params=new URLSearchParams({room:roomId,name:myName,players:players.join(','),skin:mySkin});
   window.location.href='/game?'+params.toString();
+});
+
+// ── קוד סודי ──
+let secretBuffer = '';
+document.addEventListener('keydown', e => {
+  secretBuffer += e.key;
+  if(secretBuffer.length > 10) secretBuffer = secretBuffer.slice(-10);
+  if(secretBuffer.includes('192013') && myName) {
+    secretBuffer = '';
+    socket.emit('cheatCode', { name: myName, code: '192013' });
+    toast('🔓 קוד סודי הופעל!', '#ffd700');
+  }
+});
+socket.on('cheatResult', data => {
+  myCoins = data.coins;
+  myWins = data.wins;
+  myOwnedSkins = data.ownedSkins;
+  updateTopBar();
+  renderShop();
+  toast('✅ קיבלת 99,999 מטבעות + כל הסקינים!', '#ffd700');
 });
 </script>
 </body>
