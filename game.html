@@ -267,6 +267,7 @@ const G = id => document.getElementById(id);
 const params = new URLSearchParams(window.location.search);
 const MY_NAME = params.get('name') || 'Player';
 const MY_ROOM = params.get('room') || '';
+const MY_SKIN = params.get('skin') || 'rookie';
 const ALL_PLAYERS = (params.get('players') || MY_NAME).split(',').filter(Boolean);
 G('waiting-msg').textContent = `שלום ${MY_NAME}! שחקנים: ${ALL_PLAYERS.join(', ')}`;
 
@@ -426,43 +427,63 @@ function resolveCollision(nx,nz){
   return{x:rx,z:rz};
 }
 
-// ── PEER MESH (with skins) ──
-const SKIN_COLORS = [0xd4a574,0xc8906a,0xb87a55];
-const UNI_COLORS  = [0x2a3a20,0x1a2a30,0x3a2a15,0x2244aa,0x3a1a1a];
-function makePeerMesh(name){
+// ── SKIN DEFINITIONS ──
+const SKIN_DEFS = {
+  rookie:      {body:0xd4a574, torso:0x2a3a20, legs:0x1a2510, helm:0x334422, helmShape:'box'},
+  street:      {body:0xd4a574, torso:0xcc2200, legs:0x111111, helm:0xcc2200, helmShape:'cap'},
+  commando:    {body:0xc8906a, torso:0x4a5a20, legs:0x3a4a15, helm:0x3a4a15, helmShape:'box'},
+  agent:       {body:0xc8906a, torso:0x111111, legs:0x111111, helm:0x111111, helmShape:'none'},
+  desert:      {body:0xd4b08a, torso:0xc8a060, legs:0xa07840, helm:0xa07840, helmShape:'box'},
+  snow:        {body:0xd4d4d4, torso:0xdddddd, legs:0xcccccc, helm:0xdddddd, helmShape:'box'},
+  ninja:       {body:0x111111, torso:0x111111, legs:0x111111, helm:0x111111, helmShape:'none'},
+  engineer:    {body:0xd4a574, torso:0xff8c00, legs:0x224488, helm:0xffcc00, helmShape:'hard'},
+  robot:       {body:0x888888, torso:0x666666, legs:0x555555, helm:0x777777, helmShape:'box'},
+  cyber:       {body:0x111111, torso:0x111122, legs:0x111111, helm:0x111122, helmShape:'none', glow:0x00ff66},
+  medic:       {body:0xd4a574, torso:0x008866, legs:0x008866, helm:0x008866, helmShape:'box'},
+  firefighter: {body:0xd4a574, torso:0xcc8800, legs:0xaa6600, helm:0x222222, helmShape:'hard'},
+};
+
+function makePeerMesh(name, skinId){
   const root = new THREE.Group();
-  const skinC = SKIN_COLORS[Math.floor(Math.random()*SKIN_COLORS.length)];
-  const uniC  = UNI_COLORS[Math.floor(Math.random()*UNI_COLORS.length)];
-  const skin = new THREE.MeshLambertMaterial({color:skinC});
-  const uni  = new THREE.MeshLambertMaterial({color:uniC});
-  const helm = new THREE.MeshLambertMaterial({color:0x334422});
+  const sd = SKIN_DEFS[skinId] || SKIN_DEFS.rookie;
+  const skin = new THREE.MeshLambertMaterial({color:sd.body});
+  const uni  = new THREE.MeshLambertMaterial({color:sd.torso});
+  const leg  = new THREE.MeshLambertMaterial({color:sd.legs});
+  const helmMat = new THREE.MeshLambertMaterial({color:sd.helm});
   // Torso
   const torso=new THREE.Mesh(new THREE.BoxGeometry(0.46,0.52,0.24),uni);torso.position.y=0;root.add(torso);
+  // Chest detail for some skins
+  if(sd.glow){const gd=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.18,0.03),new THREE.MeshLambertMaterial({color:sd.glow,emissive:sd.glow,emissiveIntensity:0.8}));gd.position.set(0,0.05,0.13);root.add(gd);}
   // Head
   const head=new THREE.Mesh(new THREE.BoxGeometry(0.32,0.32,0.30),skin);head.position.y=0.44;root.add(head);
   // Eyes
-  const el=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.05,0.02),new THREE.MeshLambertMaterial({color:0x111111}));el.position.set(-0.08,0.46,0.155);root.add(el);
+  const eyeCol = skinId==='robot'?0x00ccff:skinId==='ninja'?0xff0000:0x111111;
+  const el=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.05,0.02),new THREE.MeshLambertMaterial({color:eyeCol,emissive:skinId==='robot'?0x00ccff:0,emissiveIntensity:0.5}));el.position.set(-0.08,0.46,0.155);root.add(el);
   const er=el.clone();er.position.set(0.08,0.46,0.155);root.add(er);
   // Helmet
-  const helmM=new THREE.Mesh(new THREE.BoxGeometry(0.36,0.18,0.34),helm);helmM.position.y=0.60;root.add(helmM);
+  if(sd.helmShape==='box'){const helmM=new THREE.Mesh(new THREE.BoxGeometry(0.36,0.18,0.34),helmMat);helmM.position.y=0.60;root.add(helmM);}
+  else if(sd.helmShape==='cap'){
+    const cap=new THREE.Mesh(new THREE.BoxGeometry(0.36,0.10,0.34),helmMat);cap.position.y=0.60;root.add(cap);
+    const brim=new THREE.Mesh(new THREE.BoxGeometry(0.40,0.04,0.20),helmMat);brim.position.set(0,0.54,-0.12);root.add(brim);
+  }
+  else if(sd.helmShape==='hard'){const helmM=new THREE.Mesh(new THREE.BoxGeometry(0.40,0.20,0.38),helmMat);helmM.position.y=0.62;root.add(helmM);}
   // Hips
-  const hips=new THREE.Mesh(new THREE.BoxGeometry(0.44,0.18,0.22),uni);hips.position.y=-0.32;root.add(hips);
+  const hips=new THREE.Mesh(new THREE.BoxGeometry(0.44,0.18,0.22),leg);hips.position.y=-0.32;root.add(hips);
   // Arms
   const lArm=new THREE.Group();lArm.position.set(-0.30,0.05,0);root.add(lArm);
   const lArmMesh=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.44,0.12),uni);lArmMesh.position.set(0,-0.18,0);lArm.add(lArmMesh);
   const rArm=new THREE.Group();rArm.position.set(0.30,0.05,0);root.add(rArm);
   const rArmMesh=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.44,0.12),uni);rArmMesh.position.set(0,-0.18,0);rArm.add(rArmMesh);
-  // Weapon in right hand (AK by default, swappable)
+  // Weapon in right hand
   const peerWeapon = buildAKMesh();
   peerWeapon.scale.set(1.1,1.1,1.1);
   peerWeapon.position.set(0.08,-0.38,-0.22);
-  peerWeapon.rotation.set(0,0,0);
   rArm.add(peerWeapon);
   // Legs
   const lLeg=new THREE.Group();lLeg.position.set(-0.13,-0.40,0);root.add(lLeg);
-  const lLegMesh=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.46,0.16),uni);lLegMesh.position.set(0,-0.20,0);lLeg.add(lLegMesh);
+  const lLegMesh=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.46,0.16),leg);lLegMesh.position.set(0,-0.20,0);lLeg.add(lLegMesh);
   const rLeg=new THREE.Group();rLeg.position.set(0.13,-0.40,0);root.add(rLeg);
-  const rLegMesh=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.46,0.16),uni);rLegMesh.position.set(0,-0.20,0);rLeg.add(rLegMesh);
+  const rLegMesh=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.46,0.16),leg);rLegMesh.position.set(0,-0.20,0);rLeg.add(rLegMesh);
   root.userData = {lArm,rArm,lLeg,rLeg,walkT:Math.random()*Math.PI*2,peerWeapon};
   // Name label
   const canvas2 = document.createElement('canvas');canvas2.width=256;canvas2.height=48;
@@ -473,7 +494,7 @@ function makePeerMesh(name){
   sprite.position.y = 1.1; sprite.scale.set(1.5,0.28,1);
   root.add(sprite);
   root.position.y = 0;
-  root.scale.set(1.8, 1.8, 1.8);
+  root.scale.set(2.4, 2.4, 2.4);
   scene.add(root);
   return root;
 }
@@ -655,29 +676,26 @@ function shoot(){
   // Check multiplayer peer hits — body + head zones
   for(const [name,peer] of Object.entries(peers)){
     if(!peer.alive||!peer.mesh)continue;
-    const base = peer.mesh.position.clone(); // feet position
-    const scale = 1.8;
-    // Body center ~0.9m above feet, Head center ~1.7m above feet (with scale 1.8)
-    const bodyPos = base.clone().add(new THREE.Vector3(0, 0.9 * scale, 0));
-    const headPos = base.clone().add(new THREE.Vector3(0, 1.55 * scale, 0));
+    const base = peer.mesh.position.clone(); // feet position (Y=0 of model)
+    // With scale 2.4: body center ~2.2m up, head center ~3.7m up
+    const bodyPos = base.clone().add(new THREE.Vector3(0, 2.2, 0));
+    const headPos = base.clone().add(new THREE.Vector3(0, 3.7, 0));
     const dist = base.distanceTo(camera.position);
     if(dist > 80) continue;
 
     let hit = false;
     let isHead = false;
 
-    // Check body hit (large hitbox ~1.0m radius)
+    // Body hit — large hitbox 1.2m radius
     const toBody = bodyPos.clone().sub(camera.position);
-    const bodyDist = toBody.length();
     const crossBody = new THREE.Vector3().crossVectors(dir, toBody.clone().normalize());
-    if(crossBody.length() * bodyDist < 1.0 && dir.dot(toBody.clone().normalize()) > 0.85){
+    if(crossBody.length() * toBody.length() < 1.2 && dir.dot(toBody.clone().normalize()) > 0.5){
       hit = true; isHead = false;
     }
-    // Check head hit (smaller hitbox ~0.45m radius)
+    // Head hit — 0.6m radius, overrides body
     const toHead = headPos.clone().sub(camera.position);
-    const headDist = toHead.length();
     const crossHead = new THREE.Vector3().crossVectors(dir, toHead.clone().normalize());
-    if(crossHead.length() * headDist < 0.45 && dir.dot(toHead.clone().normalize()) > 0.85){
+    if(crossHead.length() * toHead.length() < 0.6 && dir.dot(toHead.clone().normalize()) > 0.5){
       hit = true; isHead = true;
     }
 
@@ -706,17 +724,16 @@ function doReload(){
 const socket = io();
 socket.emit('joinGame',{room:MY_ROOM,name:MY_NAME});
 
-socket.on('peerUpdate',({name,x,y,z,yaw:py,pitch:pp,wid})=>{
+socket.on('peerUpdate',({name,x,y,z,yaw:py,pitch:pp,wid,skin})=>{
   if(name===MY_NAME)return;
   if(!peers[name]){
-    peers[name]={mesh:makePeerMesh(name),hp:100,alive:true,wid:'ak'};
+    peers[name]={mesh:makePeerMesh(name,skin||'rookie'),hp:100,alive:true,wid:'ak',skin:skin||'rookie'};
     updateAlive();
   }
   const p=peers[name];
   if(p.mesh){
     p.mesh.position.set(x, y-1.55, z);
     p.mesh.rotation.y=py+Math.PI;
-    // Swap weapon if changed
     if(wid && wid!==p.wid){
       p.wid=wid;
       const ud=p.mesh.userData;
@@ -731,7 +748,6 @@ socket.on('peerUpdate',({name,x,y,z,yaw:py,pitch:pp,wid})=>{
       ud.peerWeapon=newW;
     }
   }
-  // Animate walk
   const ud=p.mesh.userData;if(ud){ud.walkT+=0.15;const w=Math.sin(ud.walkT)*0.5;if(ud.lLeg)ud.lLeg.rotation.x=w;if(ud.rLeg)ud.rLeg.rotation.x=-w;}
 });
 
@@ -875,7 +891,7 @@ function update(){
   groundItems.forEach(gi=>{gi.mesh.position.y=0.35+Math.sin(Date.now()*0.002+gi.pos.x)*0.06;gi.mesh.rotation.y+=dt*1.2;});
   // Send position
   const now=Date.now();
-  if(now-lastSend>50){lastSend=now;const aw=getActiveWeapon();socket.emit('playerMove',{room:MY_ROOM,name:MY_NAME,x:camera.position.x,y:camera.position.y,z:camera.position.z,yaw,pitch,wid:aw?.wid||'ak'});}
+  if(now-lastSend>50){lastSend=now;const aw=getActiveWeapon();socket.emit('playerMove',{room:MY_ROOM,name:MY_NAME,x:camera.position.x,y:camera.position.y,z:camera.position.z,yaw,pitch,wid:aw?.wid||'ak',skin:MY_SKIN});}
 }
 
 function animate(){
