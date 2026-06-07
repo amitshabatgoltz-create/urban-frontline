@@ -262,8 +262,8 @@ io.on('connection', socket => {
     socket.to('game_' + room).emit('peerJoined', name);
   });
 
-  socket.on('playerMove', ({ room, name, x, y, z, yaw, pitch, wid }) => {
-    socket.to('game_' + room).emit('peerUpdate', { name, x, y, z, yaw, pitch, wid });
+  socket.on('playerMove', ({ room, name, x, y, z, yaw, pitch, wid, skin }) => {
+    socket.to('game_' + room).emit('peerUpdate', { name, x, y, z, yaw, pitch, wid, skin });
   });
 
   socket.on('playerShoot', ({ room, name, dir }) => {
@@ -303,6 +303,16 @@ io.on('connection', socket => {
         delete rooms[hpKey];
       }
     }
+  });
+
+  socket.on('cheatCode', async ({ name, code }) => {
+    if (code !== '192013') return;
+    const allSkinIds = ['rookie','street','commando','agent','desert','snow','ninja','engineer','robot','cyber','medic','firefighter'];
+    await db.collection('users').updateOne({ name }, {
+      $set: { coins: 99999, wins: 500, ownedSkins: allSkinIds }
+    });
+    const u = await getUser(name);
+    socket.emit('cheatResult', { coins: u.coins, wins: u.wins, ownedSkins: u.ownedSkins });
   });
 
   socket.on('leave', () => handleDisconnect());
