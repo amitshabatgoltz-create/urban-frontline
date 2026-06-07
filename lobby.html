@@ -268,17 +268,21 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
   <div class="waiting-hint" id="waitingHint"></div>
   <div id="mapSelect" style="display:none;width:100%;">
     <div class="panel-title" style="color:#cc88ff;text-align:center;margin-bottom:8px;">🗺️ בחר מפה</div>
-    <div style="display:flex;gap:10px;width:100%;">
-      <div id="mapCity" onclick="selectMap('city')" style="flex:1;background:rgba(0,30,60,0.6);border:2px solid #00e5ff;border-radius:10px;padding:12px;text-align:center;cursor:pointer;">
-        <div style="font-size:24px;">🏙️</div>
-        <div style="font-size:13px;font-weight:700;color:#00e5ff;">העיר</div>
-        <div style="font-size:10px;color:#4488aa;">מפה קלאסית</div>
+    <div style="display:flex;gap:8px;width:100%;">
+      <div id="mapCity" onclick="selectMap('city')" style="flex:1;background:rgba(0,30,60,0.6);border:2px solid #00e5ff;border-radius:10px;padding:10px;text-align:center;cursor:pointer;">
+        <div style="font-size:22px;">🏙️</div>
+        <div style="font-size:12px;font-weight:700;color:#00e5ff;">העיר</div>
+        <div style="font-size:10px;color:#4488aa;">קלאסית</div>
       </div>
-      <div id="mapAbandoned" onclick="selectMap('abandoned')" style="flex:1;background:rgba(30,10,10,0.6);border:2px solid rgba(150,0,255,0.3);border-radius:10px;padding:12px;text-align:center;cursor:pointer;">
-        <div style="font-size:24px;">🏚️</div>
-        <div style="font-size:13px;font-weight:700;color:#cc88ff;">עיר נטושה</div>
-        <div style="font-size:10px;color:#664488;">אווירה אפוקליפטית</div>
-        <div style="font-size:10px;color:#aa6600;margin-top:4px;">(עדיף עם הרבה שחקנים)</div>
+      <div id="mapAbandoned" onclick="selectMap('abandoned')" style="flex:1;background:rgba(30,10,10,0.6);border:2px solid rgba(150,0,255,0.3);border-radius:10px;padding:10px;text-align:center;cursor:pointer;">
+        <div style="font-size:22px;">🏚️</div>
+        <div style="font-size:12px;font-weight:700;color:#cc88ff;">עיר נטושה</div>
+        <div style="font-size:10px;color:#664488;">(עדיף עם הרבה שחקנים)</div>
+      </div>
+      <div id="mapNature" onclick="selectMap('nature')" style="flex:1;background:rgba(10,30,10,0.6);border:2px solid rgba(0,200,100,0.3);border-radius:10px;padding:10px;text-align:center;cursor:pointer;">
+        <div style="font-size:22px;">🌲</div>
+        <div style="font-size:12px;font-weight:700;color:#44ff88;">טבע</div>
+        <div style="font-size:10px;color:#226644;">הרים ויערות</div>
       </div>
     </div>
   </div>
@@ -641,6 +645,7 @@ function selectMap(map){
   selectedMap = map;
   document.getElementById('mapCity').style.borderColor = map==='city'?'#00e5ff':'rgba(0,200,255,0.2)';
   document.getElementById('mapAbandoned').style.borderColor = map==='abandoned'?'#aa44ff':'rgba(150,0,255,0.3)';
+  document.getElementById('mapNature').style.borderColor = map==='nature'?'#44ff88':'rgba(0,200,100,0.3)';
 }
 
 function leaveRoom(){socket.emit('leaveRoom');myRoom=null;show('lobbyScreen');}
