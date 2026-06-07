@@ -732,7 +732,7 @@ socket.on('peerUpdate',({name,x,y,z,yaw:py,pitch:pp,wid,skin})=>{
   }
   const p=peers[name];
   if(p.mesh){
-    p.mesh.position.set(x, y-1.55+0.6, z);
+    p.mesh.position.set(x, y-1.55+1.1, z);
     p.mesh.rotation.y=py+Math.PI;
     if(wid && wid!==p.wid){
       p.wid=wid;
