@@ -154,7 +154,9 @@ canvas{display:block;width:100vw;height:100vh;}
 .btn-back:hover{background:rgba(0,200,255,0.1);}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script>
+// GLTFLoader for r128
+</script>
 <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
@@ -658,97 +660,85 @@ function resolveCollision(nx,nz){
   return{x:rx,z:rz};
 }
 
-// ── GLB CHARACTER LOADER ──
-const GLB_URL = '/character.glb';
-const gltfLoader = new THREE.GLTFLoader();
-let baseGLB = null;
-
-// Preload the GLB
-gltfLoader.load(GLB_URL, gltf => {
-  baseGLB = gltf;
-  console.log('✅ GLB loaded!');
-}, undefined, err => {
-  console.warn('GLB load failed, using fallback:', err);
-});
-
-// Skin color tints per skin
+// ── PEER MESH — Minecraft Style ──
 const SKIN_TINTS = {
-  rookie:      0x2a5c1e,
-  street:      0xcc2200,
-  commando:    0x4a5a20,
-  agent:       0x111111,
-  desert:      0xc8a060,
-  snow:        0xdddddd,
-  ninja:       0x111111,
-  engineer:    0xff8800,
-  robot:       0x666666,
-  cyber:       0x111122,
-  medic:       0x008866,
-  firefighter: 0xcc7700,
+  rookie:0x2a5c1e,street:0xcc2200,commando:0x4a5a20,agent:0x111111,
+  desert:0xc8a060,snow:0xdddddd,ninja:0x111111,engineer:0xff8800,
+  robot:0x666666,cyber:0x111122,medic:0x008866,firefighter:0xcc7700,
+};
+const SKIN_FACE_COL = {
+  rookie:0xd4a574,street:0xd4a574,commando:0xc8906a,agent:0xc8906a,
+  desert:0xd4b08a,snow:0xeeeedd,ninja:0x111111,engineer:0xd4a574,
+  robot:0x888888,cyber:0x222233,medic:0xd4a574,firefighter:0xd4a574,
+};
+const SKIN_LEGS_COL = {
+  rookie:0x1a3a10,street:0x111111,commando:0x3a4a15,agent:0x111111,
+  desert:0xa07840,snow:0xaaaaaa,ninja:0x111111,engineer:0x224488,
+  robot:0x555555,cyber:0x111111,medic:0x006644,firefighter:0xaa5500,
 };
 
 function makePeerMesh(name, skinId){
   const root = new THREE.Group();
-  root.userData = {lArm:null, rArm:null, lLeg:null, rLeg:null, walkT:Math.random()*Math.PI*2, peerWeapon:null, mixer:null};
+  const s = skinId||'rookie';
+  const tc = SKIN_TINTS[s]||0x2a5c1e;
+  const fc = SKIN_FACE_COL[s]||0xd4a574;
+  const lc = SKIN_LEGS_COL[s]||0x1a3a10;
+  const M = c => new THREE.MeshLambertMaterial({color:c});
 
-  if(baseGLB){
-    // Clone the loaded GLB
-    const clone = baseGLB.scene.clone(true);
-    // Apply skin color tint
-    const tint = SKIN_TINTS[skinId] || SKIN_TINTS.rookie;
-    clone.traverse(child => {
-      if(child.isMesh && child.material){
-        child.material = child.material.clone();
-        child.material.color.setHex(tint);
-      }
-    });
-    clone.scale.set(0.012, 0.012, 0.012);
-    clone.rotation.y = Math.PI;
-    root.add(clone);
-    root.userData.glbClone = clone;
+  // HEAD
+  const headG = new THREE.Group(); headG.position.y=0.75;
+  const headMesh=new THREE.Mesh(new THREE.BoxGeometry(1,1,1),M(fc)); headG.add(headMesh);
+  const hair=new THREE.Mesh(new THREE.BoxGeometry(1.02,0.45,1.02),M(s==='robot'?0x777777:s==='ninja'?0x111111:0x3a2a10)); hair.position.y=0.28; headG.add(hair);
+  const eyeC=s==='robot'?0x00ccff:s==='ninja'?0xff2200:0x111111;
+  const eyeL=new THREE.Mesh(new THREE.BoxGeometry(0.20,0.14,0.02),new THREE.MeshLambertMaterial({color:eyeC,emissive:s==='robot'?0x00ccff:0,emissiveIntensity:0.8})); eyeL.position.set(-0.22,0.06,0.51); headG.add(eyeL);
+  const eyeR=eyeL.clone(); eyeR.position.set(0.22,0.06,0.51); headG.add(eyeR);
+  const mouth=new THREE.Mesh(new THREE.BoxGeometry(0.30,0.08,0.02),M(0x885533)); mouth.position.set(0,-0.22,0.51); headG.add(mouth);
+  if(s==='ninja'){const mask=new THREE.Mesh(new THREE.BoxGeometry(1.02,0.55,0.02),M(0x111111));mask.position.set(0,-0.08,0.52);headG.add(mask);}
+  if(s!=='ninja'&&s!=='agent'){const helm=new THREE.Mesh(new THREE.BoxGeometry(1.06,s==='engineer'?0.40:0.36,1.06),M(s==='engineer'?0xffcc00:s==='street'?tc:tc));helm.position.y=0.65;headG.add(helm);}
+  if(s==='street'){const brim=new THREE.Mesh(new THREE.BoxGeometry(1.20,0.08,0.60),M(tc));brim.position.set(0,0.57,-0.30);headG.add(brim);}
+  if(s==='robot'){const rv=new THREE.Mesh(new THREE.BoxGeometry(0.80,0.22,0.02),new THREE.MeshLambertMaterial({color:0x00ccff,emissive:0x00ccff,emissiveIntensity:0.8}));rv.position.set(0,0.06,0.52);headG.add(rv);}
+  root.add(headG);
 
-    // Animations
-    if(baseGLB.animations && baseGLB.animations.length > 0){
-      const mixer = new THREE.AnimationMixer(clone);
-      root.userData.mixer = mixer;
-      // Play walk/idle animation
-      const walkAnim = baseGLB.animations.find(a => a.name.toLowerCase().includes('walk')) || baseGLB.animations[0];
-      if(walkAnim){
-        const action = mixer.clipAction(walkAnim);
-        action.play();
-        root.userData.action = action;
-      }
-    }
-  } else {
-    // Fallback: simple box
-    const body = new THREE.Mesh(new THREE.BoxGeometry(0.5,1.5,0.3), new THREE.MeshLambertMaterial({color:SKIN_TINTS[skinId]||0x2a5c1e}));
-    body.position.y=0.75;
-    root.add(body);
+  // BODY
+  const body=new THREE.Mesh(new THREE.BoxGeometry(1.0,1.5,0.5),M(tc)); body.position.y=0; root.add(body);
+  const belt=new THREE.Mesh(new THREE.BoxGeometry(1.02,0.14,0.52),M(0x333322)); belt.position.y=-0.62; root.add(belt);
+  if(s==='cyber'){const cg=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.60,0.02),new THREE.MeshLambertMaterial({color:0x00ff66,emissive:0x00ff66,emissiveIntensity:0.8}));cg.position.set(0,0.10,0.26);root.add(cg);}
+  if(s==='medic'){const cv=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.35,0.02),M(0xffffff));cv.position.set(0.20,0.20,0.26);root.add(cv);const ch=new THREE.Mesh(new THREE.BoxGeometry(0.28,0.10,0.02),M(0xffffff));ch.position.set(0.20,0.20,0.26);root.add(ch);}
+  if(s==='firefighter'){const fs=new THREE.Mesh(new THREE.BoxGeometry(1.02,0.12,0.52),M(0xffff00));fs.position.set(0,-0.10,0);root.add(fs);}
+  if(s==='agent'){const tie=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.70,0.02),M(0x333333));tie.position.set(0,0.10,0.26);root.add(tie);}
+
+  // ARMS
+  function makeArm(side){
+    const ag=new THREE.Group(); ag.position.set(side*0.75,0.50,0);
+    const ua=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.75,0.5),M(tc)); ua.position.y=-0.28; ag.add(ua);
+    const la=new THREE.Mesh(new THREE.BoxGeometry(0.46,0.70,0.46),M(fc)); la.position.y=-0.78; ag.add(la);
+    const gl=new THREE.Mesh(new THREE.BoxGeometry(0.46,0.18,0.46),M(0x222222)); gl.position.y=-1.10; ag.add(gl);
+    root.add(ag); return ag;
   }
+  const lArm=makeArm(-1), rArm=makeArm(1);
+  const pw=buildAKMesh(); pw.scale.set(1.2,1.2,1.2); pw.position.set(0.10,-1.0,-0.30); rArm.add(pw);
+
+  // LEGS
+  function makeLeg(side){
+    const lg=new THREE.Group(); lg.position.set(side*0.25,-0.75,0);
+    const ul=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.75,0.5),M(lc)); ul.position.y=-0.28; lg.add(ul);
+    const ll=new THREE.Mesh(new THREE.BoxGeometry(0.48,0.72,0.48),M(lc)); ll.position.y=-0.78; lg.add(ll);
+    const boot=new THREE.Mesh(new THREE.BoxGeometry(0.52,0.22,0.60),M(0x1a1a0e)); boot.position.set(0,-1.16,0.04); lg.add(boot);
+    root.add(lg); return lg;
+  }
+  const lLeg=makeLeg(-1), rLeg=makeLeg(1);
 
   // Name label
-  const canvas2 = document.createElement('canvas'); canvas2.width=320; canvas2.height=56;
-  const ctx2 = canvas2.getContext('2d');
-  ctx2.fillStyle='rgba(0,0,0,0)'; ctx2.fillRect(0,0,320,56);
-  ctx2.font='bold 30px Rajdhani,monospace'; ctx2.textAlign='center';
-  ctx2.fillStyle='#00e5ff'; ctx2.fillText(name,160,40);
-  const ntex = new THREE.CanvasTexture(canvas2);
-  const nameSprite = new THREE.Sprite(new THREE.SpriteMaterial({map:ntex,transparent:true}));
-  nameSprite.position.y=2.0; nameSprite.scale.set(2.0,0.35,1);
-  root.add(nameSprite);
+  const c2=document.createElement('canvas'); c2.width=320; c2.height=56;
+  const cx=c2.getContext('2d'); cx.fillStyle='rgba(0,0,0,0)'; cx.fillRect(0,0,320,56);
+  cx.font='bold 30px Rajdhani,monospace'; cx.textAlign='center'; cx.fillStyle='#00e5ff'; cx.fillText(name,160,40);
+  const ns=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c2),transparent:true}));
+  ns.position.y=1.8; ns.scale.set(2.0,0.35,1); root.add(ns);
 
-  root.position.y = 0;
+  root.userData={lArm,rArm,lLeg,rLeg,walkT:Math.random()*Math.PI*2,peerWeapon:pw,headG};
+  root.scale.set(0.85,0.85,0.85);
   scene.add(root);
   return root;
-}
-
-// Update GLB animations in game loop
-function updatePeerAnimations(dt){
-  for(const p of Object.values(peers)){
-    if(p.mesh && p.mesh.userData.mixer){
-      p.mesh.userData.mixer.update(dt);
-    }
-  }
 }
 
 
@@ -980,13 +970,19 @@ socket.emit('joinGame',{room:MY_ROOM,name:MY_NAME});
 socket.on('peerUpdate',({name,x,y,z,yaw:py,pitch:pp,wid,skin})=>{
   if(name===MY_NAME)return;
   if(!peers[name]){
-    peers[name]={mesh:makePeerMesh(name,skin||'rookie'),hp:100,alive:true,skin:skin||'rookie'};
+    peers[name]={mesh:makePeerMesh(name,skin||'rookie'),hp:100,alive:true,wid:'ak',skin:skin||'rookie'};
     updateAlive();
   }
   const p=peers[name];
   if(p.mesh){
-    p.mesh.position.set(x, y-1.55, z);
-    p.mesh.rotation.y = py + Math.PI;
+    p.mesh.position.set(x,y-1.55+0.7,z);
+    p.mesh.rotation.y=py+Math.PI;
+  }
+  const ud=p.mesh.userData;
+  if(ud){
+    ud.walkT+=0.15;const w=Math.sin(ud.walkT)*0.5;
+    if(ud.lLeg)ud.lLeg.rotation.x=w;if(ud.rLeg)ud.rLeg.rotation.x=-w;
+    if(ud.lArm)ud.lArm.rotation.x=-w*0.4;if(ud.rArm)ud.rArm.rotation.x=w*0.4;
   }
 });
 
@@ -1136,7 +1132,6 @@ function update(){
 function animate(){
   requestAnimationFrame(animate);
   update();
-  updatePeerAnimations(dt);
   renderer.render(scene,camera);
 }
 
