@@ -256,12 +256,12 @@ canvas{display:block;width:100vw;height:100vh;}
 <div id="dead-screen">
   <h1>ELIMINATED</h1>
   <div class="end-sub" id="dead-msg">נפלת!</div>
-  <button class="btn-back" onclick="window.location.href='/'">← חזור ללובי</button>
+  <button class="btn-back" onclick="returnToLobby()">← חזור ללובי</button>
 </div>
 <div id="win-screen">
   <h1>VICTORY! 🏆</h1>
   <div class="end-sub">ניצחת!</div>
-  <button class="btn-back" onclick="window.location.href='/'">← חזור ללובי</button>
+  <button class="btn-back" onclick="returnToLobby()">← חזור ללובי</button>
 </div>
 
 <script>
@@ -273,7 +273,12 @@ const MY_NAME = params.get('name') || 'Player';
 const MY_ROOM = params.get('room') || '';
 const MY_SKIN = params.get('skin') || 'rookie';
 const ALL_PLAYERS = (params.get('players') || MY_NAME).split(',').filter(Boolean);
+const RETURN_ROOM = params.get('returnRoom') || '';
 G('waiting-msg').textContent = `שלום ${MY_NAME}! שחקנים: ${ALL_PLAYERS.join(', ')}`;
+
+function returnToLobby(){
+  window.location.href = '/';
+}
 
 // ── WEAPONS ──
 const WEAPONS = {
@@ -981,7 +986,7 @@ socket.on('peerUpdate',({name,x,y,z,yaw:py,pitch:pp,wid,skin})=>{
       const pw=buildAKMesh(); pw.scale.set(1.2,1.2,1.2); pw.position.set(0.10,-1.0,-0.30);
       ud.rArm.add(pw); ud.peerWeapon=pw; ud.needsWeapon=false;
     }
-    p.mesh.position.set(x,y-1.55+1.1,z);
+    p.mesh.position.set(x,y-1.55+1.3,z);
     p.mesh.rotation.y=py+Math.PI;
   }
   const ud=p.mesh.userData;
