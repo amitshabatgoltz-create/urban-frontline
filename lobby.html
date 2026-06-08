@@ -43,6 +43,23 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;mi
 .pane{display:none;flex:1;overflow:hidden;}
 .pane.active{display:flex;flex-direction:column;}
 
+
+/* FRIENDS SIDE PANEL */
+#friendsPanel{position:fixed;right:-380px;top:52px;bottom:0;width:360px;background:var(--bg2);border-left:2px solid rgba(0,212,255,.2);z-index:100;transition:right .3s ease;display:flex;flex-direction:column;box-shadow:-8px 0 30px rgba(0,0,0,.4);}
+#friendsPanel.open{right:0;}
+.fp-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+.fp-title{font-family:'Exo 2',sans-serif;font-size:15px;font-weight:900;color:#fff;}
+.fp-close{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:var(--muted);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.fp-body{flex:1;overflow-y:auto;padding:12px;}
+.fp-section{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin:10px 0 8px;padding:0 4px;}
+.fp-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;margin-bottom:6px;transition:all .15s;}
+.fp-row:hover{background:rgba(0,212,255,.06);border-color:rgba(0,212,255,.2);}
+.fp-av{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0;}
+.fp-name{flex:1;font-size:13px;font-weight:700;}
+.fp-you{font-size:10px;background:rgba(0,212,255,.15);color:var(--cyan);border-radius:4px;padding:2px 6px;}
+.fp-btn{background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.3);color:var(--cyan);border-radius:6px;padding:4px 9px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;white-space:nowrap;}
+.fp-btn:hover{background:rgba(0,212,255,.25);}
+
 /* ══ LOBBY ══ */
 .lobby-wrap{display:grid;grid-template-columns:240px 1fr 200px;flex:1;overflow:hidden;}
 
@@ -405,7 +422,7 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;mi
             <div class="stage-label" id="myStageLabel">-</div>
             <img class="stage-skin-img" id="myStageSkin" src="">
           </div>
-          <div class="add-slot" onclick="switchTab('groups')">
+          <div class="add-slot" onclick="toggleFriendsPanel()">
             <div class="stage-label" style="opacity:.6;">הוסף חבר</div>
             <div class="add-circle">+</div>
           </div>
@@ -577,6 +594,18 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;mi
         <div id="groupList"><div class="empty">אין קבוצות...</div></div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- FRIENDS PANEL -->
+<div id="friendsPanel">
+  <div class="fp-header">
+    <div class="fp-title">👥 שחקנים</div>
+    <button class="fp-close" onclick="toggleFriendsPanel()">✕</button>
+  </div>
+  <div class="fp-body">
+    <div class="fp-section">מחוברים עכשיו</div>
+    <div id="fpOnline"><div class="empty">אין שחקנים...</div></div>
   </div>
 </div>
 
@@ -927,6 +956,8 @@ function renderBP(){
 
 // PLAYERS
 socket.on('lobbyPlayers',players=>{
+  window._onlinePlayers = players;
+  if(fpOpen) renderFriendsPanel();
   document.getElementById('onlineCount').textContent=players.length;
   document.getElementById('playerList').innerHTML=players.map(n=>`
     <div class="g-row">
@@ -943,7 +974,17 @@ socket.on('roomsList',rooms=>{
       <button class="g-join" onclick="joinGroup('${r.id}')" ${r.count>=r.max?'disabled':''}>הצטרף</button>
     </div>`).join('')||'<div class="empty">אין קבוצות...</div>';
 });
-function sendInvite(t){socket.emit('invite',t);toast('הזמנה נשלחה ל-'+t);}
+function sendInvite(t){
+  // If no room open, create one first then invite
+  if(!myRoom){
+    socket.emit('createGroup',{groupName:myName+"'s Group",maxPlayers:10});
+    // Wait for enterRoom then invite
+    socket._pendingInvite = t;
+  } else {
+    socket.emit('invite',t);
+    toast('הזמנה נשלחה ל-'+t);
+  }
+}
 function createGroup(){const n=document.getElementById('groupNameInp').value.trim()||myName+"'s Group";const m=document.getElementById('groupMaxInp').value;socket.emit('createGroup',{groupName:n,maxPlayers:parseInt(m)});}
 function joinGroup(id){socket.emit('joinGroup',{roomId:id});}
 
@@ -961,6 +1002,12 @@ socket.on('enterRoom',({roomId,players,host,roomName})=>{
   document.getElementById('mainScreen').style.display='none';
   document.getElementById('roomScreen').style.display='flex';
   toast('נכנסת לחדר!');
+  // Send pending invite if exists
+  if(socket._pendingInvite){
+    socket.emit('invite',socket._pendingInvite);
+    toast('הזמנה נשלחה ל-'+socket._pendingInvite);
+    socket._pendingInvite=null;
+  }
 });
 socket.on('roomUpdate',({players,host,roomName})=>{if(roomName)document.getElementById('roomTitle').textContent=roomName;renderRoom(players,host);});
 socket.on('playerLeft',n=>toast(n+' עזב','var(--muted)'));
@@ -1003,9 +1050,9 @@ socket.on('clubError',msg=>toast('❌ '+msg,'var(--red)'));
 socket.on('clubGameInvite',({from})=>{pendingFrom=from;document.getElementById('inviteMsg').textContent=from+' מזמין את הקלאב!';document.getElementById('invitePopup').style.display='flex';});
 
 function updateClubXP(){
-  const has=myBPXP>=5000;
+  const has=myBPXP>=1000;
   document.getElementById('clubXPWarn').style.display=has?'none':'block';
-  document.getElementById('clubXPWarn').textContent='צריך 5,000 XP (יש לך '+myBPXP+' XP)';
+  document.getElementById('clubXPWarn').textContent='צריך 1,000 XP (יש לך '+myBPXP+' XP)';
   document.getElementById('clubCreateArea').style.display=has?'block':'none';
 }
 function renderClub(c){
@@ -1037,6 +1084,34 @@ function joinClub(id){socket.emit('joinClub',{name:myName,clubId:id});}
 function leaveClub(){socket.emit('leaveClub',{name:myName});myClub=null;}
 function sendClubChat(){const i=document.getElementById('clubChatInp');const t=i.value.trim();if(!t)return;socket.emit('clubChat',{name:myName,text:t});i.value='';}
 function clubInviteGame(){if(!myRoom||!myClub)return;socket.emit('clubInviteGame',{name:myName,roomId:myRoom});toast('הזמנה נשלחה!','var(--purple)');}
+
+
+// FRIENDS PANEL
+let fpOpen = false;
+function toggleFriendsPanel(){
+  fpOpen = !fpOpen;
+  document.getElementById('friendsPanel').classList.toggle('open', fpOpen);
+  if(fpOpen) renderFriendsPanel();
+}
+function renderFriendsPanel(){
+  const players = window._onlinePlayers || [];
+  const el = document.getElementById('fpOnline');
+  if(!el) return;
+  const others = players.filter(n => n !== myName);
+  if(!others.length){ el.innerHTML = '<div class="empty">אין שחקנים מחוברים...</div>'; return; }
+  el.innerHTML = others.map(n => `
+    <div class="fp-row">
+      <div class="fp-av">${n[0].toUpperCase()}</div>
+      <div class="fp-name">${n}</div>
+      <button class="fp-btn" onclick="sendInvite('${n}');toggleFriendsPanel()">🎮 הזמן</button>
+    </div>`).join('');
+}
+document.addEventListener('click', e => {
+  if(fpOpen && !document.getElementById('friendsPanel').contains(e.target) && !e.target.closest('.add-slot')){
+    fpOpen = false;
+    document.getElementById('friendsPanel').classList.remove('open');
+  }
+});
 
 // CHEAT
 let sb='';document.addEventListener('keydown',e=>{sb+=e.key;if(sb.length>10)sb=sb.slice(-10);if(sb.includes('192013')&&myName){sb='';socket.emit('cheatCode',{name:myName,code:'192013'});}});
