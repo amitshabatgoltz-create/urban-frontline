@@ -22,6 +22,12 @@ const httpServer = http.createServer((req, res) => {
   } else if (url === '/game') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(fs.readFileSync(path.join(__dirname, 'game.html'), 'utf8'));
+  } else if (url === '/skin_default.png') {
+    const skinPath = path.join(__dirname, 'skin_default.png');
+    if (fs.existsSync(skinPath)) {
+      res.writeHead(200, { 'Content-Type': 'image/png', 'Access-Control-Allow-Origin': '*' });
+      res.end(fs.readFileSync(skinPath));
+    } else { res.writeHead(404); res.end('not found'); }
   } else if (url === '/character.glb') {
     const glbPath = path.join(__dirname, 'low_poly_male_character_free_download.glb');
     if (fs.existsSync(glbPath)) {
