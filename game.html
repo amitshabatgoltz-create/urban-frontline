@@ -981,7 +981,7 @@ socket.on('peerUpdate',({name,x,y,z,yaw:py,pitch:pp,wid,skin})=>{
       const pw=buildAKMesh(); pw.scale.set(1.2,1.2,1.2); pw.position.set(0.10,-1.0,-0.30);
       ud.rArm.add(pw); ud.peerWeapon=pw; ud.needsWeapon=false;
     }
-    p.mesh.position.set(x,y-1.55+0.7,z);
+    p.mesh.position.set(x,y-1.55+1.1,z);
     p.mesh.rotation.y=py+Math.PI;
   }
   const ud=p.mesh.userData;
