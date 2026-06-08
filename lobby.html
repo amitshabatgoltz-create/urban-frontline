@@ -76,7 +76,8 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
 .skin-price{font-size:12px;color:#ffd700;margin-top:4px;}
 .skin-owned{font-size:11px;color:#00cc66;margin-top:4px;}
 .skin-equipped-badge{font-size:10px;color:#00e5ff;margin-top:4px;}
-.rarity-common{border-color:rgba(150,150,150,0.4);}
+.skin-card.exclusive{border-color:rgba(255,100,0,0.8)!important;background:rgba(40,10,0,0.8)!important;box-shadow:0 0 20px rgba(255,100,0,0.4);}
+.skin-card.exclusive .skin-name{background:linear-gradient(90deg,#ff6600,#ffcc00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .rarity-rare{border-color:rgba(0,100,255,0.4);}
 .rarity-epic{border-color:rgba(150,0,255,0.4);}
 .rarity-legendary{border-color:rgba(255,165,0,0.5);}
@@ -498,18 +499,19 @@ function show(id){
 
 // ── SKINS DATA ──
 const SKINS = [
-  {id:'rookie',   name:'Rookie',          img:'https://i.imgur.com/bLdd0OJ.png', price:0,    rarity:'common',    winsReq:0,   label:'ברירת מחדל'},
-  {id:'street',   name:'שחקן רחוב',       img:'https://i.imgur.com/QefuNIy.png', price:0,    rarity:'common',    winsReq:5,   label:'5 ניצחונות'},
-  {id:'commando', name:'חייל קומנדו',     img:'https://i.imgur.com/3f2ZRyS.png', price:0,    rarity:'common',    winsReq:15,  label:'15 ניצחונות'},
-  {id:'agent',    name:'סוכן מיוחד',      img:'https://i.imgur.com/I2gLpSX.png', price:500,  rarity:'rare',      winsReq:30,  label:'30 ניצחונות'},
-  {id:'desert',   name:'לוחם מדברי',      img:'https://i.imgur.com/5gnNNb3.png', price:800,  rarity:'rare',      winsReq:50,  label:'50 ניצחונות'},
-  {id:'snow',     name:'לוחם שלג',        img:'https://i.imgur.com/NSkNX0q.png', price:1200, rarity:'epic',      winsReq:75,  label:'75 ניצחונות'},
-  {id:'ninja',    name:"נינג'ה",          img:'https://i.imgur.com/a1lK8Jk.png', price:1500, rarity:'epic',      winsReq:100, label:'100 ניצחונות'},
-  {id:'engineer', name:'מהנדס',           img:'https://i.imgur.com/rnwsFDI.png', price:2000, rarity:'epic',      winsReq:150, label:'150 ניצחונות'},
-  {id:'robot',    name:'רובוט',           img:'https://i.imgur.com/xGOx935.png', price:3500, rarity:'legendary', winsReq:250, label:'250 ניצחונות'},
-  {id:'cyber',    name:'סייבר',           img:'https://i.imgur.com/2aZFdIi.png', price:2500, rarity:'epic',      winsReq:0,   label:'2,500 מטבעות'},
-  {id:'medic',    name:'חובש',            img:'https://i.imgur.com/D9d8Vat.png', price:1800, rarity:'rare',      winsReq:0,   label:'1,800 מטבעות'},
-  {id:'firefighter',name:'כבאי',          img:'https://i.imgur.com/qiFaFPQ.png', price:2000, rarity:'rare',      winsReq:0,   label:'2,000 מטבעות'},
+  {id:'rookie',      name:'Rookie',          img:'https://i.imgur.com/bLdd0OJ.png', price:0,     rarity:'common',    winsReq:0,   label:'ברירת מחדל'},
+  {id:'street',      name:'שחקן רחוב',       img:'https://i.imgur.com/QefuNIy.png', price:0,     rarity:'common',    winsReq:5,   label:'5 ניצחונות'},
+  {id:'commando',    name:'חייל קומנדו',     img:'https://i.imgur.com/3f2ZRyS.png', price:0,     rarity:'common',    winsReq:15,  label:'15 ניצחונות'},
+  {id:'agent',       name:'סוכן מיוחד',      img:'https://i.imgur.com/I2gLpSX.png', price:500,   rarity:'rare',      winsReq:30,  label:'30 ניצחונות'},
+  {id:'desert',      name:'לוחם מדברי',      img:'https://i.imgur.com/5gnNNb3.png', price:800,   rarity:'rare',      winsReq:50,  label:'50 ניצחונות'},
+  {id:'snow',        name:'לוחם שלג',        img:'https://i.imgur.com/NSkNX0q.png', price:1200,  rarity:'epic',      winsReq:75,  label:'75 ניצחונות'},
+  {id:'ninja',       name:"נינג'ה",          img:'https://i.imgur.com/a1lK8Jk.png', price:1500,  rarity:'epic',      winsReq:100, label:'100 ניצחונות'},
+  {id:'engineer',    name:'מהנדס',           img:'https://i.imgur.com/rnwsFDI.png', price:2000,  rarity:'epic',      winsReq:150, label:'150 ניצחונות'},
+  {id:'robot',       name:'רובוט',           img:'https://i.imgur.com/xGOx935.png', price:3500,  rarity:'legendary', winsReq:250, label:'250 ניצחונות'},
+  {id:'cyber',       name:'סייבר',           img:'https://i.imgur.com/2aZFdIi.png', price:2500,  rarity:'epic',      winsReq:0,   label:'2,500 מטבעות'},
+  {id:'medic',       name:'חובש',            img:'https://i.imgur.com/D9d8Vat.png', price:1800,  rarity:'rare',      winsReq:0,   label:'1,800 מטבעות'},
+  {id:'firefighter', name:'כבאי',            img:'https://i.imgur.com/qiFaFPQ.png', price:2000,  rarity:'rare',      winsReq:0,   label:'2,000 מטבעות'},
+  {id:'harlimit',    name:'🔥 הרלמית',       img:'/skin_default.png',               price:10000, rarity:'legendary', winsReq:0,   label:'10,000 מטבעות', exclusive:true},
 ];
 
 function renderShop(){
@@ -519,6 +521,7 @@ function renderShop(){
     const equipped = mySkin === s.id;
     const locked = s.winsReq > 0 && myWins < s.winsReq && !myOwnedSkins.includes(s.id);
     let cls = 'skin-card rarity-'+s.rarity;
+    if(s.exclusive) cls += ' exclusive';
     if(equipped) cls += ' equipped';
     else if(owned) cls += ' owned';
     let action = '';
