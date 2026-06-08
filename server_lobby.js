@@ -321,6 +321,75 @@ io.on('connection', socket => {
     socket.emit('cheatResult', { coins: u.coins, wins: u.wins, ownedSkins: u.ownedSkins });
   });
 
+
+  // ── CLUB EVENTS ──
+  socket.on('createClub', async ({ name, clubName }) => {
+    const xp = await getUserXP(name);
+    if (xp < 5000) { socket.emit('clubError', 'צריך 5000 XP ליצירת קלאב'); return; }
+    if (getClubByMember(name)) { socket.emit('clubError', 'כבר חבר בקלאב'); return; }
+    const clubId = 'club_' + Date.now();
+    clubs[clubId] = { id: clubId, name: clubName || (name + "'s Club"), leader: name, members: [name], chat: [], xpRequired: 5000 };
+    socket.join('club_' + clubId);
+    socket.emit('clubJoined', clubs[clubId]);
+    console.log('CLUB CREATED:', clubId, clubName);
+  });
+
+  socket.on('joinClub', async ({ name, clubId }) => {
+    const xp = await getUserXP(name);
+    if (xp < 5000) { socket.emit('clubError', 'צריך 5000 XP להצטרפות לקלאב'); return; }
+    if (getClubByMember(name)) { socket.emit('clubError', 'כבר חבר בקלאב'); return; }
+    const club = clubs[clubId];
+    if (!club) { socket.emit('clubError', 'קלאב לא קיים'); return; }
+    if (club.members.length >= 20) { socket.emit('clubError', 'הקלאב מלא (20 חברים)'); return; }
+    club.members.push(name);
+    socket.join('club_' + clubId);
+    socket.emit('clubJoined', club);
+    io.to('club_' + clubId).emit('clubUpdate', club);
+    io.to('club_' + clubId).emit('clubMessage', { from: 'מערכת', text: name + ' הצטרף לקלאב! 🎉', system: true });
+  });
+
+  socket.on('leaveClub', ({ name }) => {
+    const club = getClubByMember(name);
+    if (!club) return;
+    club.members = club.members.filter(m => m !== name);
+    socket.leave('club_' + club.id);
+    if (club.members.length === 0) { delete clubs[club.id]; return; }
+    if (club.leader === name) club.leader = club.members[0];
+    io.to('club_' + club.id).emit('clubUpdate', club);
+    io.to('club_' + club.id).emit('clubMessage', { from: 'מערכת', text: name + ' עזב את הקלאב', system: true });
+  });
+
+  socket.on('clubChat', ({ name, text }) => {
+    const club = getClubByMember(name);
+    if (!club) return;
+    if (!text || text.length > 200) return;
+    const msg = { from: name, text, time: Date.now() };
+    club.chat.push(msg);
+    if (club.chat.length > 100) club.chat.shift();
+    io.to('club_' + club.id).emit('clubMessage', msg);
+  });
+
+  socket.on('clubInviteGame', ({ name, roomId }) => {
+    const club = getClubByMember(name);
+    if (!club || club.leader !== name) return;
+    io.to('club_' + club.id).emit('clubGameInvite', { from: name, roomId, clubName: club.name });
+  });
+
+  socket.on('getClubs', () => {
+    const list = Object.values(clubs).map(c => ({ id: c.id, name: c.name, leader: c.leader, count: c.members.length }));
+    socket.emit('clubsList', list);
+  });
+
+  socket.on('getMyClub', ({ name }) => {
+    const club = getClubByMember(name);
+    if (club) {
+      socket.join('club_' + club.id);
+      socket.emit('clubJoined', club);
+    } else {
+      socket.emit('clubJoined', null);
+    }
+  });
+
   socket.on('leave', () => handleDisconnect());
   socket.on('disconnect', () => handleDisconnect());
 
