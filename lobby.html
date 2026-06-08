@@ -179,6 +179,7 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
     <button class="ntab" onclick="showPane('shop')">🛒 חנות</button>
     <button class="ntab" onclick="showPane('battlepass')">⭐ באטל פאס</button>
     <button class="ntab" onclick="showPane('daily')">🎁 יומי</button>
+    <button class="ntab" onclick="showPane('club')">🏆 קלאב</button>
   </div>
 
   <!-- PLAYERS -->
@@ -249,6 +250,47 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
       🏆 ניצחון — +200 מטבעות<br>
       🔫 הרג — +10 מטבעות<br>
       🎁 כניסה יומית — עד 500 מטבעות
+    </div>
+  </div>
+
+
+  <!-- CLUB -->
+  <div class="pane" id="pane-club">
+    <!-- No club -->
+    <div id="clubNoMember">
+      <div class="panel">
+        <div class="panel-title">🏆 קלאבים</div>
+        <div class="xp-lock" id="clubXPMsg">צריך 5000 XP להצטרף או ליצור קלאב</div>
+        <div id="clubCreateArea" style="display:none;margin-bottom:12px;">
+          <input class="inp" id="clubNameInp" placeholder="שם הקלאב שלך" maxlength="20" style="margin-bottom:8px;">
+          <button class="btn-create" onclick="createClub()">➕ צור קלאב חדש</button>
+        </div>
+        <div class="panel-title" style="margin-top:8px;">קלאבים פתוחים</div>
+        <div class="clubs-list" id="clubsList"><div class="empty">אין קלאבים...</div></div>
+      </div>
+    </div>
+    <!-- In club -->
+    <div id="clubMember" style="display:none;">
+      <div class="panel">
+        <div class="club-header">
+          <div class="club-badge">🏆 <span id="clubName">-</span></div>
+          <div style="font-size:11px;color:#664488;">מנהיג: <span id="clubLeader">-</span></div>
+          <div style="font-size:11px;color:#664488;margin-right:auto;"><span id="clubCount">0</span>/20 חברים</div>
+        </div>
+        <div class="club-members" id="clubMembers"></div>
+        <div style="margin-top:10px;display:flex;gap:8px;">
+          <button id="clubInviteBtn" onclick="clubInviteGame()" style="display:none;background:linear-gradient(90deg,#0088cc,#00e5ff);color:#000;border:none;padding:8px 16px;border-radius:16px;font-size:12px;font-weight:700;cursor:pointer;font-family:Rajdhani,monospace;flex:1;">🎮 הזמן לקלאב למשחק</button>
+          <button onclick="leaveClub()" style="background:transparent;border:1px solid rgba(255,70,100,0.4);color:#ff4466;border-radius:16px;padding:8px 16px;font-size:12px;cursor:pointer;font-family:Rajdhani,monospace;">עזוב קלאב</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">💬 צ'אט קלאב</div>
+        <div class="chat-box" id="clubChat"></div>
+        <div class="chat-input-row">
+          <input class="chat-inp" id="clubChatInp" placeholder="כתוב הודעה..." maxlength="200" onkeydown="if(event.key==='Enter')sendClubChat()">
+          <button class="btn-send" onclick="sendClubChat()">שלח</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -349,11 +391,12 @@ function showPane(name){
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
   document.getElementById('pane-'+name).classList.add('active');
-  const idx = ['players','groups','shop','battlepass','daily'].indexOf(name);
+  const idx = ['players','groups','shop','battlepass','daily','club'].indexOf(name);
   document.querySelectorAll('.ntab')[idx]?.classList.add('active');
   if(name==='shop') renderShop();
   if(name==='battlepass') renderBP();
   if(name==='daily') renderDaily();
+  if(name==='club'){socket.emit('getClubs');if(myName)socket.emit('getMyClub',{name:myName});}
 }
 
 // ── AUTH ──
@@ -649,6 +692,93 @@ socket.on('gameStarted',({roomId,players,map})=>{
   const params=new URLSearchParams({room:roomId,name:myName,players:players.join(','),skin:mySkin,map:map||'city'});
   window.location.href='/game?'+params.toString();
 });
+
+// ── CLUB ──
+let myClub = null;
+
+socket.on('clubJoined', club => {
+  myClub = club;
+  if(club) renderClub(club);
+  else { document.getElementById('clubNoMember').style.display='block'; document.getElementById('clubMember').style.display='none'; }
+  updateClubXPAccess();
+});
+
+socket.on('clubUpdate', club => { myClub=club; renderClub(club); });
+
+socket.on('clubMessage', msg => {
+  const box = document.getElementById('clubChat');
+  if(!box) return;
+  const div = document.createElement('div');
+  div.className = 'chat-msg' + (msg.system?' system':'');
+  div.innerHTML = msg.system ? msg.text : `<span class="from">${msg.from}:</span> ${msg.text}`;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+});
+
+socket.on('clubsList', list => {
+  const el = document.getElementById('clubsList');
+  if(!el) return;
+  if(!list.length){ el.innerHTML='<div class="empty">אין קלאבים פתוחים...</div>'; return; }
+  el.innerHTML = list.map(c => `
+    <div class="club-row">
+      <div class="club-row-name">🏆 ${c.name}</div>
+      <div class="club-row-count">${c.count}/20</div>
+      <button class="btn-join-club" onclick="joinClub('${c.id}')" ${c.count>=20?'disabled':''}>הצטרף</button>
+    </div>`).join('');
+});
+
+socket.on('clubError', msg => toast('❌ '+msg,'#ff4466'));
+
+socket.on('clubGameInvite', ({from, roomId, clubName}) => {
+  pendingFrom = from;
+  document.getElementById('inviteMsg').textContent = from+' מזמין את כולי ב-'+clubName+' למשחק!';
+  document.getElementById('invitePopup').style.display='flex';
+});
+
+function updateClubXPAccess(){
+  const hasXP = myBPXP >= 5000;
+  document.getElementById('clubXPMsg').textContent = hasXP ? '' : 'צריך 5000 XP להצטרף או ליצור קלאב (יש לך '+myBPXP+' XP)';
+  document.getElementById('clubCreateArea').style.display = hasXP ? 'block' : 'none';
+}
+
+function renderClub(club){
+  document.getElementById('clubNoMember').style.display='none';
+  document.getElementById('clubMember').style.display='block';
+  document.getElementById('clubName').textContent = club.name;
+  document.getElementById('clubLeader').textContent = club.leader;
+  document.getElementById('clubCount').textContent = club.members.length;
+  document.getElementById('clubMembers').innerHTML = club.members.map(m => `
+    <div class="club-member">
+      <div class="club-member-name">${m}</div>
+      ${m===club.leader?'<span class="club-crown">👑</span>':''}
+      ${m===myName?'<span style="font-size:10px;color:#00e5ff;">אתה</span>':''}
+    </div>`).join('');
+  const invBtn = document.getElementById('clubInviteBtn');
+  if(invBtn) invBtn.style.display = myName===club.leader&&myRoom?'block':'none';
+}
+
+function createClub(){
+  const name = document.getElementById('clubNameInp').value.trim();
+  if(!name){ toast('כתוב שם לקלאב','#ff4466'); return; }
+  socket.emit('createClub',{name:myName, clubName:name});
+}
+
+function joinClub(clubId){ socket.emit('joinClub',{name:myName, clubId}); }
+function leaveClub(){ socket.emit('leaveClub',{name:myName}); myClub=null; }
+
+function sendClubChat(){
+  const inp = document.getElementById('clubChatInp');
+  const text = inp.value.trim();
+  if(!text) return;
+  socket.emit('clubChat',{name:myName, text});
+  inp.value='';
+}
+
+function clubInviteGame(){
+  if(!myRoom||!myClub) return;
+  socket.emit('clubInviteGame',{name:myName, roomId:myRoom});
+  toast('הזמנה נשלחה לכל חברי הקלאב!','#aa44ff');
+}
 
 // ── קוד סודי ──
 let secretBuffer = '';
