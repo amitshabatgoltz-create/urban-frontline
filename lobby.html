@@ -2,352 +2,517 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Urban Frontline</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap');
+:root{
+  --bg:#07090f;
+  --bg2:#0d1220;
+  --bg3:#111827;
+  --accent:#4f8eff;
+  --accent2:#7c3aed;
+  --gold:#f59e0b;
+  --diamond:#38bdf8;
+  --green:#22c55e;
+  --red:#ef4444;
+  --text:#e2e8f0;
+  --muted:#64748b;
+  --border:rgba(255,255,255,0.07);
+  --card:rgba(255,255,255,0.04);
+}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;}
 
-/* AUTH */
-#authScreen{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;}
-.title{font-size:44px;font-weight:700;letter-spacing:6px;background:linear-gradient(90deg,#fff,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.sub{font-size:12px;color:#00e5ff;letter-spacing:4px;opacity:0.7;margin-bottom:8px;}
-.card{border:1px solid rgba(0,200,255,0.3);border-radius:14px;padding:24px 32px;background:rgba(5,18,35,0.92);display:flex;flex-direction:column;gap:12px;min-width:300px;}
-.atabs{display:flex;border:1px solid rgba(0,200,255,0.3);border-radius:8px;overflow:hidden;}
-.atab{flex:1;background:transparent;color:#4488aa;border:none;padding:9px 0;font-size:13px;font-weight:700;font-family:Rajdhani,monospace;letter-spacing:2px;cursor:pointer;}
-.atab.active{background:rgba(0,180,255,0.2);color:#00e5ff;}
-.inp{background:rgba(0,30,60,0.8);border:1px solid rgba(0,200,255,0.3);border-radius:8px;padding:10px 14px;color:#e0f4ff;font-size:14px;font-family:Rajdhani,monospace;outline:none;text-align:right;width:100%;}
-.inp:focus{border-color:#00e5ff;}
-.btn-main{background:linear-gradient(90deg,#0088cc,#00e5ff);color:#000;border:none;padding:12px 0;font-size:16px;font-weight:700;border-radius:24px;cursor:pointer;font-family:Rajdhani,monospace;letter-spacing:2px;width:100%;}
-.btn-main:hover{opacity:0.9;}
-.err{color:#ff4466;font-size:12px;text-align:center;display:none;}
+/* ── AUTH ── */
+#authScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,rgba(79,142,255,0.15) 0%,transparent 70%);}
+.auth-box{background:rgba(13,18,32,0.95);border:1px solid rgba(79,142,255,0.2);border-radius:20px;padding:36px 40px;width:360px;backdrop-filter:blur(20px);}
+.auth-logo{text-align:center;margin-bottom:24px;}
+.auth-logo h1{font-family:'Exo 2',sans-serif;font-size:28px;font-weight:900;background:linear-gradient(135deg,#fff 30%,#4f8eff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:3px;}
+.auth-logo p{font-size:11px;color:var(--muted);letter-spacing:4px;margin-top:2px;}
+.auth-tabs{display:flex;background:rgba(255,255,255,0.04);border-radius:10px;padding:4px;gap:4px;margin-bottom:20px;}
+.auth-tab{flex:1;background:transparent;border:none;color:var(--muted);padding:8px;font-size:14px;font-weight:700;font-family:'Rajdhani',sans-serif;letter-spacing:1px;cursor:pointer;border-radius:7px;transition:all 0.2s;}
+.auth-tab.active{background:var(--accent);color:#fff;}
+.auth-inp{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;font-family:'Rajdhani',sans-serif;outline:none;margin-bottom:10px;transition:border 0.2s;}
+.auth-inp:focus{border-color:var(--accent);}
+.auth-btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;padding:13px;font-size:16px;font-weight:800;font-family:'Exo 2',sans-serif;letter-spacing:2px;border-radius:12px;cursor:pointer;transition:opacity 0.2s;margin-top:4px;}
+.auth-btn:hover{opacity:0.85;}
+.auth-err{color:var(--red);font-size:12px;text-align:center;margin:-4px 0 8px;display:none;}
 
-/* TOP BAR */
-#topBar{display:none;position:fixed;top:0;left:0;right:0;background:rgba(5,13,26,0.97);border-bottom:1px solid rgba(0,200,255,0.2);padding:10px 20px;z-index:100;align-items:center;gap:16px;}
-.tb-name{font-size:16px;font-weight:700;color:#00e5ff;}
-.tb-coins{font-size:15px;font-weight:700;color:#ffd700;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:20px;padding:4px 14px;}
-.tb-stats{font-size:12px;color:#4488aa;margin-right:auto;}
+/* ── MAIN LAYOUT ── */
+#mainScreen{display:none;flex-direction:column;min-height:100vh;}
 
-/* LOBBY */
-#lobbyScreen{display:none;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:700px;padding:20px;margin-top:60px;}
-.lobby-title{font-size:28px;font-weight:700;letter-spacing:4px;color:#00e5ff;}
+/* TOP NAV */
+.top-nav{display:flex;align-items:center;background:rgba(13,18,32,0.98);border-bottom:1px solid var(--border);padding:0 20px;height:56px;position:sticky;top:0;z-index:100;gap:4px;}
+.nav-logo{font-family:'Exo 2',sans-serif;font-size:16px;font-weight:900;background:linear-gradient(135deg,#fff,#4f8eff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;margin-left:16px;margin-left:auto;}
+.nav-tab{background:transparent;border:none;color:var(--muted);padding:8px 16px;font-size:13px;font-weight:700;font-family:'Rajdhani',sans-serif;letter-spacing:2px;cursor:pointer;border-radius:8px;transition:all 0.2s;height:40px;}
+.nav-tab:hover{color:var(--text);background:var(--card);}
+.nav-tab.active{color:#fff;background:rgba(79,142,255,0.15);border-bottom:2px solid var(--accent);}
+.nav-right{display:flex;align-items:center;gap:12px;margin-right:auto;}
+.currency-badge{display:flex;align-items:center;gap:6px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:20px;padding:5px 14px;font-size:14px;font-weight:700;color:var(--gold);}
+.currency-badge .icon{font-size:16px;}
+.player-badge{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:5px 14px;}
+.player-name{font-size:13px;font-weight:700;color:var(--text);}
+.player-level{font-size:11px;color:var(--muted);}
 
-/* NAV TABS */
-.nav-tabs{display:flex;gap:4px;background:rgba(0,10,30,0.8);border:1px solid rgba(0,200,255,0.2);border-radius:12px;padding:6px;width:100%;}
-.ntab{flex:1;background:transparent;color:#4488aa;border:none;padding:10px 0;font-size:13px;font-weight:700;font-family:Rajdhani,monospace;letter-spacing:1px;cursor:pointer;border-radius:8px;transition:all 0.2s;}
-.ntab.active{background:rgba(0,180,255,0.2);color:#00e5ff;}
-.ntab:hover:not(.active){background:rgba(0,180,255,0.08);}
+/* ── PANES ── */
+.pane{display:none;flex:1;padding:24px 20px;max-width:1100px;margin:0 auto;width:100%;}
+.pane.active{display:block;}
 
-.pane{display:none;width:100%;flex-direction:column;gap:12px;}
-.pane.active{display:flex;}
-.panel{background:rgba(5,18,35,0.9);border:1px solid rgba(0,200,255,0.2);border-radius:14px;padding:18px;width:100%;}
-.panel-title{font-size:13px;font-weight:700;color:#00e5ff;letter-spacing:2px;margin-bottom:12px;}
+/* ── LOBBY PANE ── */
+.lobby-grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;}
+.lobby-left{}
+.lobby-hero{background:linear-gradient(135deg,rgba(79,142,255,0.1),rgba(124,58,237,0.1));border:1px solid rgba(79,142,255,0.2);border-radius:20px;padding:24px;margin-bottom:20px;display:flex;align-items:center;gap:24px;}
+.hero-skin{width:120px;height:160px;display:flex;align-items:center;justify-content:center;font-size:80px;background:rgba(79,142,255,0.05);border-radius:12px;border:1px solid rgba(79,142,255,0.1);}
+.hero-info{flex:1;}
+.hero-name{font-family:'Exo 2',sans-serif;font-size:26px;font-weight:900;color:#fff;}
+.hero-level{font-size:13px;color:var(--muted);margin-bottom:12px;}
+.xp-bar-wrap{margin-bottom:12px;}
+.xp-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;}
+.xp-bar{height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width 0.5s;}
+.stats-row{display:flex;gap:16px;}
+.stat{text-align:center;}
+.stat-val{font-family:'Exo 2',sans-serif;font-size:20px;font-weight:800;color:#fff;}
+.stat-lbl{font-size:11px;color:var(--muted);}
+.play-btn{width:100%;background:linear-gradient(135deg,#f59e0b,#ef4444);border:none;color:#fff;padding:16px;font-size:20px;font-weight:900;font-family:'Exo 2',sans-serif;letter-spacing:3px;border-radius:14px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(245,158,11,0.3);}
+.play-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(245,158,11,0.4);}
 
-/* PLAYERS */
-.player-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(0,30,60,0.5);border:1px solid rgba(0,200,255,0.1);border-radius:8px;margin-bottom:6px;}
-.player-row:last-child{margin-bottom:0;}
-.pdot{width:8px;height:8px;border-radius:50%;background:#00cc66;flex-shrink:0;}
-.pname{flex:1;font-size:14px;font-weight:600;color:#e0f4ff;}
-.badge{font-size:10px;background:rgba(0,200,255,0.1);color:#00e5ff;border:1px solid rgba(0,200,255,0.3);border-radius:4px;padding:2px 7px;}
-.invite-btn{background:rgba(0,180,255,0.15);border:1px solid rgba(0,200,255,0.3);color:#00cfff;border-radius:6px;padding:5px 12px;font-size:12px;font-family:Rajdhani,monospace;cursor:pointer;font-weight:700;}
-.invite-btn:hover{background:rgba(0,180,255,0.3);}
-.empty{color:#334455;font-size:12px;text-align:center;padding:12px;}
+/* CHALLENGES */
+.section-title{font-family:'Exo 2',sans-serif;font-size:14px;font-weight:800;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;}
+.challenges-list{display:flex;flex-direction:column;gap:8px;}
+.challenge{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;}
+.ch-icon{font-size:20px;width:36px;text-align:center;}
+.ch-info{flex:1;}
+.ch-name{font-size:13px;font-weight:700;color:var(--text);}
+.ch-prog{font-size:11px;color:var(--muted);margin-top:2px;}
+.ch-prog-bar{height:4px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:6px;overflow:hidden;}
+.ch-prog-fill{height:100%;background:var(--green);border-radius:2px;}
+.ch-reward{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--diamond);}
+
+/* PLAYERS PANEL */
+.lobby-right{}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px;}
+.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.panel-title{font-family:'Exo 2',sans-serif;font-size:12px;font-weight:800;color:var(--muted);letter-spacing:3px;text-transform:uppercase;}
+.online-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);}
+.player-list{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;}
+.player-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid transparent;transition:all 0.15s;}
+.player-row:hover{border-color:rgba(79,142,255,0.2);background:rgba(79,142,255,0.05);}
+.p-avatar{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+.p-name{flex:1;font-size:13px;font-weight:600;}
+.p-you{font-size:10px;background:rgba(79,142,255,0.2);color:var(--accent);border-radius:4px;padding:2px 6px;}
+.invite-btn{background:rgba(79,142,255,0.15);border:1px solid rgba(79,142,255,0.3);color:var(--accent);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;}
+.invite-btn:hover{background:rgba(79,142,255,0.3);}
+.empty{color:var(--muted);font-size:12px;text-align:center;padding:16px;}
 
 /* GROUPS */
-.group-row{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(0,20,50,0.6);border:1px solid rgba(0,200,255,0.15);border-radius:10px;margin-bottom:8px;}
-.group-info{flex:1;}
-.group-name{font-size:15px;font-weight:700;color:#e0f4ff;}
-.group-host{font-size:11px;color:#4488aa;}
-.group-count{font-size:13px;font-weight:700;color:#00e5ff;white-space:nowrap;}
-.join-btn{background:linear-gradient(90deg,#006699,#00aacc);color:#fff;border:none;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;font-family:Rajdhani,monospace;cursor:pointer;}
+.group-create{margin-bottom:12px;}
+.group-inp{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:'Rajdhani',sans-serif;outline:none;margin-bottom:8px;}
+.group-inp:focus{border-color:var(--accent);}
+.group-select{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:13px;font-family:'Rajdhani',sans-serif;outline:none;margin-bottom:8px;}
+.group-list{display:flex;flex-direction:column;gap:8px;}
+.group-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;transition:all 0.15s;}
+.group-row:hover{border-color:rgba(79,142,255,0.3);}
+.g-info{flex:1;}
+.g-name{font-size:13px;font-weight:700;}
+.g-host{font-size:11px;color:var(--muted);}
+.g-count{font-size:12px;font-weight:700;color:var(--accent);}
+.join-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;padding:6px 14px;border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;}
 .join-btn:disabled{opacity:0.4;cursor:not-allowed;}
-.create-form{background:rgba(0,10,30,0.8);border:1px solid rgba(0,200,255,0.25);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px;}
-.select-inp{background:rgba(0,30,60,0.8);border:1px solid rgba(0,200,255,0.3);border-radius:8px;padding:9px 14px;color:#e0f4ff;font-size:14px;font-family:Rajdhani,monospace;outline:none;width:100%;}
-.btn-create{background:linear-gradient(90deg,#004466,#0088cc);color:#fff;border:none;padding:11px 0;font-size:15px;font-weight:700;border-radius:24px;cursor:pointer;font-family:Rajdhani,monospace;letter-spacing:2px;width:100%;}
 
-/* SHOP */
-.skin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.skin-card{background:rgba(0,20,50,0.7);border:2px solid rgba(0,200,255,0.15);border-radius:12px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s;}
-.skin-card:hover{border-color:rgba(0,200,255,0.4);}
-.skin-card.owned{border-color:rgba(0,255,100,0.4);}
-.skin-card.equipped{border-color:#00e5ff;background:rgba(0,100,200,0.2);}
-.skin-emoji{font-size:36px;margin-bottom:6px;}
-.skin-name{font-size:13px;font-weight:700;color:#e0f4ff;}
-.skin-price{font-size:12px;color:#ffd700;margin-top:4px;}
-.skin-owned{font-size:11px;color:#00cc66;margin-top:4px;}
-.skin-equipped-badge{font-size:10px;color:#00e5ff;margin-top:4px;}
-.skin-card.exclusive{border-color:rgba(255,100,0,0.8)!important;background:rgba(40,10,0,0.8)!important;box-shadow:0 0 20px rgba(255,100,0,0.4);}
-.skin-card.exclusive .skin-name{background:linear-gradient(90deg,#ff6600,#ffcc00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.rarity-rare{border-color:rgba(0,100,255,0.4);}
-.rarity-epic{border-color:rgba(150,0,255,0.4);}
-.rarity-legendary{border-color:rgba(255,165,0,0.5);}
+/* ── SHOP PANE ── */
+.shop-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.shop-title{font-family:'Exo 2',sans-serif;font-size:22px;font-weight:900;color:#fff;}
+.shop-refresh{font-size:12px;color:var(--muted);}
+.shop-tabs{display:flex;gap:6px;margin-bottom:20px;}
+.shop-tab{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:8px 20px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;transition:all 0.2s;}
+.shop-tab.active{background:rgba(79,142,255,0.2);border-color:var(--accent);color:#fff;}
+.featured-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+.featured-card{background:linear-gradient(135deg,rgba(79,142,255,0.1),rgba(124,58,237,0.05));border:1px solid rgba(79,142,255,0.2);border-radius:16px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.featured-card:hover{transform:translateY(-3px);border-color:rgba(79,142,255,0.4);box-shadow:0 8px 24px rgba(79,142,255,0.15);}
+.featured-card.legendary{background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(239,68,68,0.08));border-color:rgba(245,158,11,0.3);}
+.featured-card.epic{background:linear-gradient(135deg,rgba(124,58,237,0.12),rgba(79,142,255,0.08));border-color:rgba(124,58,237,0.3);}
+.featured-card.rare{background:linear-gradient(135deg,rgba(56,189,248,0.1),rgba(79,142,255,0.05));border-color:rgba(56,189,248,0.2);}
+.card-img{width:100%;height:140px;object-fit:contain;border-radius:10px;margin-bottom:10px;background:rgba(0,0,0,0.2);}
+.card-img-placeholder{width:100%;height:140px;display:flex;align-items:center;justify-content:center;font-size:64px;border-radius:10px;margin-bottom:10px;background:rgba(0,0,0,0.2);}
+.card-rarity{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.card-rarity.legendary{color:var(--gold);}
+.card-rarity.epic{color:#a78bfa;}
+.card-rarity.rare{color:var(--diamond);}
+.card-rarity.common{color:var(--muted);}
+.card-name{font-family:'Exo 2',sans-serif;font-size:15px;font-weight:800;color:#fff;margin-bottom:8px;}
+.card-price{display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:700;color:var(--diamond);}
+.card-price .gem{font-size:16px;}
+.card-owned{font-size:11px;color:var(--green);margin-top:4px;}
+.card-equipped{font-size:11px;color:var(--accent);margin-top:4px;font-weight:700;}
+.card-locked{font-size:11px;color:var(--muted);margin-top:4px;}
+.card-action{margin-top:10px;}
+.btn-buy{background:linear-gradient(135deg,var(--gold),#f97316);border:none;color:#000;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Exo 2',sans-serif;width:100%;transition:opacity 0.2s;}
+.btn-buy:hover{opacity:0.85;}
+.btn-equip{background:rgba(79,142,255,0.2);border:1px solid var(--accent);color:var(--accent);padding:8px 20px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;width:100%;}
+.lock-badge{position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.6);border-radius:20px;padding:3px 8px;font-size:10px;color:var(--muted);}
 
-/* BATTLE PASS */
-.bp-bar-wrap{background:rgba(0,10,30,0.8);border:1px solid rgba(100,0,200,0.3);border-radius:12px;padding:16px;margin-bottom:12px;}
-.bp-level{font-size:20px;font-weight:700;color:#aa44ff;}
-.bp-bar{height:12px;background:rgba(100,0,200,0.2);border-radius:6px;margin:8px 0;overflow:hidden;}
-.bp-fill{height:100%;background:linear-gradient(90deg,#6600cc,#aa00ff);border-radius:6px;transition:width 0.5s;}
-.bp-xp{font-size:11px;color:#664488;}
-.bp-rewards{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;}
-.bp-reward{min-width:70px;background:rgba(50,0,100,0.4);border:1px solid rgba(150,0,255,0.3);border-radius:8px;padding:8px;text-align:center;flex-shrink:0;}
-.bp-reward.unlocked{border-color:#aa44ff;background:rgba(100,0,200,0.3);}
-.bp-rlevel{font-size:10px;color:#664488;}
-.bp-ricon{font-size:20px;}
-.bp-rdesc{font-size:10px;color:#cc88ff;margin-top:2px;}
+/* ── BATTLE PASS ── */
+.bp-hero{background:linear-gradient(135deg,rgba(124,58,237,0.15),rgba(79,142,255,0.08));border:1px solid rgba(124,58,237,0.25);border-radius:20px;padding:24px;margin-bottom:24px;display:flex;align-items:center;gap:24px;}
+.bp-icon{font-size:48px;}
+.bp-info{flex:1;}
+.bp-season{font-size:11px;color:var(--accent2);letter-spacing:3px;font-weight:700;text-transform:uppercase;}
+.bp-name{font-family:'Exo 2',sans-serif;font-size:22px;font-weight:900;color:#fff;}
+.bp-ends{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.bp-level-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.bp-level-badge{background:linear-gradient(135deg,var(--accent2),var(--accent));width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Exo 2',sans-serif;font-size:18px;font-weight:900;color:#fff;}
+.bp-xp-info{flex:1;}
+.bp-xp-label{font-size:12px;color:var(--muted);margin-bottom:4px;}
+.bp-bar{height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;}
+.bp-fill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:4px;transition:width 0.5s;}
+.tiers-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;}
+.tier{min-width:80px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 8px;text-align:center;flex-shrink:0;transition:all 0.2s;}
+.tier.unlocked{border-color:rgba(124,58,237,0.4);background:rgba(124,58,237,0.1);}
+.tier.current{border-color:var(--accent2);box-shadow:0 0 12px rgba(124,58,237,0.3);}
+.tier-num{font-size:10px;color:var(--muted);margin-bottom:4px;}
+.tier-icon{font-size:24px;margin-bottom:4px;}
+.tier-desc{font-size:9px;color:var(--muted);}
+.tier-check{font-size:14px;color:var(--green);}
+.how-earn{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-top:16px;}
+.earn-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);}
+.earn-row:last-child{border-bottom:none;}
+.earn-icon{font-size:20px;width:32px;text-align:center;}
+.earn-text{flex:1;font-size:13px;color:var(--text);}
+.earn-xp{font-size:13px;font-weight:700;color:var(--accent2);}
 
-/* DAILY */
-.daily-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
-.day-card{background:rgba(0,20,50,0.6);border:1px solid rgba(0,200,255,0.15);border-radius:8px;padding:8px 4px;text-align:center;}
-.day-card.today{border-color:#00e5ff;background:rgba(0,100,200,0.2);}
-.day-card.done{border-color:rgba(0,200,100,0.4);background:rgba(0,100,50,0.2);}
-.day-num{font-size:10px;color:#4488aa;}
-.day-icon{font-size:20px;margin:4px 0;}
-.day-reward{font-size:10px;color:#ffd700;}
+/* ── DAILY ── */
+.daily-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:20px;}
+.day-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 6px;text-align:center;transition:all 0.2s;}
+.day-card.active{border-color:var(--gold);background:rgba(245,158,11,0.08);box-shadow:0 0 12px rgba(245,158,11,0.2);}
+.day-card.done{border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.06);}
+.day-num{font-size:10px;color:var(--muted);margin-bottom:4px;}
+.day-icon{font-size:22px;margin-bottom:4px;}
+.day-val{font-size:11px;font-weight:700;color:var(--gold);}
+.day-check{font-size:14px;color:var(--green);}
 
-/* ROOM */
-#roomScreen{display:none;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:520px;padding:20px;margin-top:60px;}
-.room-title{font-size:26px;font-weight:700;letter-spacing:4px;color:#aa44ff;}
-.room-panel{background:rgba(10,5,30,0.95);border:1px solid rgba(150,0,255,0.3);border-radius:14px;padding:20px;width:100%;}
-.rplayer{display:flex;align-items:center;gap:12px;padding:11px 14px;background:rgba(30,5,60,0.6);border:1px solid rgba(150,0,255,0.2);border-radius:8px;margin-bottom:8px;}
-.rdot{width:10px;height:10px;border-radius:50%;background:#aa44ff;box-shadow:0 0 8px #aa44ff;}
-.rname{flex:1;font-size:15px;font-weight:700;color:#e0d0ff;}
-.rbadge{font-size:10px;background:rgba(150,0,255,0.2);color:#cc88ff;border:1px solid rgba(150,0,255,0.4);border-radius:4px;padding:2px 8px;}
-.btn-start{background:linear-gradient(90deg,#6600cc,#aa00ff);color:#fff;border:none;padding:14px 0;font-size:16px;font-weight:700;border-radius:30px;cursor:pointer;font-family:Rajdhani,monospace;letter-spacing:2px;width:100%;box-shadow:0 0 20px rgba(120,0,255,0.4);}
-.btn-red{background:transparent;border:1px solid rgba(255,70,100,0.4);color:#ff4466;border-radius:6px;padding:7px 20px;font-size:12px;font-family:Rajdhani,monospace;cursor:pointer;}
-.waiting-hint{font-size:12px;color:#664488;text-align:center;}
+/* ── CLUB ── */
+.club-hero{background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(124,58,237,0.08));border:1px solid rgba(239,68,68,0.2);border-radius:20px;padding:20px;margin-bottom:20px;display:flex;align-items:center;gap:16px;}
+.club-icon-big{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#ef4444,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:28px;}
+.club-meta{flex:1;}
+.club-name-big{font-family:'Exo 2',sans-serif;font-size:20px;font-weight:900;color:#fff;}
+.club-tag{font-size:11px;color:var(--muted);}
+.club-stats{display:flex;gap:20px;margin-top:6px;}
+.club-stat{text-align:center;}
+.club-stat-val{font-family:'Exo 2',sans-serif;font-size:16px;font-weight:800;color:#fff;}
+.club-stat-lbl{font-size:10px;color:var(--muted);}
+.club-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.members-list{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;}
+.member-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:8px;}
+.member-avatar{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#ef4444,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;}
+.member-name{flex:1;font-size:13px;font-weight:600;}
+.crown{color:var(--gold);}
+.chat-box{height:160px;overflow-y:auto;background:rgba(0,0,0,0.2);border-radius:10px;padding:10px;margin-bottom:8px;display:flex;flex-direction:column;gap:4px;}
+.chat-msg{font-size:12px;color:#94a3b8;line-height:1.4;}
+.chat-msg .from{color:#a78bfa;font-weight:700;}
+.chat-msg.sys{color:var(--muted);font-style:italic;}
+.chat-row{display:flex;gap:8px;}
+.chat-inp{flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;font-family:'Rajdhani',sans-serif;outline:none;}
+.btn-send{background:var(--accent2);border:none;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;}
+.club-no-member{}
+.xp-lock-msg{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--gold);margin-bottom:12px;text-align:center;}
+.clubs-list{display:flex;flex-direction:column;gap:8px;}
+.club-row-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:12px;transition:all 0.15s;}
+.club-row-item:hover{border-color:rgba(239,68,68,0.3);}
 
-/* INVITE POPUP */
-#invitePopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;align-items:center;justify-content:center;}
-.popup{background:#0a1828;border:1px solid rgba(0,200,255,0.4);border-radius:16px;padding:32px 40px;text-align:center;}
-.popup h3{font-size:20px;color:#00e5ff;margin-bottom:8px;}
-.popup p{font-size:14px;color:#88aacc;margin-bottom:24px;}
-.popup-btns{display:flex;gap:12px;justify-content:center;}
-.btn-accept{background:linear-gradient(90deg,#00aa44,#00ff66);color:#000;border:none;padding:12px 32px;border-radius:24px;font-size:14px;font-weight:700;cursor:pointer;font-family:Rajdhani,monospace;}
-.btn-decline{background:transparent;border:1px solid #ff4466;color:#ff4466;padding:12px 32px;border-radius:24px;font-size:14px;font-weight:700;cursor:pointer;font-family:Rajdhani,monospace;}
+/* ── ROOM ── */
+#roomScreen{display:none;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,0.1) 0%,transparent 70%);}
+.room-box{background:rgba(13,18,32,0.98);border:1px solid rgba(124,58,237,0.25);border-radius:20px;padding:28px;width:460px;max-width:95vw;}
+.room-title-row{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.room-icon{font-size:28px;}
+.room-name{font-family:'Exo 2',sans-serif;font-size:22px;font-weight:900;color:#fff;}
+.room-id{font-size:11px;color:var(--muted);margin-bottom:20px;}
+.room-players{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.rp-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.15);border-radius:10px;}
+.rp-dot{width:8px;height:8px;border-radius:50%;background:#a78bfa;box-shadow:0 0 6px #a78bfa;}
+.rp-name{flex:1;font-size:14px;font-weight:700;}
+.rp-badge{font-size:10px;background:rgba(124,58,237,0.2);color:#a78bfa;border-radius:4px;padding:2px 7px;}
+.map-select{display:none;margin-bottom:16px;}
+.map-select-title{font-size:12px;color:var(--muted);letter-spacing:2px;font-weight:700;text-transform:uppercase;margin-bottom:8px;}
+.map-options{display:flex;gap:8px;}
+.map-opt{flex:1;background:var(--card);border:2px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.map-opt.selected{border-color:var(--accent);}
+.map-opt-icon{font-size:22px;}
+.map-opt-name{font-size:12px;font-weight:700;color:var(--text);margin-top:4px;}
+.map-opt-hint{font-size:10px;color:var(--muted);margin-top:2px;}
+.waiting-hint{text-align:center;font-size:12px;color:var(--muted);margin-bottom:12px;}
+.start-btn{width:100%;background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;color:#fff;padding:14px;font-size:17px;font-weight:900;font-family:'Exo 2',sans-serif;letter-spacing:2px;border-radius:12px;cursor:pointer;box-shadow:0 4px 20px rgba(124,58,237,0.3);margin-bottom:10px;display:none;}
+.back-btn{width:100%;background:transparent;border:1px solid rgba(255,100,100,0.3);color:#f87171;padding:10px;font-size:13px;font-weight:700;border-radius:10px;cursor:pointer;font-family:'Rajdhani',sans-serif;}
 
-/* DAILY REWARD POPUP */
-#dailyPopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:998;align-items:center;justify-content:center;}
-.daily-popup{background:linear-gradient(135deg,#0a1828,#0a0520);border:2px solid #ffd700;border-radius:20px;padding:40px;text-align:center;box-shadow:0 0 60px rgba(255,215,0,0.3);}
-.daily-popup h2{font-size:28px;color:#ffd700;margin-bottom:8px;}
-.daily-popup .day-streak{font-size:14px;color:#88aacc;margin-bottom:20px;}
-.daily-coins{font-size:60px;margin:20px 0;}
-.daily-amount{font-size:32px;font-weight:700;color:#ffd700;}
-.btn-claim{background:linear-gradient(90deg,#cc8800,#ffd700);color:#000;border:none;padding:14px 48px;border-radius:30px;font-size:18px;font-weight:700;cursor:pointer;font-family:Rajdhani,monospace;margin-top:20px;}
+/* ── INVITE POPUP ── */
+#invitePopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:999;align-items:center;justify-content:center;}
+.invite-box{background:rgba(13,18,32,0.98);border:1px solid rgba(79,142,255,0.3);border-radius:20px;padding:32px;text-align:center;max-width:340px;}
+.invite-box h3{font-family:'Exo 2',sans-serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:6px;}
+.invite-box p{font-size:14px;color:var(--muted);margin-bottom:24px;}
+.invite-btns{display:flex;gap:10px;justify-content:center;}
+.btn-accept{background:linear-gradient(135deg,#22c55e,#16a34a);border:none;color:#fff;padding:12px 28px;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;}
+.btn-decline{background:transparent;border:1px solid var(--red);color:var(--red);padding:12px 28px;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;}
 
-#toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#0a1828;border:1px solid rgba(0,200,255,0.4);color:#00e5ff;padding:10px 24px;border-radius:24px;font-size:13px;font-weight:600;z-index:1000;display:none;pointer-events:none;}
+/* ── DAILY POPUP ── */
+#dailyPopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:998;align-items:center;justify-content:center;}
+.daily-popup-box{background:rgba(13,18,32,0.98);border:2px solid var(--gold);border-radius:24px;padding:40px;text-align:center;max-width:320px;box-shadow:0 0 60px rgba(245,158,11,0.2);}
+.daily-popup-box h2{font-family:'Exo 2',sans-serif;font-size:26px;font-weight:900;color:var(--gold);margin-bottom:6px;}
+.daily-streak{font-size:13px;color:var(--muted);margin-bottom:16px;}
+.daily-reward-icon{font-size:56px;margin-bottom:8px;}
+.daily-amount{font-family:'Exo 2',sans-serif;font-size:36px;font-weight:900;color:var(--gold);}
+.daily-sub{font-size:13px;color:var(--muted);margin-top:4px;margin-bottom:20px;}
+.btn-claim{background:linear-gradient(135deg,var(--gold),#f97316);border:none;color:#000;padding:14px 40px;border-radius:24px;font-size:17px;font-weight:900;cursor:pointer;font-family:'Exo 2',sans-serif;}
+
+/* ── TOAST ── */
+#toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:rgba(13,18,32,0.98);border:1px solid rgba(79,142,255,0.4);color:#fff;padding:10px 24px;border-radius:20px;font-size:13px;font-weight:600;z-index:1000;display:none;pointer-events:none;backdrop-filter:blur(10px);}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px;}
 </style>
 </head>
 <body>
 
-<!-- AUTH -->
+<!-- ── AUTH ── -->
 <div id="authScreen">
-  <div class="title">URBAN FRONTLINE</div>
-  <div class="sub">BATTLE ROYALE</div>
-  <div class="card">
-    <div class="atabs">
-      <button class="atab active" id="tabLogin" onclick="showTab('login')">כניסה</button>
-      <button class="atab" id="tabReg" onclick="showTab('register')">הרשמה</button>
+  <div class="auth-box">
+    <div class="auth-logo">
+      <h1>URBAN FRONTLINE</h1>
+      <p>BATTLE ROYALE</p>
     </div>
-    <div id="loginForm" style="display:flex;flex-direction:column;gap:10px;">
-      <input class="inp" id="loginName" type="text" placeholder="שם משתמש" maxlength="16">
-      <input class="inp" id="loginPass" type="password" placeholder="סיסמה" maxlength="30" onkeydown="if(event.key==='Enter')doLogin()">
-      <div class="err" id="loginErr"></div>
-      <button class="btn-main" onclick="doLogin()">כניסה</button>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="showTab('login')">כניסה</button>
+      <button class="auth-tab" id="tabReg" onclick="showTab('register')">הרשמה</button>
     </div>
-    <div id="regForm" style="display:none;flex-direction:column;gap:10px;">
-      <input class="inp" id="regName" type="text" placeholder="שם משתמש" maxlength="16">
-      <input class="inp" id="regPass" type="password" placeholder="סיסמה (מינ. 4)" maxlength="30">
-      <input class="inp" id="regPass2" type="password" placeholder="אימות סיסמה" maxlength="30" onkeydown="if(event.key==='Enter')doRegister()">
-      <div class="err" id="regErr"></div>
-      <button class="btn-main" onclick="doRegister()">צור חשבון</button>
+    <div id="loginForm">
+      <input class="auth-inp" id="loginName" type="text" placeholder="שם משתמש" maxlength="16">
+      <input class="auth-inp" id="loginPass" type="password" placeholder="סיסמה" maxlength="30" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="auth-err" id="loginErr"></div>
+      <button class="auth-btn" onclick="doLogin()">כניסה</button>
+    </div>
+    <div id="regForm" style="display:none;">
+      <input class="auth-inp" id="regName" type="text" placeholder="שם משתמש" maxlength="16">
+      <input class="auth-inp" id="regPass" type="password" placeholder="סיסמה (מינ. 4)" maxlength="30">
+      <input class="auth-inp" id="regPass2" type="password" placeholder="אימות סיסמה" maxlength="30" onkeydown="if(event.key==='Enter')doRegister()">
+      <div class="auth-err" id="regErr"></div>
+      <button class="auth-btn" onclick="doRegister()">צור חשבון</button>
     </div>
   </div>
 </div>
 
-<!-- TOP BAR -->
-<div id="topBar">
-  <div class="tb-name" id="tbName"></div>
-  <div class="tb-coins">🪙 <span id="tbCoins">0</span></div>
-  <div class="tb-stats">🏆 <span id="tbWins">0</span> | 💀 <span id="tbKills">0</span></div>
-  <button class="btn-red" onclick="logout()" style="margin-right:0;">יציאה</button>
-</div>
+<!-- ── MAIN ── -->
+<div id="mainScreen">
+  <!-- TOP NAV -->
+  <nav class="top-nav">
+    <button class="nav-tab active" onclick="switchTab('lobby')">LOBBY</button>
+    <button class="nav-tab" onclick="switchTab('shop')">SHOP</button>
+    <button class="nav-tab" onclick="switchTab('battlepass')">BATTLE PASS</button>
+    <button class="nav-tab" onclick="switchTab('club')">CLUB</button>
+    <div class="nav-right">
+      <div class="currency-badge"><span class="icon">💎</span><span id="navCoins">0</span></div>
+      <div class="player-badge">
+        <div>
+          <div class="player-name" id="navName">-</div>
+          <div class="player-level">🏆 <span id="navWins">0</span> ניצחונות</div>
+        </div>
+      </div>
+      <button onclick="logout()" style="background:transparent;border:1px solid rgba(255,100,100,0.3);color:#f87171;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;">יציאה</button>
+    </div>
+    <div class="nav-logo">URBAN FRONTLINE</div>
+  </nav>
 
-<!-- LOBBY -->
-<div id="lobbyScreen">
-  <div class="nav-tabs">
-    <button class="ntab active" onclick="showPane('players')">👥 שחקנים</button>
-    <button class="ntab" onclick="showPane('groups')">⚔️ קבוצות</button>
-    <button class="ntab" onclick="showPane('shop')">🛒 חנות</button>
-    <button class="ntab" onclick="showPane('battlepass')">⭐ באטל פאס</button>
-    <button class="ntab" onclick="showPane('daily')">🎁 יומי</button>
-    <button class="ntab" onclick="showPane('club')">🏆 קלאב</button>
-  </div>
-
-  <!-- PLAYERS -->
-  <div class="pane active" id="pane-players">
-    <div class="panel">
-      <div class="panel-title">👥 שחקנים אונליין (<span id="playerCount">0</span>)</div>
-      <div id="playerList"><div class="empty">אין שחקנים...</div></div>
+  <!-- LOBBY PANE -->
+  <div class="pane active" id="pane-lobby">
+    <div class="lobby-grid">
+      <div class="lobby-left">
+        <!-- Hero -->
+        <div class="lobby-hero">
+          <div class="hero-skin" id="heroSkinPreview">🧑</div>
+          <div class="hero-info">
+            <div class="hero-name" id="heroName">-</div>
+            <div class="hero-level">רמה <span id="heroLevel">1</span></div>
+            <div class="xp-bar-wrap">
+              <div class="xp-label"><span>XP</span><span><span id="heroXP">0</span> / <span id="heroNextXP">500</span></span></div>
+              <div class="xp-bar"><div class="bp-fill" id="heroXPFill" style="width:0%"></div></div>
+            </div>
+            <div class="stats-row">
+              <div class="stat"><div class="stat-val" id="heroWins">0</div><div class="stat-lbl">ניצחונות</div></div>
+              <div class="stat"><div class="stat-val" id="heroKills">0</div><div class="stat-lbl">הרגות</div></div>
+              <div class="stat"><div class="stat-val" id="heroCoins">0</div><div class="stat-lbl">💎</div></div>
+            </div>
+          </div>
+        </div>
+        <!-- Play -->
+        <button class="play-btn" onclick="switchTab('groups')" style="margin-bottom:20px;">▶ PLAY</button>
+        <!-- Challenges -->
+        <div class="section-title">משימות יומיות</div>
+        <div class="challenges-list">
+          <div class="challenge"><div class="ch-icon">🎮</div><div class="ch-info"><div class="ch-name">שחק משחק אחד</div><div class="ch-prog">0 / 1</div><div class="ch-prog-bar"><div class="ch-prog-fill" style="width:0%"></div></div></div><div class="ch-reward"><span>💎</span>50</div></div>
+          <div class="challenge"><div class="ch-icon">💀</div><div class="ch-info"><div class="ch-name">השג 5 הרגות</div><div class="ch-prog">0 / 5</div><div class="ch-prog-bar"><div class="ch-prog-fill" style="width:0%"></div></div></div><div class="ch-reward"><span>💎</span>70</div></div>
+          <div class="challenge"><div class="ch-icon">🏆</div><div class="ch-info"><div class="ch-name">נצח משחק</div><div class="ch-prog">0 / 1</div><div class="ch-prog-bar"><div class="ch-prog-fill" style="width:0%"></div></div></div><div class="ch-reward"><span>💎</span>100</div></div>
+        </div>
+      </div>
+      <div class="lobby-right">
+        <!-- Players -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">שחקנים אונליין</div>
+            <div style="display:flex;align-items:center;gap:6px;"><div class="online-dot"></div><span style="font-size:12px;color:var(--muted);" id="onlineCount">0</span></div>
+          </div>
+          <div class="player-list" id="playerList"><div class="empty">אין שחקנים...</div></div>
+        </div>
+        <!-- Groups quick -->
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">קבוצות פתוחות</div><button onclick="switchTab('groups')" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;">הכל →</button></div>
+          <div id="quickGroupList"><div class="empty">אין קבוצות...</div></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- GROUPS -->
+  <!-- GROUPS PANE -->
   <div class="pane" id="pane-groups">
-    <div class="create-form">
-      <div class="panel-title" style="margin-bottom:4px;">➕ צור קבוצה</div>
-      <input class="inp" id="groupNameInp" placeholder="שם הקבוצה" maxlength="24">
-      <select class="select-inp" id="groupMaxInp">
-        <option value="2">2 שחקנים</option>
-        <option value="4">4 שחקנים</option>
-        <option value="6">6 שחקנים</option>
-        <option value="8">8 שחקנים</option>
-        <option value="10" selected>10 שחקנים</option>
-      </select>
-      <button class="btn-create" onclick="createGroup()">🚀 פתח קבוצה</button>
-    </div>
-    <div class="panel">
-      <div class="panel-title">🌐 קבוצות פתוחות</div>
-      <div id="groupList"><div class="empty">אין קבוצות...</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:800px;">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">צור קבוצה</div></div>
+        <input class="group-inp" id="groupNameInp" placeholder="שם הקבוצה" maxlength="24">
+        <select class="group-select" id="groupMaxInp">
+          <option value="2">2 שחקנים</option>
+          <option value="4">4 שחקנים</option>
+          <option value="6">6 שחקנים</option>
+          <option value="8">8 שחקנים</option>
+          <option value="10" selected>10 שחקנים</option>
+        </select>
+        <button class="auth-btn" onclick="createGroup()" style="margin-top:4px;">🚀 פתח קבוצה</button>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">קבוצות פתוחות</div></div>
+        <div class="group-list" id="groupList"><div class="empty">אין קבוצות...</div></div>
+      </div>
     </div>
   </div>
 
-  <!-- SHOP -->
+  <!-- SHOP PANE -->
   <div class="pane" id="pane-shop">
-    <div class="panel">
-      <div class="panel-title">🛒 חנות סקינים</div>
-      <div class="skin-grid" id="skinGrid"></div>
+    <div class="shop-header">
+      <div class="shop-title">🛒 חנות</div>
     </div>
+    <div class="featured-grid" id="skinGrid"></div>
   </div>
 
-  <!-- BATTLE PASS -->
+  <!-- BATTLE PASS PANE -->
   <div class="pane" id="pane-battlepass">
-    <div class="bp-bar-wrap">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <div class="bp-level">⭐ רמה <span id="bpLevel">0</span></div>
-        <div class="bp-xp"><span id="bpXP">0</span> / <span id="bpNextXP">500</span> XP</div>
+    <div class="bp-hero">
+      <div class="bp-icon">⭐</div>
+      <div class="bp-info">
+        <div class="bp-season">SEASON 1</div>
+        <div class="bp-name">URBAN ASSAULT</div>
+        <div class="bp-ends">45 ימים נותרו</div>
+        <div class="bp-level-row">
+          <div class="bp-level-badge" id="bpLevelBadge">0</div>
+          <div class="bp-xp-info">
+            <div class="bp-xp-label"><span>XP</span><span><span id="bpXP">0</span> / 500</span></div>
+            <div class="bp-bar"><div class="bp-fill" id="bpFill" style="width:0%"></div></div>
+          </div>
+        </div>
       </div>
-      <div class="bp-bar"><div class="bp-fill" id="bpFill" style="width:0%"></div></div>
     </div>
-    <div class="panel">
-      <div class="panel-title">🎁 פרסים</div>
-      <div class="bp-rewards" id="bpRewards"></div>
-    </div>
-    <div class="panel" style="font-size:12px;color:#4488aa;line-height:1.8;">
-      <div class="panel-title">📋 איך מרוויחים XP?</div>
-      ✅ ניצחון — 150 XP<br>
-      🔫 הרג — 25 XP<br>
-      🎮 כל משחק — XP אוטומטי
+    <div class="section-title" style="margin-bottom:12px;">פרסים</div>
+    <div class="tiers-scroll" id="tiersScroll"></div>
+    <div class="how-earn" style="margin-top:20px;">
+      <div class="section-title" style="margin-bottom:10px;">איך מרוויחים XP?</div>
+      <div class="earn-row"><div class="earn-icon">🏆</div><div class="earn-text">ניצחון</div><div class="earn-xp">+150 XP</div></div>
+      <div class="earn-row"><div class="earn-icon">🔫</div><div class="earn-text">הרג</div><div class="earn-xp">+25 XP</div></div>
+      <div class="earn-row"><div class="earn-icon">🎁</div><div class="earn-text">כניסה יומית</div><div class="earn-xp">+50 XP</div></div>
     </div>
   </div>
 
-  <!-- DAILY -->
-  <div class="pane" id="pane-daily">
-    <div class="panel">
-      <div class="panel-title">🎁 פרס התחברות יומי</div>
-      <div class="daily-grid" id="dailyGrid"></div>
-    </div>
-    <div class="panel" style="font-size:12px;color:#4488aa;line-height:2;">
-      <div class="panel-title">🪙 איך מרוויחים מטבעות?</div>
-      🏆 ניצחון — +200 מטבעות<br>
-      🔫 הרג — +10 מטבעות<br>
-      🎁 כניסה יומית — עד 500 מטבעות
-    </div>
-  </div>
-
-
-  <!-- CLUB -->
+  <!-- CLUB PANE -->
   <div class="pane" id="pane-club">
-    <!-- No club -->
     <div id="clubNoMember">
-      <div class="panel">
-        <div class="panel-title">🏆 קלאבים</div>
-        <div class="xp-lock" id="clubXPMsg">צריך 5000 XP להצטרף או ליצור קלאב</div>
-        <div id="clubCreateArea" style="display:none;margin-bottom:12px;">
-          <input class="inp" id="clubNameInp" placeholder="שם הקלאב שלך" maxlength="20" style="margin-bottom:8px;">
-          <button class="btn-create" onclick="createClub()">➕ צור קלאב חדש</button>
+      <div class="xp-lock-msg" id="clubXPMsg">צריך 5,000 XP ליצירה או הצטרפות לקלאב</div>
+      <div id="clubCreateArea" style="display:none;margin-bottom:20px;">
+        <div style="display:flex;gap:10px;">
+          <input class="auth-inp" id="clubNameInp" placeholder="שם הקלאב" maxlength="20" style="margin-bottom:0;">
+          <button class="auth-btn" onclick="createClub()" style="width:auto;padding:0 20px;white-space:nowrap;">➕ צור</button>
         </div>
-        <div class="panel-title" style="margin-top:8px;">קלאבים פתוחים</div>
-        <div class="clubs-list" id="clubsList"><div class="empty">אין קלאבים...</div></div>
       </div>
+      <div class="section-title" style="margin-bottom:12px;">קלאבים פתוחים</div>
+      <div class="clubs-list" id="clubsList"><div class="empty">אין קלאבים...</div></div>
     </div>
-    <!-- In club -->
     <div id="clubMember" style="display:none;">
-      <div class="panel">
-        <div class="club-header">
-          <div class="club-badge">🏆 <span id="clubName">-</span></div>
-          <div style="font-size:11px;color:#664488;">מנהיג: <span id="clubLeader">-</span></div>
-          <div style="font-size:11px;color:#664488;margin-right:auto;"><span id="clubCount">0</span>/20 חברים</div>
+      <div class="club-hero">
+        <div class="club-icon-big">⚔️</div>
+        <div class="club-meta">
+          <div class="club-name-big" id="clubNameBig">-</div>
+          <div class="club-tag">מנהיג: <span id="clubLeaderBig">-</span></div>
+          <div class="club-stats">
+            <div class="club-stat"><div class="club-stat-val" id="clubCountBig">0</div><div class="club-stat-lbl">חברים</div></div>
+          </div>
         </div>
-        <div class="club-members" id="clubMembers"></div>
-        <div style="margin-top:10px;display:flex;gap:8px;">
-          <button id="clubInviteBtn" onclick="clubInviteGame()" style="display:none;background:linear-gradient(90deg,#0088cc,#00e5ff);color:#000;border:none;padding:8px 16px;border-radius:16px;font-size:12px;font-weight:700;cursor:pointer;font-family:Rajdhani,monospace;flex:1;">🎮 הזמן לקלאב למשחק</button>
-          <button onclick="leaveClub()" style="background:transparent;border:1px solid rgba(255,70,100,0.4);color:#ff4466;border-radius:16px;padding:8px 16px;font-size:12px;cursor:pointer;font-family:Rajdhani,monospace;">עזוב קלאב</button>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button id="clubInviteBtn" onclick="clubInviteGame()" style="display:none;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;">🎮 הזמן למשחק</button>
+          <button onclick="leaveClub()" style="background:transparent;border:1px solid rgba(255,100,100,0.3);color:#f87171;padding:8px 16px;border-radius:10px;font-size:12px;cursor:pointer;font-family:'Rajdhani',sans-serif;">עזוב</button>
         </div>
       </div>
-      <div class="panel">
-        <div class="panel-title">💬 צ'אט קלאב</div>
-        <div class="chat-box" id="clubChat"></div>
-        <div class="chat-input-row">
-          <input class="chat-inp" id="clubChatInp" placeholder="כתוב הודעה..." maxlength="200" onkeydown="if(event.key==='Enter')sendClubChat()">
-          <button class="btn-send" onclick="sendClubChat()">שלח</button>
+      <div class="club-grid">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">חברים</div></div>
+          <div class="members-list" id="clubMembers"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">💬 צ'אט קלאב</div></div>
+          <div class="chat-box" id="clubChat"></div>
+          <div class="chat-row">
+            <input class="chat-inp" id="clubChatInp" placeholder="הודעה..." maxlength="200" onkeydown="if(event.key==='Enter')sendClubChat()">
+            <button class="btn-send" onclick="sendClubChat()">שלח</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
-  <button class="btn-red" onclick="logout()">← התנתקות</button>
 </div>
 
 <!-- ROOM -->
 <div id="roomScreen">
-  <div style="text-align:center;">
-    <div class="room-title" id="roomTitle">GAME ROOM ⚔️</div>
-    <div style="font-size:12px;color:#664488;" id="roomSubtitle"></div>
-  </div>
-  <div class="room-panel">
-    <div class="panel-title" style="color:#cc88ff;">שחקנים בחדר</div>
-    <div id="roomPlayers"></div>
-  </div>
-  <div class="waiting-hint" id="waitingHint"></div>
-  <div id="mapSelect" style="display:none;width:100%;">
-    <div class="panel-title" style="color:#cc88ff;text-align:center;margin-bottom:8px;">🗺️ בחר מפה</div>
-    <div style="display:flex;gap:10px;width:100%;">
-      <div id="mapCity" onclick="selectMap('city')" style="flex:1;background:rgba(0,30,60,0.6);border:2px solid #00e5ff;border-radius:10px;padding:12px;text-align:center;cursor:pointer;">
-        <div style="font-size:24px;">🏙️</div>
-        <div style="font-size:13px;font-weight:700;color:#00e5ff;">העיר</div>
-        <div style="font-size:10px;color:#4488aa;">מפה קלאסית</div>
-      </div>
-      <div id="mapAbandoned" onclick="selectMap('abandoned')" style="flex:1;background:rgba(30,10,10,0.6);border:2px solid rgba(150,0,255,0.3);border-radius:10px;padding:12px;text-align:center;cursor:pointer;">
-        <div style="font-size:24px;">🏚️</div>
-        <div style="font-size:13px;font-weight:700;color:#cc88ff;">עיר נטושה</div>
-        <div style="font-size:10px;color:#664488;">(עדיף עם הרבה שחקנים)</div>
+  <div class="room-box">
+    <div class="room-title-row"><div class="room-icon">⚔️</div><div class="room-name" id="roomTitle">GAME ROOM</div></div>
+    <div class="room-id" id="roomSubtitle"></div>
+    <div class="room-players" id="roomPlayers"></div>
+    <div class="map-select" id="mapSelect">
+      <div class="map-select-title">בחר מפה</div>
+      <div class="map-options">
+        <div class="map-opt selected" id="mapCity" onclick="selectMap('city')"><div class="map-opt-icon">🏙️</div><div class="map-opt-name">העיר</div><div class="map-opt-hint">קלאסית</div></div>
+        <div class="map-opt" id="mapAbandoned" onclick="selectMap('abandoned')"><div class="map-opt-icon">🏚️</div><div class="map-opt-name">עיר נטושה</div><div class="map-opt-hint">מפה גדולה</div></div>
       </div>
     </div>
+    <div class="waiting-hint" id="waitingHint"></div>
+    <button class="start-btn" id="startBtn" onclick="startGame()">▶ התחל משחק!</button>
+    <button class="back-btn" onclick="leaveRoom()">← חזור ללובי</button>
   </div>
-  <button class="btn-start" id="startBtn" style="display:none;" onclick="startGame()">▶ התחל משחק!</button>
-  <button class="btn-red" onclick="leaveRoom()">← חזור ללובי</button>
 </div>
 
-<!-- INVITE POPUP -->
+<!-- INVITE -->
 <div id="invitePopup">
-  <div class="popup">
-    <h3>🎮 הזמנה למשחק!</h3>
+  <div class="invite-box">
+    <h3>🎮 הזמנה!</h3>
     <p id="inviteMsg"></p>
-    <div class="popup-btns">
+    <div class="invite-btns">
       <button class="btn-accept" onclick="acceptInvite()">✅ קבל</button>
       <button class="btn-decline" onclick="declineInvite()">❌ דחה</button>
     </div>
   </div>
 </div>
 
-<!-- DAILY REWARD POPUP -->
+<!-- DAILY POPUP -->
 <div id="dailyPopup">
-  <div class="daily-popup">
+  <div class="daily-popup-box">
     <h2>🎁 פרס יומי!</h2>
-    <div class="day-streak" id="dailyStreakText"></div>
-    <div class="daily-coins">🪙</div>
+    <div class="daily-streak" id="dailyStreakText"></div>
+    <div class="daily-reward-icon">💎</div>
     <div class="daily-amount" id="dailyAmount">+0</div>
-    <div style="font-size:14px;color:#88aacc;margin-top:8px;">מטבעות נוספו לחשבונך!</div>
+    <div class="daily-sub">מטבעות נוספו!</div>
     <button class="btn-claim" onclick="closeDailyPopup()">תבעו! 🎉</button>
   </div>
 </div>
@@ -357,47 +522,37 @@ body{background:#050d1a;color:white;font-family:'Rajdhani',sans-serif;min-height
 <script src="/socket.io/socket.io.js"></script>
 <script>
 const socket = io();
-let myName = '';
-let myCoins = 0;
-let myWins = 0;
-let myKills = 0;
-let mySkin = 'rookie';
-let myOwnedSkins = ['rookie'];
-let myBPLevel = 0;
-let myBPXP = 0;
-let pendingFrom = '';
-let myRoom = null;
+let myName='',myCoins=0,myWins=0,myKills=0,mySkin='rookie',myOwnedSkins=['rookie'],myBPLevel=0,myBPXP=0;
+let pendingFrom='',myRoom=null,myClub=null,selectedMap='city';
 
-// ── HASH ──
 function h(p){let v=0;for(let i=0;i<p.length;i++){v=((v<<5)-v)+p.charCodeAt(i);v|=0;}return Math.abs(v).toString(36);}
 
-// ── TOAST ──
-function toast(msg,col='#00e5ff'){
+function toast(msg,col='#4f8eff'){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.style.borderColor=col;t.style.color=col;t.style.display='block';
+  t.textContent=msg;t.style.borderColor=col;t.style.display='block';
   setTimeout(()=>t.style.display='none',3000);
 }
 
 // ── TABS ──
 function showTab(tab){
   const isLogin=tab==='login';
-  document.getElementById('loginForm').style.display=isLogin?'flex':'none';
-  document.getElementById('regForm').style.display=isLogin?'none':'flex';
-  document.getElementById('tabLogin').className='atab'+(isLogin?' active':'');
-  document.getElementById('tabReg').className='atab'+(!isLogin?' active':'');
+  document.getElementById('loginForm').style.display=isLogin?'block':'none';
+  document.getElementById('regForm').style.display=isLogin?'none':'block';
+  document.getElementById('tabLogin').className='auth-tab'+(isLogin?' active':'');
+  document.getElementById('tabReg').className='auth-tab'+(!isLogin?' active':'');
 }
 function showErr(id,msg){const e=document.getElementById(id);e.textContent=msg;e.style.display='block';setTimeout(()=>e.style.display='none',3000);}
 
-function showPane(name){
+function switchTab(tab){
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('pane-'+name).classList.add('active');
-  const idx = ['players','groups','shop','battlepass','daily','club'].indexOf(name);
-  document.querySelectorAll('.ntab')[idx]?.classList.add('active');
-  if(name==='shop') renderShop();
-  if(name==='battlepass') renderBP();
-  if(name==='daily') renderDaily();
-  if(name==='club'){socket.emit('getClubs');if(myName)socket.emit('getMyClub',{name:myName});}
+  const tabMap={lobby:0,groups:1,shop:2,battlepass:3,club:4};
+  if(tabMap[tab]!==undefined) document.querySelectorAll('.nav-tab')[tabMap[tab]]?.classList.add('active');
+  const paneMap={lobby:'pane-lobby',groups:'pane-groups',shop:'pane-shop',battlepass:'pane-battlepass',club:'pane-club'};
+  if(paneMap[tab]) document.getElementById(paneMap[tab])?.classList.add('active');
+  if(tab==='shop') renderShop();
+  if(tab==='battlepass') renderBP();
+  if(tab==='club'){socket.emit('getClubs');if(myName)socket.emit('getMyClub',{name:myName});}
 }
 
 // ── AUTH ──
@@ -418,232 +573,156 @@ function doRegister(){
   socket.emit('register',{name,passHash:h(pass)});
 }
 
-socket.on('authError', msg => {
-  showErr('loginErr', msg);
-  showErr('regErr', msg);
-});
-
-socket.on('authOk', data => {
-  myName = data.name;
-  myCoins = data.coins;
-  myWins = data.wins;
-  myKills = data.kills;
-  mySkin = data.skin || localStorage.getItem('uf_skin_'+data.name) || 'rookie';
-  myOwnedSkins = data.ownedSkins || ['rookie'];
-  myBPLevel = data.battlePassLevel || 0;
-  myBPXP = data.battlePassXP || 0;
-  localStorage.setItem('uf_skin_'+data.name, mySkin);
-  updateTopBar();
-  socket.emit('join', myName);
-  show('lobbyScreen');
-  document.getElementById('topBar').style.display='flex';
-  if(data.dailyReward > 0){
-    document.getElementById('dailyAmount').textContent = '+'+data.dailyReward;
-    document.getElementById('dailyStreakText').textContent = 'יום '+data.loginStreak+' ברצף!';
+socket.on('authError',msg=>{showErr('loginErr',msg);showErr('regErr',msg);});
+socket.on('authOk',data=>{
+  myName=data.name;myCoins=data.coins;myWins=data.wins;myKills=data.kills;
+  mySkin=data.skin||localStorage.getItem('uf_skin_'+data.name)||'rookie';
+  myOwnedSkins=data.ownedSkins||['rookie'];
+  myBPLevel=data.battlePassLevel||0;myBPXP=data.battlePassXP||0;
+  localStorage.setItem('uf_skin_'+data.name,mySkin);
+  updateHUD();
+  socket.emit('join',myName);
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('mainScreen').style.display='flex';
+  if(data.dailyReward>0){
+    document.getElementById('dailyAmount').textContent='+'+data.dailyReward;
+    document.getElementById('dailyStreakText').textContent='יום '+data.loginStreak+' ברצף!';
     document.getElementById('dailyPopup').style.display='flex';
   }
 });
 
-socket.on('statsUpdate', data => {
-  if(data.coins !== undefined) myCoins = data.coins;
-  if(data.wins !== undefined) myWins = data.wins;
-  if(data.kills !== undefined) myKills = data.kills;
-  if(data.battlePassXP !== undefined) myBPXP = data.battlePassXP;
-  updateTopBar();
+socket.on('statsUpdate',data=>{
+  if(data.coins!==undefined)myCoins=data.coins;
+  if(data.wins!==undefined)myWins=data.wins;
+  if(data.kills!==undefined)myKills=data.kills;
+  if(data.battlePassXP!==undefined)myBPXP=data.battlePassXP;
+  updateHUD();
 });
 
-socket.on('buyResult', data => {
-  if(data.ok){
-    myCoins = data.coins;
-    myOwnedSkins = data.ownedSkins;
-    updateTopBar();
-    renderShop();
-    toast('✅ הסקין נרכש!','#00ff66');
-  } else {
-    toast('❌ '+data.msg,'#ff4466');
-  }
-});
-
-socket.on('equipResult', data => {
-  if(data.ok){ 
-    mySkin = data.skin; 
-    localStorage.setItem('uf_skin_'+myName, mySkin);
-    renderShop(); 
-    toast('✅ סקין מצויד! '+mySkin,'#00e5ff'); 
-  }
-});
-
-function updateTopBar(){
-  document.getElementById('tbName').textContent = myName;
-  document.getElementById('tbCoins').textContent = myCoins.toLocaleString();
-  document.getElementById('tbWins').textContent = myWins;
-  document.getElementById('tbKills').textContent = myKills;
+function updateHUD(){
+  document.getElementById('navCoins').textContent=myCoins.toLocaleString();
+  document.getElementById('navName').textContent=myName;
+  document.getElementById('navWins').textContent=myWins;
+  document.getElementById('heroName').textContent=myName;
+  document.getElementById('heroWins').textContent=myWins;
+  document.getElementById('heroKills').textContent=myKills;
+  document.getElementById('heroCoins').textContent=myCoins.toLocaleString();
+  const level=Math.floor(myBPXP/500);
+  document.getElementById('heroLevel').textContent=level+1;
+  const xpInLevel=myBPXP%500;
+  document.getElementById('heroXP').textContent=xpInLevel;
+  document.getElementById('heroXPFill').style.width=(xpInLevel/500*100)+'%';
+  // Hero skin emoji
+  const skinEmojis={rookie:'🧑',street:'🧢',commando:'🪖',agent:'🕶️',desert:'🏜️',snow:'❄️',ninja:'🥷',engineer:'🦺',robot:'🤖',cyber:'💻',medic:'🏥',firefighter:'🚒',harlimit:'🔥'};
+  document.getElementById('heroSkinPreview').textContent=skinEmojis[mySkin]||'🧑';
 }
 
-function closeDailyPopup(){
-  document.getElementById('dailyPopup').style.display='none';
-  myCoins += parseInt(document.getElementById('dailyAmount').textContent.replace('+',''));
-  updateTopBar();
-}
+function logout(){myName='';socket.emit('leave');document.getElementById('authScreen').style.display='flex';document.getElementById('mainScreen').style.display='none';}
+function closeDailyPopup(){document.getElementById('dailyPopup').style.display='none';updateHUD();}
 
-function logout(){
-  myName='';socket.emit('leave');
-  document.getElementById('topBar').style.display='none';
-  show('authScreen');
-}
-
-function show(id){
-  ['authScreen','lobbyScreen','roomScreen'].forEach(s=>document.getElementById(s).style.display='none');
-  document.getElementById(id).style.display='flex';
-}
-
-// ── SKINS DATA ──
-const SKINS = [
-  {id:'rookie',      name:'Rookie',          img:'https://i.imgur.com/bLdd0OJ.png', price:0,     rarity:'common',    winsReq:0,   label:'ברירת מחדל'},
-  {id:'street',      name:'שחקן רחוב',       img:'https://i.imgur.com/QefuNIy.png', price:0,     rarity:'common',    winsReq:5,   label:'5 ניצחונות'},
-  {id:'commando',    name:'חייל קומנדו',     img:'https://i.imgur.com/3f2ZRyS.png', price:0,     rarity:'common',    winsReq:15,  label:'15 ניצחונות'},
-  {id:'agent',       name:'סוכן מיוחד',      img:'https://i.imgur.com/I2gLpSX.png', price:500,   rarity:'rare',      winsReq:30,  label:'30 ניצחונות'},
-  {id:'desert',      name:'לוחם מדברי',      img:'https://i.imgur.com/5gnNNb3.png', price:800,   rarity:'rare',      winsReq:50,  label:'50 ניצחונות'},
-  {id:'snow',        name:'לוחם שלג',        img:'https://i.imgur.com/NSkNX0q.png', price:1200,  rarity:'epic',      winsReq:75,  label:'75 ניצחונות'},
-  {id:'ninja',       name:"נינג'ה",          img:'https://i.imgur.com/a1lK8Jk.png', price:1500,  rarity:'epic',      winsReq:100, label:'100 ניצחונות'},
-  {id:'engineer',    name:'מהנדס',           img:'https://i.imgur.com/rnwsFDI.png', price:2000,  rarity:'epic',      winsReq:150, label:'150 ניצחונות'},
-  {id:'robot',       name:'רובוט',           img:'https://i.imgur.com/xGOx935.png', price:3500,  rarity:'legendary', winsReq:250, label:'250 ניצחונות'},
-  {id:'cyber',       name:'סייבר',           img:'https://i.imgur.com/2aZFdIi.png', price:2500,  rarity:'epic',      winsReq:0,   label:'2,500 מטבעות'},
-  {id:'medic',       name:'חובש',            img:'https://i.imgur.com/D9d8Vat.png', price:1800,  rarity:'rare',      winsReq:0,   label:'1,800 מטבעות'},
-  {id:'firefighter', name:'כבאי',            img:'https://i.imgur.com/qiFaFPQ.png', price:2000,  rarity:'rare',      winsReq:0,   label:'2,000 מטבעות'},
-  {id:'harlimit',    name:'🔥 הרלמית',       img:'/skin_default.png',               price:10000, rarity:'legendary', winsReq:0,   label:'10,000 מטבעות', exclusive:true},
+// ── SKINS ──
+const SKINS=[
+  {id:'rookie',name:'Rookie',img:'https://i.imgur.com/bLdd0OJ.png',price:0,rarity:'common',winsReq:0,label:'ברירת מחדל'},
+  {id:'street',name:'שחקן רחוב',img:'https://i.imgur.com/QefuNIy.png',price:0,rarity:'common',winsReq:5,label:'5 ניצחונות'},
+  {id:'commando',name:'חייל קומנדו',img:'https://i.imgur.com/3f2ZRyS.png',price:0,rarity:'common',winsReq:15,label:'15 ניצחונות'},
+  {id:'agent',name:'סוכן מיוחד',img:'https://i.imgur.com/I2gLpSX.png',price:500,rarity:'rare',winsReq:30,label:'30 ניצחונות'},
+  {id:'desert',name:'לוחם מדברי',img:'https://i.imgur.com/5gnNNb3.png',price:800,rarity:'rare',winsReq:50,label:'50 ניצחונות'},
+  {id:'snow',name:'לוחם שלג',img:'https://i.imgur.com/NSkNX0q.png',price:1200,rarity:'epic',winsReq:75,label:'75 ניצחונות'},
+  {id:'ninja',name:"נינג'ה",img:'https://i.imgur.com/a1lK8Jk.png',price:1500,rarity:'epic',winsReq:100,label:'100 ניצחונות'},
+  {id:'engineer',name:'מהנדס',img:'https://i.imgur.com/rnwsFDI.png',price:2000,rarity:'epic',winsReq:150,label:'150 ניצחונות'},
+  {id:'robot',name:'רובוט',img:'https://i.imgur.com/xGOx935.png',price:3500,rarity:'legendary',winsReq:250,label:'250 ניצחונות'},
+  {id:'cyber',name:'סייבר',img:'https://i.imgur.com/2aZFdIi.png',price:2500,rarity:'epic',winsReq:0,label:'2,500 מטבעות'},
+  {id:'medic',name:'חובש',img:'https://i.imgur.com/D9d8Vat.png',price:1800,rarity:'rare',winsReq:0,label:'1,800 מטבעות'},
+  {id:'firefighter',name:'כבאי',img:'https://i.imgur.com/qiFaFPQ.png',price:2000,rarity:'rare',winsReq:0,label:'2,000 מטבעות'},
+  {id:'harlimit',name:'🔥 הרלמית',img:'/skin_default.png',price:10000,rarity:'legendary',winsReq:0,label:'10,000 מטבעות',exclusive:true},
 ];
 
 function renderShop(){
-  const grid = document.getElementById('skinGrid');
-  grid.innerHTML = SKINS.map(s => {
-    const owned = myOwnedSkins.includes(s.id) || s.price===0&&myWins>=(s.winsReq||0);
-    const equipped = mySkin === s.id;
-    const locked = s.winsReq > 0 && myWins < s.winsReq && !myOwnedSkins.includes(s.id);
-    let cls = 'skin-card rarity-'+s.rarity;
-    if(s.exclusive) cls += ' exclusive';
-    if(equipped) cls += ' equipped';
-    else if(owned) cls += ' owned';
-    let action = '';
-    if(equipped) action = '<div class="skin-equipped-badge">✅ מצויד</div>';
-    else if(locked) action = `<div style="font-size:11px;color:#664466;margin-top:4px;">🔒 ${s.label}</div>`;
-    else if(owned) action = `<button onclick="equipSkin('${s.id}')" style="background:rgba(0,180,255,0.2);border:1px solid #00e5ff;color:#00e5ff;border-radius:12px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:Rajdhani,monospace;">צייד</button>`;
-    else action = `<div class="skin-price">🪙 ${s.price.toLocaleString()}</div><button onclick="buySkin('${s.id}',${s.price})" style="background:linear-gradient(90deg,#cc8800,#ffd700);color:#000;border:none;border-radius:12px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:Rajdhani,monospace;margin-top:4px;">קנה</button>`;
-    return `<div class="${cls}" style="${locked?'opacity:0.5':''}">
-      <img src="${s.img}" style="width:80px;height:100px;object-fit:cover;border-radius:8px;margin-bottom:6px;display:block;margin-left:auto;margin-right:auto;">
-      <div class="skin-name">${s.name}</div>
-      ${action}
-    </div>`;
+  const grid=document.getElementById('skinGrid');
+  grid.innerHTML=SKINS.map(s=>{
+    const owned=myOwnedSkins.includes(s.id)||(s.price===0&&myWins>=(s.winsReq||0));
+    const equipped=mySkin===s.id;
+    const locked=s.winsReq>0&&myWins<s.winsReq&&!myOwnedSkins.includes(s.id);
+    let cls='featured-card '+s.rarity;
+    if(s.exclusive)cls+=' exclusive';
+    let action='';
+    if(equipped) action='<div class="card-equipped">✅ מצויד</div>';
+    else if(locked) action='<div class="card-locked">🔒 '+s.label+'</div>';
+    else if(owned) action='<button class="btn-equip" onclick="equipSkin(\''+s.id+'\')">צייד</button>';
+    else action='<div class="card-price"><span class="gem">💎</span>'+s.price.toLocaleString()+'</div><button class="btn-buy" onclick="buySkin(\''+s.id+'\','+s.price+')" style="margin-top:8px;">קנה</button>';
+    return '<div class="'+cls+'">'+(locked?'<div class="lock-badge">🔒 '+s.label+'</div>':'')+'<img src="'+s.img+'" class="card-img" onerror="this.style.display=\'none\'">'+'<div class="card-rarity '+s.rarity+'">'+s.rarity.toUpperCase()+'</div>'+'<div class="card-name">'+s.name+'</div>'+'<div class="card-action">'+action+'</div></div>';
   }).join('');
 }
 
-function buySkin(skinId, price){
-  socket.emit('buySkin',{name:myName, skinId, price});
-}
-function equipSkin(skinId){
-  socket.emit('equipSkin',{name:myName, skinId});
-}
+socket.on('buyResult',data=>{
+  if(data.ok){myCoins=data.coins;myOwnedSkins=data.ownedSkins;updateHUD();renderShop();toast('✅ הסקין נרכש!','#22c55e');}
+  else toast('❌ '+data.msg,'#ef4444');
+});
+socket.on('equipResult',data=>{
+  if(data.ok){mySkin=data.skin;localStorage.setItem('uf_skin_'+myName,mySkin);updateHUD();renderShop();toast('✅ סקין מצויד!','#4f8eff');}
+});
+function buySkin(id,price){socket.emit('buySkin',{name:myName,skinId:id,price});}
+function equipSkin(id){socket.emit('equipSkin',{name:myName,skinId:id});}
 
 // ── BATTLE PASS ──
-const BP_REWARDS = [
-  {level:1,  icon:'🪙', desc:'100 מטבעות'},
-  {level:5,  icon:'🎨', desc:'ספריי'},
-  {level:10, icon:'💙', desc:'סקין כחול'},
-  {level:15, icon:'🪙', desc:'300 מטבעות'},
-  {level:20, icon:'🪙', desc:'500 מטבעות'},
-  {level:25, icon:'❄️', desc:'Ice Trooper'},
-  {level:30, icon:'👑', desc:'סקין אפי'},
-  {level:40, icon:'🌌', desc:'Galaxy Hero'},
-  {level:50, icon:'🏆', desc:'סקין אגדי'},
+const BP_REWARDS=[
+  {level:1,icon:'💎',desc:'100 מטבעות'},
+  {level:5,icon:'🎨',desc:'ספריי'},
+  {level:10,icon:'💙',desc:'סקין כחול'},
+  {level:15,icon:'💎',desc:'300 מטבעות'},
+  {level:20,icon:'💎',desc:'500 מטבעות'},
+  {level:25,icon:'❄️',desc:'לוחם שלג'},
+  {level:30,icon:'👑',desc:'סקין אפי'},
+  {level:40,icon:'🌌',desc:'Galaxy Hero'},
+  {level:50,icon:'🏆',desc:'סקין אגדי'},
 ];
-const XP_PER_LEVEL = 500;
 
 function renderBP(){
-  const xpInLevel = myBPXP % XP_PER_LEVEL;
-  const pct = (xpInLevel / XP_PER_LEVEL * 100).toFixed(1);
-  document.getElementById('bpLevel').textContent = myBPLevel;
-  document.getElementById('bpXP').textContent = xpInLevel;
-  document.getElementById('bpNextXP').textContent = XP_PER_LEVEL;
-  document.getElementById('bpFill').style.width = pct + '%';
-  document.getElementById('bpRewards').innerHTML = BP_REWARDS.map(r => {
-    const unlocked = myBPLevel >= r.level;
-    return `<div class="bp-reward ${unlocked?'unlocked':''}">
-      <div class="bp-rlevel">רמה ${r.level}</div>
-      <div class="bp-ricon">${r.icon}</div>
-      <div class="bp-rdesc">${r.desc}</div>
-      ${unlocked?'<div style="font-size:9px;color:#00cc66;">✅</div>':''}
-    </div>`;
+  const xpInLevel=myBPXP%500;
+  const level=Math.floor(myBPXP/500);
+  document.getElementById('bpLevelBadge').textContent=level;
+  document.getElementById('bpXP').textContent=xpInLevel;
+  document.getElementById('bpFill').style.width=(xpInLevel/500*100)+'%';
+  document.getElementById('tiersScroll').innerHTML=BP_REWARDS.map(r=>{
+    const unlocked=level>=r.level;
+    return '<div class="tier'+(unlocked?' unlocked':'')+'"><div class="tier-num">'+r.level+'</div><div class="tier-icon">'+r.icon+'</div><div class="tier-desc">'+r.desc+'</div>'+(unlocked?'<div class="tier-check">✓</div>':'')+'</div>';
   }).join('');
 }
 
-// ── DAILY ──
-const DAILY_REWARDS = [
-  {day:1,icon:'🪙',reward:'50'},
-  {day:2,icon:'🪙',reward:'100'},
-  {day:3,icon:'🪙',reward:'150'},
-  {day:4,icon:'🪙',reward:'200'},
-  {day:5,icon:'🪙',reward:'250'},
-  {day:6,icon:'🪙',reward:'300'},
-  {day:7,icon:'🌟',reward:'500'},
-];
-
-function renderDaily(){
-  document.getElementById('dailyGrid').innerHTML = DAILY_REWARDS.map(r => `
-    <div class="day-card">
-      <div class="day-num">יום ${r.day}</div>
-      <div class="day-icon">${r.icon}</div>
-      <div class="day-reward">${r.reward}</div>
-    </div>`).join('');
-}
-
-// ── LOBBY ──
-socket.on('lobbyPlayers', players => {
-  document.getElementById('playerCount').textContent = players.length;
-  const list = document.getElementById('playerList');
+// ── PLAYERS ──
+socket.on('lobbyPlayers',players=>{
+  document.getElementById('onlineCount').textContent=players.length;
+  const list=document.getElementById('playerList');
   if(!players.length){list.innerHTML='<div class="empty">אין שחקנים...</div>';return;}
-  list.innerHTML = players.map(n=>`
-    <div class="player-row">
-      <div class="pdot"></div>
-      <div class="pname">${n}</div>
-      ${n===myName?'<span class="badge">אתה</span>':`<button class="invite-btn" onclick="sendInvite('${n}')">🎮 הזמן</button>`}
-    </div>`).join('');
+  list.innerHTML=players.map(n=>'<div class="player-row"><div class="p-avatar">'+n[0].toUpperCase()+'</div><div class="p-name">'+n+'</div>'+(n===myName?'<span class="p-you">אתה</span>':`<button class="invite-btn" onclick="sendInvite('${n}')">🎮 הזמן</button>`)+'</div>').join('');
 });
 
-socket.on('roomsList', rooms => {
-  const list = document.getElementById('groupList');
-  if(!rooms.length){list.innerHTML='<div class="empty">אין קבוצות פתוחות...</div>';return;}
-  list.innerHTML = rooms.map(r => {
-    const full = r.count >= r.max;
-    return `<div class="group-row">
-      <div class="group-info">
-        <div class="group-name">⚔️ ${r.name}</div>
-        <div class="group-host">מארח: ${r.host}</div>
-      </div>
-      <div class="group-count">${r.count}/${r.max}</div>
-      <button class="join-btn" onclick="joinGroup('${r.id}')" ${full?'disabled':''}>
-        ${full?'מלא':'הצטרף'}
-      </button>
-    </div>`;
+// ── GROUPS ──
+socket.on('roomsList',rooms=>{
+  const quickList=document.getElementById('quickGroupList');
+  const list=document.getElementById('groupList');
+  if(!rooms.length){
+    if(quickList)quickList.innerHTML='<div class="empty">אין קבוצות...</div>';
+    if(list)list.innerHTML='<div class="empty">אין קבוצות פתוחות...</div>';
+    return;
+  }
+  const html=rooms.map(r=>{
+    const full=r.count>=r.max;
+    return '<div class="group-row"><div class="g-info"><div class="g-name">⚔️ '+r.name+'</div><div class="g-host">מארח: '+r.host+'</div></div><div class="g-count">'+r.count+'/'+r.max+'</div><button class="join-btn" onclick="joinGroup(\''+r.id+'\')" '+(full?'disabled':'')+'>'+(full?'מלא':'הצטרף')+'</button></div>';
   }).join('');
+  if(quickList)quickList.innerHTML=html;
+  if(list)list.innerHTML=html;
 });
 
 function sendInvite(target){socket.emit('invite',target);toast('הזמנה נשלחה ל-'+target);}
-function createGroup(){
-  const name=document.getElementById('groupNameInp').value.trim()||myName+"'s Group";
-  const max=document.getElementById('groupMaxInp').value;
-  socket.emit('createGroup',{groupName:name,maxPlayers:parseInt(max)});
-}
+function createGroup(){const name=document.getElementById('groupNameInp').value.trim()||myName+"'s Group";const max=document.getElementById('groupMaxInp').value;socket.emit('createGroup',{groupName:name,maxPlayers:parseInt(max)});}
 function joinGroup(roomId){socket.emit('joinGroup',{roomId});}
 
 // ── INVITE ──
-socket.on('invited',({from})=>{
-  pendingFrom=from;
-  document.getElementById('inviteMsg').textContent=from+' מזמין אותך!';
-  document.getElementById('invitePopup').style.display='flex';
-});
+socket.on('invited',({from})=>{pendingFrom=from;document.getElementById('inviteMsg').textContent=from+' מזמין אותך!';document.getElementById('invitePopup').style.display='flex';});
 function acceptInvite(){document.getElementById('invitePopup').style.display='none';socket.emit('acceptInvite',{from:pendingFrom});}
 function declineInvite(){document.getElementById('invitePopup').style.display='none';socket.emit('declineInvite',{from:pendingFrom});}
-socket.on('inviteDeclined',({by})=>toast(by+' דחה','#ff4466'));
+socket.on('inviteDeclined',({by})=>toast(by+' דחה','#ef4444'));
 
 // ── ROOM ──
 socket.on('enterRoom',({roomId,players,host,roomName})=>{
@@ -651,22 +730,15 @@ socket.on('enterRoom',({roomId,players,host,roomName})=>{
   document.getElementById('roomTitle').textContent=roomName||'GAME ROOM';
   document.getElementById('roomSubtitle').textContent='מזהה: '+roomId.slice(-6);
   renderRoom(players,host);
-  show('roomScreen');
-  toast('נכנסת לחדר!','#aa44ff');
+  document.querySelectorAll('#authScreen,#mainScreen').forEach(e=>e.style.display='none');
+  document.getElementById('roomScreen').style.display='flex';
+  toast('נכנסת לחדר!','#a78bfa');
 });
-socket.on('roomUpdate',({players,host,roomName})=>{
-  if(roomName)document.getElementById('roomTitle').textContent=roomName;
-  renderRoom(players,host);
-});
-socket.on('playerLeft',name=>toast(name+' עזב','#ff4466'));
+socket.on('roomUpdate',({players,host,roomName})=>{if(roomName)document.getElementById('roomTitle').textContent=roomName;renderRoom(players,host);});
+socket.on('playerLeft',name=>toast(name+' עזב','#ef4444'));
 
 function renderRoom(players,host){
-  document.getElementById('roomPlayers').innerHTML=players.map(n=>`
-    <div class="rplayer">
-      <div class="rdot"></div>
-      <div class="rname">${n}</div>
-      <span class="rbadge">${n===host?'👑 מארח':n===myName?'אתה':'מחובר'}</span>
-    </div>`).join('');
+  document.getElementById('roomPlayers').innerHTML=players.map(n=>'<div class="rp-row"><div class="rp-dot"></div><div class="rp-name">'+n+'</div><span class="rp-badge">'+(n===host?'👑 מארח':n===myName?'אתה':'מחובר')+'</span></div>').join('');
   const btn=document.getElementById('startBtn');
   const hint=document.getElementById('waitingHint');
   const mapSel=document.getElementById('mapSelect');
@@ -676,132 +748,74 @@ function renderRoom(players,host){
     mapSel.style.display='block';
   } else {
     btn.style.display='none';
-    hint.textContent='ממתין למארח...';
+    hint.textContent='ממתין למארח שיתחיל...';
     mapSel.style.display='none';
   }
 }
 
-let selectedMap = 'city';
 function selectMap(map){
-  selectedMap = map;
-  document.getElementById('mapCity').style.borderColor = map==='city'?'#00e5ff':'rgba(0,200,255,0.2)';
-  document.getElementById('mapAbandoned').style.borderColor = map==='abandoned'?'#aa44ff':'rgba(150,0,255,0.3)';
+  selectedMap=map;
+  document.getElementById('mapCity').classList.toggle('selected',map==='city');
+  document.getElementById('mapAbandoned').classList.toggle('selected',map==='abandoned');
 }
-
-function leaveRoom(){socket.emit('leaveRoom');myRoom=null;show('lobbyScreen');}
-function startGame(){socket.emit('startGame',{roomId:myRoom, map:selectedMap});}
-
+function leaveRoom(){socket.emit('leaveRoom');myRoom=null;document.getElementById('roomScreen').style.display='none';document.getElementById('mainScreen').style.display='flex';}
+function startGame(){socket.emit('startGame',{roomId:myRoom,map:selectedMap});}
 socket.on('gameStarted',({roomId,players,map})=>{
   const params=new URLSearchParams({room:roomId,name:myName,players:players.join(','),skin:mySkin,map:map||'city'});
   window.location.href='/game?'+params.toString();
 });
 
 // ── CLUB ──
-let myClub = null;
-
-socket.on('clubJoined', club => {
-  myClub = club;
-  if(club) renderClub(club);
-  else { document.getElementById('clubNoMember').style.display='block'; document.getElementById('clubMember').style.display='none'; }
+socket.on('clubJoined',club=>{
+  myClub=club;
+  if(club)renderClub(club);
+  else{document.getElementById('clubNoMember').style.display='block';document.getElementById('clubMember').style.display='none';}
   updateClubXPAccess();
 });
-
-socket.on('clubUpdate', club => { myClub=club; renderClub(club); });
-
-socket.on('clubMessage', msg => {
-  const box = document.getElementById('clubChat');
-  if(!box) return;
-  const div = document.createElement('div');
-  div.className = 'chat-msg' + (msg.system?' system':'');
-  div.innerHTML = msg.system ? msg.text : `<span class="from">${msg.from}:</span> ${msg.text}`;
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
+socket.on('clubUpdate',club=>{myClub=club;renderClub(club);});
+socket.on('clubMessage',msg=>{
+  const box=document.getElementById('clubChat');if(!box)return;
+  const div=document.createElement('div');div.className='chat-msg'+(msg.system?' sys':'');
+  div.innerHTML=msg.system?msg.text:'<span class="from">'+msg.from+':</span> '+msg.text;
+  box.appendChild(div);box.scrollTop=box.scrollHeight;
 });
-
-socket.on('clubsList', list => {
-  const el = document.getElementById('clubsList');
-  if(!el) return;
-  if(!list.length){ el.innerHTML='<div class="empty">אין קלאבים פתוחים...</div>'; return; }
-  el.innerHTML = list.map(c => `
-    <div class="club-row">
-      <div class="club-row-name">🏆 ${c.name}</div>
-      <div class="club-row-count">${c.count}/20</div>
-      <button class="btn-join-club" onclick="joinClub('${c.id}')" ${c.count>=20?'disabled':''}>הצטרף</button>
-    </div>`).join('');
+socket.on('clubsList',list=>{
+  const el=document.getElementById('clubsList');if(!el)return;
+  if(!list.length){el.innerHTML='<div class="empty">אין קלאבים...</div>';return;}
+  el.innerHTML=list.map(c=>'<div class="club-row-item"><div style="flex:1"><div style="font-size:14px;font-weight:700;">⚔️ '+c.name+'</div><div style="font-size:11px;color:var(--muted);">מנהיג: '+c.leader+'</div></div><div style="font-size:12px;color:var(--accent);">'+c.count+'/20</div><button class="join-btn" onclick="joinClub(\''+c.id+'\')">הצטרף</button></div>').join('');
 });
-
-socket.on('clubError', msg => toast('❌ '+msg,'#ff4466'));
-
-socket.on('clubGameInvite', ({from, roomId, clubName}) => {
-  pendingFrom = from;
-  document.getElementById('inviteMsg').textContent = from+' מזמין את כולי ב-'+clubName+' למשחק!';
-  document.getElementById('invitePopup').style.display='flex';
-});
+socket.on('clubError',msg=>toast('❌ '+msg,'#ef4444'));
+socket.on('clubGameInvite',({from,roomId})=>{pendingFrom=from;document.getElementById('inviteMsg').textContent=from+' מזמין את כולי הקלאב למשחק!';document.getElementById('invitePopup').style.display='flex';});
 
 function updateClubXPAccess(){
-  const hasXP = myBPXP >= 5000;
-  document.getElementById('clubXPMsg').textContent = hasXP ? '' : 'צריך 5000 XP להצטרף או ליצור קלאב (יש לך '+myBPXP+' XP)';
-  document.getElementById('clubCreateArea').style.display = hasXP ? 'block' : 'none';
+  const has=myBPXP>=5000;
+  document.getElementById('clubXPMsg').textContent=has?'':'צריך 5,000 XP (יש לך '+myBPXP+' XP)';
+  document.getElementById('clubXPMsg').style.display=has?'none':'block';
+  document.getElementById('clubCreateArea').style.display=has?'block':'none';
 }
-
 function renderClub(club){
   document.getElementById('clubNoMember').style.display='none';
   document.getElementById('clubMember').style.display='block';
-  document.getElementById('clubName').textContent = club.name;
-  document.getElementById('clubLeader').textContent = club.leader;
-  document.getElementById('clubCount').textContent = club.members.length;
-  document.getElementById('clubMembers').innerHTML = club.members.map(m => `
-    <div class="club-member">
-      <div class="club-member-name">${m}</div>
-      ${m===club.leader?'<span class="club-crown">👑</span>':''}
-      ${m===myName?'<span style="font-size:10px;color:#00e5ff;">אתה</span>':''}
-    </div>`).join('');
-  const invBtn = document.getElementById('clubInviteBtn');
-  if(invBtn) invBtn.style.display = myName===club.leader&&myRoom?'block':'none';
+  document.getElementById('clubNameBig').textContent=club.name;
+  document.getElementById('clubLeaderBig').textContent=club.leader;
+  document.getElementById('clubCountBig').textContent=club.members.length+'/20';
+  document.getElementById('clubMembers').innerHTML=club.members.map(m=>'<div class="member-row"><div class="member-avatar">'+m[0].toUpperCase()+'</div><div class="member-name">'+m+'</div>'+(m===club.leader?'<span class="crown">👑</span>':'')+'</div>').join('');
+  const invBtn=document.getElementById('clubInviteBtn');
+  if(invBtn)invBtn.style.display=myName===club.leader&&myRoom?'block':'none';
 }
+function createClub(){const name=document.getElementById('clubNameInp').value.trim();if(!name){toast('כתוב שם לקלאב','#ef4444');return;}socket.emit('createClub',{name:myName,clubName:name});}
+function joinClub(clubId){socket.emit('joinClub',{name:myName,clubId});}
+function leaveClub(){socket.emit('leaveClub',{name:myName});myClub=null;}
+function sendClubChat(){const inp=document.getElementById('clubChatInp');const text=inp.value.trim();if(!text)return;socket.emit('clubChat',{name:myName,text});inp.value='';}
+function clubInviteGame(){if(!myRoom||!myClub)return;socket.emit('clubInviteGame',{name:myName,roomId:myRoom});toast('הזמנה נשלחה לכל הקלאב!','#a78bfa');}
 
-function createClub(){
-  const name = document.getElementById('clubNameInp').value.trim();
-  if(!name){ toast('כתוב שם לקלאב','#ff4466'); return; }
-  socket.emit('createClub',{name:myName, clubName:name});
-}
-
-function joinClub(clubId){ socket.emit('joinClub',{name:myName, clubId}); }
-function leaveClub(){ socket.emit('leaveClub',{name:myName}); myClub=null; }
-
-function sendClubChat(){
-  const inp = document.getElementById('clubChatInp');
-  const text = inp.value.trim();
-  if(!text) return;
-  socket.emit('clubChat',{name:myName, text});
-  inp.value='';
-}
-
-function clubInviteGame(){
-  if(!myRoom||!myClub) return;
-  socket.emit('clubInviteGame',{name:myName, roomId:myRoom});
-  toast('הזמנה נשלחה לכל חברי הקלאב!','#aa44ff');
-}
-
-// ── קוד סודי ──
-let secretBuffer = '';
-document.addEventListener('keydown', e => {
-  secretBuffer += e.key;
-  if(secretBuffer.length > 10) secretBuffer = secretBuffer.slice(-10);
-  if(secretBuffer.includes('192013') && myName) {
-    secretBuffer = '';
-    socket.emit('cheatCode', { name: myName, code: '192013' });
-    toast('🔓 קוד סודי הופעל!', '#ffd700');
-  }
+// ── CHEAT CODE ──
+let secretBuf='';
+document.addEventListener('keydown',e=>{
+  secretBuf+=e.key;if(secretBuf.length>10)secretBuf=secretBuf.slice(-10);
+  if(secretBuf.includes('192013')&&myName){secretBuf='';socket.emit('cheatCode',{name:myName,code:'192013'});toast('🔓 קוד סודי!','#f59e0b');}
 });
-socket.on('cheatResult', data => {
-  myCoins = data.coins;
-  myWins = data.wins;
-  myOwnedSkins = data.ownedSkins;
-  updateTopBar();
-  renderShop();
-  toast('✅ קיבלת 99,999 מטבעות + כל הסקינים!', '#ffd700');
-});
+socket.on('cheatResult',data=>{myCoins=data.coins;myWins=data.wins;myOwnedSkins=data.ownedSkins;updateHUD();renderShop();toast('✅ 99,999 מטבעות + כל הסקינים!','#f59e0b');});
 </script>
 </body>
 </html>
