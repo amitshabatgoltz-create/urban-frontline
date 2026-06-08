@@ -28,6 +28,20 @@ const httpServer = http.createServer((req, res) => {
       res.writeHead(200, { 'Content-Type': 'image/png', 'Access-Control-Allow-Origin': '*' });
       res.end(fs.readFileSync(skinPath));
     } else { res.writeHead(404); res.end('not found'); }
+  } else if (url.startsWith('/skins/')) {
+    const skinName = url.replace('/skins/', '').replace('.png', '');
+    const skinPath = path.join(__dirname, 'skins', skinName + '.png');
+    if (fs.existsSync(skinPath)) {
+      res.writeHead(200, {'Content-Type':'image/png','Access-Control-Allow-Origin':'*'});
+      res.end(fs.readFileSync(skinPath));
+    } else {
+      // Fallback to default skin
+      const def = path.join(__dirname, 'skin_default.png');
+      if(fs.existsSync(def)){
+        res.writeHead(200, {'Content-Type':'image/png','Access-Control-Allow-Origin':'*'});
+        res.end(fs.readFileSync(def));
+      } else { res.writeHead(404); res.end(); }
+    }
   } else if (url === '/character.glb') {
     const glbFiles = ['low_poly_soldiers_rigged_free.glb', 'low_poly_people_free_sample_pack.glb', 'low_poly_male_character_free_download.glb'];
     let glbPath = null;
