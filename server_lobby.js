@@ -29,13 +29,16 @@ const httpServer = http.createServer((req, res) => {
       res.end(fs.readFileSync(skinPath));
     } else { res.writeHead(404); res.end('not found'); }
   } else if (url === '/character.glb') {
-    const glbPath = path.join(__dirname, 'low_poly_male_character_free_download.glb');
-    if (fs.existsSync(glbPath)) {
-      res.writeHead(200, { 'Content-Type': 'model/gltf-binary', 'Access-Control-Allow-Origin': '*' });
-      res.end(fs.readFileSync(glbPath));
-    } else {
-      res.writeHead(404); res.end('GLB not found');
+    const glbFiles = ['low_poly_soldiers_rigged_free.glb', 'low_poly_people_free_sample_pack.glb', 'low_poly_male_character_free_download.glb'];
+    let glbPath = null;
+    for(const f of glbFiles){
+      const p = path.join(__dirname, f);
+      if(fs.existsSync(p)){ glbPath = p; break; }
     }
+    if(glbPath){
+      res.writeHead(200, {'Content-Type':'model/gltf-binary','Access-Control-Allow-Origin':'*'});
+      res.end(fs.readFileSync(glbPath));
+    } else { res.writeHead(404); res.end('GLB not found'); }
   } else {
     res.writeHead(404); res.end('Not found');
   }
@@ -339,10 +342,10 @@ io.on('connection', socket => {
   // ── CLUB EVENTS ──
   socket.on('createClub', async ({ name, clubName }) => {
     const xp = await getUserXP(name);
-    if (xp < 5000) { socket.emit('clubError', 'צריך 5000 XP ליצירת קלאב'); return; }
+    if (xp < 1000) { socket.emit('clubError', 'צריך 1000 XP ליצירת קלאב'); return; }
     if (getClubByMember(name)) { socket.emit('clubError', 'כבר חבר בקלאב'); return; }
     const clubId = 'club_' + Date.now();
-    clubs[clubId] = { id: clubId, name: clubName || (name + "'s Club"), leader: name, members: [name], chat: [], xpRequired: 5000 };
+    clubs[clubId] = { id: clubId, name: clubName || (name + "'s Club"), leader: name, members: [name], chat: [], xpRequired: 1000 };
     socket.join('club_' + clubId);
     socket.emit('clubJoined', clubs[clubId]);
     console.log('CLUB CREATED:', clubId, clubName);
@@ -350,7 +353,7 @@ io.on('connection', socket => {
 
   socket.on('joinClub', async ({ name, clubId }) => {
     const xp = await getUserXP(name);
-    if (xp < 5000) { socket.emit('clubError', 'צריך 5000 XP להצטרפות לקלאב'); return; }
+    if (xp < 1000) { socket.emit('clubError', 'צריך 1000 XP להצטרפות לקלאב'); return; }
     if (getClubByMember(name)) { socket.emit('clubError', 'כבר חבר בקלאב'); return; }
     const club = clubs[clubId];
     if (!club) { socket.emit('clubError', 'קלאב לא קיים'); return; }
