@@ -716,7 +716,7 @@ function makePeerMesh(name, skinId){
     root.add(ag); return ag;
   }
   const lArm=makeArm(-1), rArm=makeArm(1);
-  const pw=buildAKMesh(); pw.scale.set(1.2,1.2,1.2); pw.position.set(0.10,-1.0,-0.30); rArm.add(pw);
+  const pw=null; // weapon added later when scene is ready
 
   // LEGS
   function makeLeg(side){
@@ -735,7 +735,7 @@ function makePeerMesh(name, skinId){
   const ns=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c2),transparent:true}));
   ns.position.y=1.8; ns.scale.set(2.0,0.35,1); root.add(ns);
 
-  root.userData={lArm,rArm,lLeg,rLeg,walkT:Math.random()*Math.PI*2,peerWeapon:pw,headG};
+  root.userData={lArm,rArm,lLeg,rLeg,walkT:Math.random()*Math.PI*2,peerWeapon:null,headG,needsWeapon:true};
   root.scale.set(0.85,0.85,0.85);
   scene.add(root);
   return root;
@@ -975,6 +975,12 @@ socket.on('peerUpdate',({name,x,y,z,yaw:py,pitch:pp,wid,skin})=>{
   }
   const p=peers[name];
   if(p.mesh){
+    // Add weapon on first update (buildAKMesh is now ready)
+    const ud=p.mesh.userData;
+    if(ud.needsWeapon && ud.rArm){
+      const pw=buildAKMesh(); pw.scale.set(1.2,1.2,1.2); pw.position.set(0.10,-1.0,-0.30);
+      ud.rArm.add(pw); ud.peerWeapon=pw; ud.needsWeapon=false;
+    }
     p.mesh.position.set(x,y-1.55+0.7,z);
     p.mesh.rotation.y=py+Math.PI;
   }
