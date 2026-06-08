@@ -663,7 +663,62 @@ function resolveCollision(nx,nz){
   return{x:rx,z:rz};
 }
 
-// ── PEER MESH — Minecraft Style ──
+// ── MINECRAFT SKIN SYSTEM ──
+const skinTextureCache = {};
+
+function loadSkinTexture(url, callback){
+  if(skinTextureCache[url]){ callback(skinTextureCache[url]); return; }
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    // Draw to canvas to read pixels
+    const c = document.createElement('canvas');
+    c.width = img.width; c.height = img.height;
+    const ctx = c.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    skinTextureCache[url] = {canvas:c, ctx, w:img.width, h:img.height};
+    callback(skinTextureCache[url]);
+  };
+  img.onerror = () => callback(null);
+  img.src = url;
+}
+
+// Create a material from a region of the skin texture
+function skinMat(skinData, px, py, pw, ph, flipX){
+  if(!skinData) return new THREE.MeshLambertMaterial({color:0xd4a574});
+  const {canvas, w, h} = skinData;
+  const c2 = document.createElement('canvas');
+  c2.width = pw; c2.height = ph;
+  const ctx2 = c2.getContext('2d');
+  if(flipX){
+    ctx2.scale(-1,1);
+    ctx2.drawImage(canvas, px, py, pw, ph, -pw, 0, pw, ph);
+  } else {
+    ctx2.drawImage(canvas, px, py, pw, ph, 0, 0, pw, ph);
+  }
+  const tex = new THREE.CanvasTexture(c2);
+  tex.magFilter = THREE.NearestFilter;
+  tex.minFilter = THREE.NearestFilter;
+  return new THREE.MeshLambertMaterial({map:tex, transparent:true});
+}
+
+// Create a box with 6 different face materials from skin UV
+// Minecraft skin layout (64x64):
+// Head: front=8,8,8,8  back=24,8,8,8  top=8,0,8,8  bottom=16,0,8,8  right=0,8,8,8  left=16,8,8,8
+// Body: front=20,20,8,12  back=32,20,8,12  top=20,16,8,4  bottom=28,16,8,4  right=16,20,4,12  left=28,20,4,12
+// RArm: front=44,20,4,12  back=52,20,4,12  top=44,16,4,4  bottom=48,16,4,4  right=40,20,4,12  left=48,20,4,12
+// LArm: front=36,52,4,12  back=44,52,4,12  top=36,48,4,4  bottom=40,48,4,4  right=32,52,4,12  left=40,52,4,12
+// RLeg: front=4,20,4,12   back=12,20,4,12  top=4,16,4,4   bottom=8,16,4,4   right=0,20,4,12   left=8,20,4,12
+// LLeg: front=20,52,4,12  back=28,52,4,12  top=20,48,4,4  bottom=24,48,4,4  right=16,52,4,12  left=24,52,4,12
+
+function skinBox(w,h,d, sd, uvs){
+  // uvs = [right,left,top,bottom,front,back] each [px,py,pw,ph]
+  const geo = new THREE.BoxGeometry(w,h,d);
+  const mats = uvs.map(uv => uv ? skinMat(sd,uv[0],uv[1],uv[2],uv[3]) : new THREE.MeshLambertMaterial({color:0x888888}));
+  return new THREE.Mesh(geo, mats);
+}
+
+// Fallback colors per skin
 const SKIN_COLORS={
   rookie:{body:0x2a5c1e,face:0xd4a574,legs:0x1a3a10,boots:0x1a1a0e,hair:0x3a2a10},
   street:{body:0xcc2200,face:0xd4a574,legs:0x111111,boots:0x222222,hair:0x1a1a1a},
@@ -680,70 +735,137 @@ const SKIN_COLORS={
   harlimit:{body:0xff4400,face:0xd4a574,legs:0x111111,boots:0x0a0a0a,hair:0x111111},
 };
 
-function makePeerMesh(name, skinId){
+function buildMinecraftMesh(sd, sk){
   const root = new THREE.Group();
-  const s = skinId||'rookie';
-  const sk = SKIN_COLORS[s]||SKIN_COLORS.rookie;
   const M = c => new THREE.MeshLambertMaterial({color:c});
 
-  // HEAD
-  const headG = new THREE.Group(); headG.position.y=0.75;
-  const headMesh = new THREE.Mesh(new THREE.BoxGeometry(1,1,1),M(sk.face)); headG.add(headMesh);
-  const hair = new THREE.Mesh(new THREE.BoxGeometry(1.02,0.45,1.02),M(sk.hair)); hair.position.y=0.28; headG.add(hair);
-  const eyeC = s==='robot'?0x00ccff:s==='ninja'?0xff2200:0x111111;
-  const eyeL = new THREE.Mesh(new THREE.BoxGeometry(0.20,0.14,0.02),new THREE.MeshLambertMaterial({color:eyeC,emissive:s==='robot'?0x00ccff:0,emissiveIntensity:0.8}));
-  eyeL.position.set(-0.22,0.06,0.51); headG.add(eyeL);
-  const eyeR = eyeL.clone(); eyeR.position.set(0.22,0.06,0.51); headG.add(eyeR);
-  const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.30,0.08,0.02),M(0x885533)); mouth.position.set(0,-0.22,0.51); headG.add(mouth);
-  // Helmet per skin
-  if(s!=='ninja'&&s!=='agent'){
-    const helm = new THREE.Mesh(new THREE.BoxGeometry(1.06,s==='engineer'?0.40:0.36,1.06),M(s==='engineer'?0xffcc00:sk.body));
-    helm.position.y=0.65; headG.add(helm);
+  if(sd){
+    // HEAD with real skin texture
+    const headG = new THREE.Group(); headG.position.y = 0.75;
+    const headMesh = skinBox(1,1,1, sd, [
+      [0,8,8,8],   // right
+      [16,8,8,8],  // left
+      [8,0,8,8],   // top
+      [16,0,8,8],  // bottom
+      [8,8,8,8],   // front (face)
+      [24,8,8,8],  // back
+    ]);
+    headG.add(headMesh);
+    root.add(headG);
+
+    // BODY
+    const body = skinBox(1,1.5,0.5, sd, [
+      [16,20,4,12],
+      [28,20,4,12],
+      [20,16,8,4],
+      [28,16,8,4],
+      [20,20,8,12],
+      [32,20,8,12],
+    ]);
+    body.position.y = 0; root.add(body);
+
+    // RIGHT ARM
+    const rArm = new THREE.Group(); rArm.position.set(0.75,0.5,0);
+    const rArmMesh = skinBox(0.5,1.5,0.5, sd, [
+      [40,20,4,12],[48,20,4,12],[44,16,4,4],[48,16,4,4],[44,20,4,12],[52,20,4,12]
+    ]);
+    rArmMesh.position.y = -0.5; rArm.add(rArmMesh); root.add(rArm);
+
+    // LEFT ARM
+    const lArm = new THREE.Group(); lArm.position.set(-0.75,0.5,0);
+    const lArmMesh = skinBox(0.5,1.5,0.5, sd, [
+      [32,52,4,12],[40,52,4,12],[36,48,4,4],[40,48,4,4],[36,52,4,12],[44,52,4,12]
+    ]);
+    lArmMesh.position.y = -0.5; lArm.add(lArmMesh); root.add(lArm);
+
+    // RIGHT LEG
+    const rLeg = new THREE.Group(); rLeg.position.set(0.25,-0.75,0);
+    const rLegMesh = skinBox(0.5,1.5,0.5, sd, [
+      [0,20,4,12],[8,20,4,12],[4,16,4,4],[8,16,4,4],[4,20,4,12],[12,20,4,12]
+    ]);
+    rLegMesh.position.y = -0.5; rLeg.add(rLegMesh); root.add(rLeg);
+
+    // LEFT LEG
+    const lLeg = new THREE.Group(); lLeg.position.set(-0.25,-0.75,0);
+    const lLegMesh = skinBox(0.5,1.5,0.5, sd, [
+      [16,52,4,12],[24,52,4,12],[20,48,4,4],[24,48,4,4],[20,52,4,12],[28,52,4,12]
+    ]);
+    lLegMesh.position.y = -0.5; lLeg.add(lLegMesh); root.add(lLeg);
+
+    // Weapon
+    const pw = buildAKMesh();
+    pw.scale.set(1.2,1.2,1.2); pw.position.set(0.10,-1.0,-0.30); rArm.add(pw);
+
+    root.userData = {lArm,rArm,lLeg,rLeg,walkT:Math.random()*Math.PI*2,peerWeapon:pw};
+  } else {
+    // Fallback colored boxes
+    const tc = sk.body; const fc = sk.face; const lc = sk.legs;
+    const headG = new THREE.Group(); headG.position.y=0.75;
+    headG.add(new THREE.Mesh(new THREE.BoxGeometry(1,1,1),M(fc)));
+    const hair=new THREE.Mesh(new THREE.BoxGeometry(1.02,0.45,1.02),M(sk.hair)); hair.position.y=0.28; headG.add(hair);
+    const eyeL=new THREE.Mesh(new THREE.BoxGeometry(0.20,0.14,0.02),M(0x111111)); eyeL.position.set(-0.22,0.06,0.51); headG.add(eyeL);
+    const eyeR=eyeL.clone(); eyeR.position.set(0.22,0.06,0.51); headG.add(eyeR);
+    if(sk.body!==0x111111){const helm=new THREE.Mesh(new THREE.BoxGeometry(1.06,0.36,1.06),M(tc));helm.position.y=0.65;headG.add(helm);}
+    root.add(headG);
+    root.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(1,1.5,0.5),M(tc)),{position:{x:0,y:0,z:0}}));
+    function makeArm(side){const ag=new THREE.Group();ag.position.set(side*0.75,0.5,0);const m=new THREE.Mesh(new THREE.BoxGeometry(0.5,1.5,0.5),M(tc));m.position.y=-0.5;ag.add(m);root.add(ag);return ag;}
+    function makeLeg(side){const lg=new THREE.Group();lg.position.set(side*0.25,-0.75,0);const m=new THREE.Mesh(new THREE.BoxGeometry(0.5,1.5,0.5),M(lc));m.position.y=-0.5;lg.add(m);const b=new THREE.Mesh(new THREE.BoxGeometry(0.52,0.22,0.60),M(sk.boots));b.position.set(0,-1.16,0.04);lg.add(b);root.add(lg);return lg;}
+    const lArm=makeArm(-1),rArm=makeArm(1),lLeg=makeLeg(-1),rLeg=makeLeg(1);
+    const pw=buildAKMesh();pw.scale.set(1.2,1.2,1.2);pw.position.set(0.10,-1.0,-0.30);rArm.add(pw);
+    root.userData={lArm,rArm,lLeg,rLeg,walkT:Math.random()*Math.PI*2,peerWeapon:pw};
   }
-  if(s==='street'){const brim=new THREE.Mesh(new THREE.BoxGeometry(1.20,0.08,0.60),M(sk.body));brim.position.set(0,0.57,-0.30);headG.add(brim);}
-  if(s==='ninja'){const mask=new THREE.Mesh(new THREE.BoxGeometry(1.02,0.55,0.02),M(0x111111));mask.position.set(0,-0.08,0.52);headG.add(mask);}
-  if(s==='robot'){const rv=new THREE.Mesh(new THREE.BoxGeometry(0.80,0.22,0.02),new THREE.MeshLambertMaterial({color:0x00ccff,emissive:0x00ccff,emissiveIntensity:0.8}));rv.position.set(0,0.06,0.52);headG.add(rv);}
-  root.add(headG);
 
-  // BODY
-  const body = new THREE.Mesh(new THREE.BoxGeometry(1.0,1.5,0.5),M(sk.body)); body.position.y=0; root.add(body);
-  const belt = new THREE.Mesh(new THREE.BoxGeometry(1.02,0.14,0.52),M(sk.boots)); belt.position.y=-0.62; root.add(belt);
-  if(s==='cyber'){const cg=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.60,0.02),new THREE.MeshLambertMaterial({color:0x00ff66,emissive:0x00ff66,emissiveIntensity:0.8}));cg.position.set(0,0.10,0.26);root.add(cg);}
-  if(s==='medic'){const cv=new THREE.Mesh(new THREE.BoxGeometry(0.10,0.35,0.02),M(0xffffff));cv.position.set(0.20,0.20,0.26);root.add(cv);const ch=new THREE.Mesh(new THREE.BoxGeometry(0.28,0.10,0.02),M(0xffffff));ch.position.set(0.20,0.20,0.26);root.add(ch);}
-  if(s==='firefighter'){const fs=new THREE.Mesh(new THREE.BoxGeometry(1.02,0.10,0.52),M(0xffff00));fs.position.set(0,-0.10,0);root.add(fs);}
-
-  // ARMS
-  function makeArm(side){
-    const ag=new THREE.Group(); ag.position.set(side*0.75,0.50,0);
-    const ua=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.75,0.5),M(sk.body)); ua.position.y=-0.28; ag.add(ua);
-    const la=new THREE.Mesh(new THREE.BoxGeometry(0.46,0.70,0.46),M(sk.face)); la.position.y=-0.78; ag.add(la);
-    const gl=new THREE.Mesh(new THREE.BoxGeometry(0.46,0.18,0.46),M(0x222222)); gl.position.y=-1.10; ag.add(gl);
-    root.add(ag); return ag;
-  }
-  const lArm=makeArm(-1), rArm=makeArm(1);
-  const pw=buildAKMesh(); pw.scale.set(1.2,1.2,1.2); pw.position.set(0.10,-1.0,-0.30); rArm.add(pw);
-
-  // LEGS
-  function makeLeg(side){
-    const lg=new THREE.Group(); lg.position.set(side*0.25,-0.75,0);
-    const ul=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.75,0.5),M(sk.legs)); ul.position.y=-0.28; lg.add(ul);
-    const ll=new THREE.Mesh(new THREE.BoxGeometry(0.48,0.72,0.48),M(sk.legs)); ll.position.y=-0.78; lg.add(ll);
-    const boot=new THREE.Mesh(new THREE.BoxGeometry(0.52,0.22,0.60),M(sk.boots)); boot.position.set(0,-1.16,0.04); lg.add(boot);
-    root.add(lg); return lg;
-  }
-  const lLeg=makeLeg(-1), rLeg=makeLeg(1);
-
-  // Name label
-  const c2=document.createElement('canvas'); c2.width=320; c2.height=56;
-  const cx=c2.getContext('2d'); cx.fillStyle='rgba(0,0,0,0)'; cx.fillRect(0,0,320,56);
-  cx.font='bold 30px Rajdhani,monospace'; cx.textAlign='center'; cx.fillStyle='#00e5ff'; cx.fillText(name,160,40);
-  const ns=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c2),transparent:true}));
-  ns.position.y=1.8; ns.scale.set(2.0,0.35,1); root.add(ns);
-
-  root.userData={lArm,rArm,lLeg,rLeg,walkT:Math.random()*Math.PI*2,peerWeapon:pw};
-  root.scale.set(0.85,0.85,0.85);
-  scene.add(root);
   return root;
+}
+
+// Skin URL map — uses /skin_default.png from server (no CORS)
+// Each skin maps to a specific PNG on the server
+const SKIN_URLS = {
+  rookie:'/skins/rookie.png', street:'/skins/street.png',
+  commando:'/skins/commando.png', agent:'/skins/agent.png',
+  desert:'/skins/desert.png', snow:'/skins/snow.png',
+  ninja:'/skins/ninja.png', engineer:'/skins/engineer.png',
+  robot:'/skins/robot.png', cyber:'/skins/cyber.png',
+  medic:'/skins/medic.png', firefighter:'/skins/firefighter.png',
+  harlimit:'/skin_default.png',
+};
+
+function makePeerMesh(name, skinId){
+  const root = new THREE.Group();
+  root.userData = {walkT:Math.random()*Math.PI*2};
+  scene.add(root);
+
+  const sk = SKIN_COLORS[skinId||'rookie']||SKIN_COLORS.rookie;
+  const url = SKIN_URLS[skinId||'rookie']||null;
+
+  // Try to load skin texture
+  if(url){
+    loadSkinTexture(url, sd => {
+      const mesh = buildMinecraftMesh(sd, sk);
+      mesh.scale.set(0.85,0.85,0.85);
+      // Name label
+      addNameLabel(root, name, sd ? 1.8 : 1.8);
+      root.add(mesh);
+      // Copy userData
+      if(mesh.userData.lArm) root.userData = {...mesh.userData, walkT:Math.random()*Math.PI*2};
+    });
+  } else {
+    const mesh = buildMinecraftMesh(null, sk);
+    mesh.scale.set(0.85,0.85,0.85);
+    root.add(mesh);
+    addNameLabel(root, name, 1.8);
+    if(mesh.userData.lArm) root.userData = {...mesh.userData, walkT:Math.random()*Math.PI*2};
+  }
+
+  return root;
+}
+
+function addNameLabel(root, name, yPos){
+  const c2=document.createElement('canvas');c2.width=320;c2.height=56;
+  const cx=c2.getContext('2d');cx.fillStyle='rgba(0,0,0,0)';cx.fillRect(0,0,320,56);
+  cx.font='bold 30px Rajdhani,monospace';cx.textAlign='center';cx.fillStyle='#00e5ff';cx.fillText(name,160,40);
+  const ns=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c2),transparent:true}));
+  ns.position.y=yPos;ns.scale.set(2.0,0.35,1);root.add(ns);
 }
 
 
