@@ -2,206 +2,318 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Urban Frontline</title>
 <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@700;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 <style>
+:root{--bg:#0a1628;--bg2:#111e38;--bg3:#162040;--blue:#1a56db;--cyan:#00d4ff;--gold:#f5c518;--purple:#7c3aed;--green:#22c55e;--red:#ef4444;--text:#e2e8f0;--muted:#64748b;}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{
-  background:radial-gradient(ellipse at 50% 20%,#3a9de8 0%,#1a6bcf 45%,#0d3fa0 100%);
-  min-height:100vh;color:#fff;font-family:'Exo 2',sans-serif;overflow:hidden;
-}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow:hidden;}
 
-/* ── AUTH ── */
-#authScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;}
-.auth-box{background:rgba(8,25,70,0.88);border:2px solid rgba(100,200,255,0.4);border-radius:24px;padding:36px 40px;width:360px;backdrop-filter:blur(24px);box-shadow:0 0 60px rgba(0,150,255,0.25);}
-.auth-logo{text-align:center;margin-bottom:22px;}
-.auth-logo h1{font-size:26px;font-weight:900;letter-spacing:4px;color:#fff;text-shadow:0 0 20px rgba(0,200,255,0.6);}
-.auth-logo p{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:5px;margin-top:3px;}
-.auth-tabs{display:flex;background:rgba(255,255,255,0.07);border-radius:12px;padding:4px;gap:4px;margin-bottom:18px;}
-.atab{flex:1;background:transparent;border:none;color:rgba(255,255,255,0.5);padding:9px;font-size:14px;font-weight:700;font-family:'Exo 2',sans-serif;cursor:pointer;border-radius:9px;transition:all .2s;}
-.atab.active{background:linear-gradient(135deg,#00c8ff,#0070ff);color:#fff;}
-.ainp{width:100%;background:rgba(255,255,255,0.09);border:1.5px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 16px;color:#fff;font-size:14px;font-family:'Rajdhani',sans-serif;outline:none;margin-bottom:10px;transition:border .2s;}
-.ainp:focus{border-color:#00c8ff;}
-.abtn{width:100%;background:linear-gradient(135deg,#f5c518,#f97316);border:none;color:#000;padding:14px;font-size:16px;font-weight:900;font-family:'Exo 2',sans-serif;letter-spacing:2px;border-radius:14px;cursor:pointer;margin-top:4px;transition:all .2s;}
-.abtn:hover{transform:scale(1.02);box-shadow:0 4px 24px rgba(245,197,24,.4);}
-.aerr{color:#ff7070;font-size:12px;text-align:center;margin:-4px 0 8px;display:none;}
+/* ══ AUTH ══ */
+#authScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0a1628,#162040);}
+.auth-box{background:rgba(17,30,56,.95);border:2px solid rgba(0,212,255,.3);border-radius:20px;padding:36px 40px;width:360px;backdrop-filter:blur(20px);box-shadow:0 0 60px rgba(0,150,255,.2);}
+.auth-logo{text-align:center;margin-bottom:20px;}
+.auth-logo h1{font-family:'Exo 2',sans-serif;font-size:24px;font-weight:900;color:#fff;letter-spacing:4px;text-shadow:0 0 20px rgba(0,212,255,.5);}
+.auth-logo p{font-size:10px;color:var(--muted);letter-spacing:5px;margin-top:3px;}
+.auth-tabs{display:flex;background:rgba(255,255,255,.06);border-radius:10px;padding:4px;gap:4px;margin-bottom:18px;}
+.atab{flex:1;background:transparent;border:none;color:var(--muted);padding:9px;font-size:14px;font-weight:700;font-family:'Exo 2',sans-serif;cursor:pointer;border-radius:7px;transition:all .2s;}
+.atab.active{background:var(--blue);color:#fff;}
+.ainp{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:10px;padding:12px 16px;color:#fff;font-size:14px;font-family:'Rajdhani',sans-serif;outline:none;margin-bottom:10px;}
+.ainp:focus{border-color:var(--cyan);}
+.abtn{width:100%;background:linear-gradient(135deg,var(--gold),#f97316);border:none;color:#000;padding:14px;font-size:16px;font-weight:900;font-family:'Exo 2',sans-serif;letter-spacing:2px;border-radius:12px;cursor:pointer;transition:all .2s;}
+.abtn:hover{transform:scale(1.02);}
+.aerr{color:#ff6b6b;font-size:12px;text-align:center;margin:-4px 0 8px;display:none;}
 
-/* ── MAIN ── */
-#mainScreen{display:none;flex-direction:column;height:100vh;overflow:hidden;}
+/* ══ MAIN ══ */
+#mainScreen{display:none;flex-direction:column;height:100vh;}
 
 /* NAV */
-.nav{display:flex;align-items:center;padding:14px 28px;position:relative;z-index:20;}
-.nav-tabs{display:flex;gap:10px;align-items:center;}
-.ntab{background:transparent;border:none;color:rgba(255,255,255,0.65);padding:10px 28px;font-size:17px;font-weight:700;font-family:'Exo 2',sans-serif;letter-spacing:1px;cursor:pointer;border-radius:30px;transition:all .2s;}
-.ntab.active{background:linear-gradient(135deg,rgba(0,200,255,0.3),rgba(0,100,255,0.2));color:#fff;border:2px solid rgba(0,200,255,0.7);box-shadow:0 0 20px rgba(0,200,255,0.3);}
-.ntab:hover:not(.active){background:rgba(255,255,255,0.08);}
-.nav-r{margin-right:auto;display:flex;align-items:center;gap:14px;}
-.coins-pill{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.25);border:2px solid rgba(255,255,255,0.25);border-radius:30px;padding:8px 20px;font-size:17px;font-weight:800;}
-.streak-orb{position:relative;width:52px;height:52px;display:flex;align-items:center;justify-content:center;}
-.streak-orb .flame{position:absolute;top:-10px;font-size:26px;}
-.streak-orb .num{font-size:16px;font-weight:900;margin-top:10px;}
+.nav{display:flex;align-items:center;background:var(--bg2);border-bottom:1px solid rgba(255,255,255,.07);padding:0 20px;height:52px;position:relative;z-index:50;}
+.nav-logo{font-family:'Exo 2',sans-serif;font-size:14px;font-weight:900;color:var(--cyan);letter-spacing:2px;margin-left:16px;}
+.nav-tabs{display:flex;gap:2px;position:absolute;left:50%;transform:translateX(-50%);}
+.ntab{background:transparent;border:none;color:var(--muted);padding:0 20px;height:52px;font-size:14px;font-weight:700;font-family:'Exo 2',sans-serif;letter-spacing:1px;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;}
+.ntab:hover{color:var(--text);}
+.ntab.active{color:#fff;border-bottom-color:var(--blue);background:rgba(26,86,219,.15);}
+.nav-right{margin-right:auto;display:flex;align-items:center;gap:10px;}
+.coins-badge{display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:6px 14px;font-size:15px;font-weight:800;}
+.add-btn{width:28px;height:28px;background:rgba(0,212,255,.2);border:1px solid rgba(0,212,255,.4);color:var(--cyan);border-radius:50%;font-size:16px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Exo 2',sans-serif;}
 
-/* PANE WRAPPER */
+/* PANES */
 .pane{display:none;flex:1;overflow:hidden;}
 .pane.active{display:flex;flex-direction:column;}
 
-/* ── LOBBY PANE ── */
-#pane-lobby{position:relative;}
-.lobby-stage{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:60px;padding:0 60px 10px;}
-.stage-slot{display:flex;flex-direction:column;align-items:center;gap:6px;}
-.stage-label{font-size:20px;font-weight:800;color:rgba(255,255,255,0.85);text-shadow:0 2px 10px rgba(0,0,0,.4);}
-.stage-img{width:180px;height:260px;object-fit:contain;filter:drop-shadow(0 12px 32px rgba(0,0,0,.5));transition:all .3s;}
-.stage-img:hover{transform:scale(1.04);}
-.stage-add{width:110px;height:110px;background:radial-gradient(circle,rgba(80,180,255,.35),rgba(30,100,220,.15));border:3px solid rgba(120,200,255,.5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:44px;cursor:pointer;transition:all .2s;margin-bottom:80px;box-shadow:0 0 30px rgba(80,180,255,.25);}
-.stage-add:hover{transform:scale(1.1);box-shadow:0 0 50px rgba(80,180,255,.4);}
-.lobby-bottom{display:flex;align-items:center;padding:14px 28px;gap:20px;}
-.lb-player{display:flex;align-items:center;gap:12px;}
-.lb-avatar{width:46px;height:46px;background:linear-gradient(135deg,#00c8ff,#0060ff);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;flex-shrink:0;}
-.lb-name{font-size:16px;font-weight:800;}
-.lb-level{font-size:12px;color:rgba(255,255,255,.55);}
-.lb-xp{width:100px;height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin-top:4px;}
-.lb-xp-f{height:100%;background:#00c8ff;border-radius:3px;transition:width .5s;}
-.lb-stats{display:flex;gap:20px;}
-.lb-stat{text-align:center;}
-.lb-sv{font-size:19px;font-weight:900;}
-.lb-sl{font-size:10px;color:rgba(255,255,255,.5);}
-.lb-space{flex:1;}
-.play-btn{background:linear-gradient(135deg,#f5c518,#f97316);border:none;color:#000;padding:16px 64px;font-size:24px;font-weight:900;font-family:'Exo 2',sans-serif;letter-spacing:3px;border-radius:18px;cursor:pointer;box-shadow:0 4px 32px rgba(245,197,24,.45);transition:all .2s;}
-.play-btn:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 8px 44px rgba(245,197,24,.55);}
+/* ══ LOBBY ══ */
+.lobby-wrap{display:grid;grid-template-columns:240px 1fr 200px;flex:1;overflow:hidden;}
 
-/* FRIENDS PANEL */
-#friendsPanel{position:fixed;right:-380px;top:0;bottom:0;width:360px;background:rgba(8,25,70,.96);border-left:2px solid rgba(0,200,255,.3);z-index:50;transition:right .3s;backdrop-filter:blur(20px);display:flex;flex-direction:column;padding:20px;}
-#friendsPanel.open{right:0;}
-.fp-title{font-size:16px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
-.fp-close{background:none;border:none;color:rgba(255,255,255,.5);font-size:20px;cursor:pointer;}
-.fp-section{font-size:11px;font-weight:700;letter-spacing:3px;color:rgba(255,255,255,.4);text-transform:uppercase;margin:12px 0 8px;}
-.fp-list{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;}
-.fp-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:10px;cursor:pointer;transition:all .15s;}
-.fp-row:hover{background:rgba(0,200,255,.1);border-color:rgba(0,200,255,.3);}
-.fp-av{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#00c8ff,#0060ff);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0;}
-.fp-name{flex:1;font-size:13px;font-weight:700;}
-.fp-actions{display:flex;gap:6px;}
-.fp-btn{background:rgba(0,200,255,.15);border:1px solid rgba(0,200,255,.4);color:#00c8ff;border-radius:6px;padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;white-space:nowrap;}
-.fp-btn.add{background:rgba(0,255,100,.1);border-color:rgba(0,255,100,.4);color:#00ff88;}
-.fp-btn:hover{opacity:.8;}
+/* Left panel */
+.lobby-left{background:var(--bg2);border-right:1px solid rgba(255,255,255,.07);padding:14px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;}
+.player-card{background:rgba(26,86,219,.1);border:1px solid rgba(26,86,219,.3);border-radius:12px;padding:12px;}
+.pc-name{font-family:'Exo 2',sans-serif;font-size:16px;font-weight:900;color:#fff;}
+.pc-level{font-size:11px;color:var(--muted);margin-bottom:8px;}
+.xp-bar-wrap{margin-bottom:6px;}
+.xp-row{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px;}
+.xp-bar{height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--blue));border-radius:3px;transition:width .5s;}
+.lb-section-title{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+.challenge-item{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.ch-icon{font-size:16px;width:28px;text-align:center;}
+.ch-text{flex:1;}
+.ch-name{font-size:12px;font-weight:700;color:var(--text);}
+.ch-prog{font-size:10px;color:var(--muted);}
+.ch-prog-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:3px;overflow:hidden;}
+.ch-prog-fill{height:100%;background:var(--green);border-radius:2px;}
+.ch-reward{font-size:12px;font-weight:700;color:var(--cyan);white-space:nowrap;}
+.lobby-btns{display:flex;gap:8px;}
+.lobby-btn{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);padding:10px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;text-align:center;transition:all .2s;}
+.lobby-btn:hover{background:rgba(255,255,255,.12);}
 
-/* ── SHOP PANE ── */
-#pane-shop{overflow-y:auto;padding:20px 28px;}
-.shop-featured{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
-/* SHOP CARDS — exact like Canva design */
-.shop-scroll{display:flex;flex-wrap:wrap;gap:16px;padding:20px 28px;overflow-y:auto;align-content:flex-start;}
-.scard{background:rgba(210,230,255,.15);border:2px solid rgba(255,255,255,.25);border-radius:20px;padding:16px 16px 10px;cursor:pointer;transition:all .2s;position:relative;min-width:220px;flex:1;max-width:340px;}
-.scard:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,150,255,.25);}
-.scard-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;}
-.scard-name{font-size:22px;font-weight:900;color:#1565c0;line-height:1.1;font-family:'Exo 2',sans-serif;}
-.scard-name.light{color:#fff;}
-.scard-name.gold{color:#f5c518;}
-.scard-name.green{color:#22c55e;}
-.scard-name.purple{color:#a78bfa;}
-.scard-gem{font-size:22px;}
-.scard-price{font-size:30px;font-weight:900;color:#1565c0;margin-bottom:2px;}
-.scard-price.light{color:#fff;}
-.scard-price.gold{color:#f5c518;}
-.scard-price.green{color:#22c55e;}
-.scard-price.purple{color:#a78bfa;}
-.scard-per{font-size:11px;color:rgba(255,255,255,.55);margin-bottom:8px;}
-.scard-imgs{display:flex;align-items:flex-end;justify-content:center;gap:4px;min-height:140px;}
-.scard-img{height:140px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4));}
-.scard-label{position:absolute;bottom:8px;left:12px;font-size:11px;color:rgba(255,255,255,.5);font-family:'Rajdhani',sans-serif;}
+/* Center stage */
+.lobby-center{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;position:relative;padding-bottom:0;background:radial-gradient(ellipse at 50% 100%,rgba(26,86,219,.15) 0%,transparent 70%);}
+.stage-img-wrap{display:flex;align-items:flex-end;justify-content:center;gap:40px;flex:1;padding:20px;}
+.stage-slot{display:flex;flex-direction:column;align-items:center;cursor:pointer;}
+.stage-label{font-family:'Exo 2',sans-serif;font-size:16px;font-weight:800;color:rgba(255,255,255,.8);margin-bottom:8px;text-shadow:0 2px 8px rgba(0,0,0,.5);}
+.stage-skin-img{height:240px;object-fit:contain;filter:drop-shadow(0 10px 30px rgba(0,0,0,.6));transition:transform .2s;}
+.stage-skin-img:hover{transform:scale(1.04);}
+.add-slot{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;opacity:.7;transition:opacity .2s;}
+.add-slot:hover{opacity:1;}
+.add-circle{width:90px;height:90px;background:radial-gradient(circle,rgba(0,212,255,.2),rgba(0,100,255,.1));border:2px dashed rgba(0,212,255,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:60px;}
+.mode-bar{background:rgba(0,0,0,.4);border-top:1px solid rgba(255,255,255,.08);width:100%;padding:12px 20px;display:flex;align-items:center;gap:16px;}
+.mode-badge{background:rgba(26,86,219,.3);border:1px solid rgba(26,86,219,.5);border-radius:8px;padding:6px 12px;}
+.mode-title{font-size:11px;color:var(--muted);}
+.mode-val{font-size:14px;font-weight:800;color:#fff;}
+.mode-change{background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--muted);padding:6px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;}
+.play-btn{background:linear-gradient(135deg,var(--gold),#f97316);border:none;color:#000;padding:14px 48px;font-size:22px;font-weight:900;font-family:'Exo 2',sans-serif;letter-spacing:3px;border-radius:14px;cursor:pointer;box-shadow:0 4px 24px rgba(245,197,24,.4);transition:all .2s;margin-right:auto;}
+.play-btn:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(245,197,24,.5);}
 
-/* ── SKIN DETAIL POPUP ── */
-#skinDetail{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;}
-.sd-box{background:rgba(8,25,70,.97);border:2px solid rgba(0,200,255,.4);border-radius:24px;padding:32px;width:380px;text-align:center;backdrop-filter:blur(20px);}
-.sd-img{width:200px;height:260px;object-fit:contain;margin:0 auto 16px;display:block;filter:drop-shadow(0 8px 24px rgba(0,0,0,.5));}
-.sd-name{font-size:24px;font-weight:900;margin-bottom:6px;}
-.sd-rarity{font-size:11px;letter-spacing:3px;font-weight:700;text-transform:uppercase;margin-bottom:16px;}
-.sd-rarity.legendary{color:#f5c518;}
-.sd-rarity.epic{color:#a78bfa;}
-.sd-rarity.rare{color:#38d4ff;}
-.sd-rarity.common{color:rgba(255,255,255,.5);}
-.sd-price-row{display:flex;align-items:center;justify-content:center;gap:10px;font-size:28px;font-weight:900;color:#38d4ff;margin-bottom:20px;}
-.sd-buy{width:100%;background:linear-gradient(135deg,#f5c518,#f97316);border:none;color:#000;padding:14px;font-size:17px;font-weight:900;font-family:'Exo 2',sans-serif;border-radius:14px;cursor:pointer;margin-bottom:10px;transition:all .2s;}
-.sd-buy:hover{transform:scale(1.02);}
-.sd-equip{width:100%;background:rgba(0,200,255,.15);border:2px solid rgba(0,200,255,.5);color:#00c8ff;padding:12px;font-size:15px;font-weight:700;border-radius:14px;cursor:pointer;margin-bottom:10px;font-family:'Rajdhani',sans-serif;}
-.sd-close{width:100%;background:transparent;border:1px solid rgba(255,100,100,.4);color:#ff8080;padding:10px;font-size:13px;font-weight:700;border-radius:10px;cursor:pointer;font-family:'Rajdhani',sans-serif;}
-.sd-owned{color:#22c55e;font-size:14px;margin-bottom:12px;font-weight:700;}
+/* Right panel */
+.lobby-right{background:var(--bg2);border-left:1px solid rgba(255,255,255,.07);padding:14px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;}
+.news-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px;}
+.news-tag{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--cyan);margin-bottom:3px;}
+.news-title{font-size:12px;font-weight:700;color:var(--text);}
+.nav-icon-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--text);border-radius:8px;padding:8px;cursor:pointer;font-size:11px;font-weight:700;text-align:center;transition:all .2s;display:block;width:100%;}
+.nav-icon-btn:hover{background:rgba(255,255,255,.12);}
 
-/* ── BATTLE PASS ── */
-#pane-battlepass{overflow-y:auto;padding:20px 28px;}
-.bp-coming{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:16px;text-align:center;}
-.bp-coming-icon{font-size:80px;}
-.bp-coming h2{font-size:32px;font-weight:900;}
-.bp-coming p{font-size:16px;color:rgba(255,255,255,.5);}
+/* ══ SHOP ══ */
+.shop-wrap{display:flex;flex:1;overflow:hidden;}
+.shop-sidebar{width:160px;background:var(--bg2);border-left:1px solid rgba(255,255,255,.07);padding:12px;display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
+.shop-cat{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;cursor:pointer;transition:all .2s;border:1px solid transparent;}
+.shop-cat:hover{background:rgba(255,255,255,.06);}
+.shop-cat.active{background:rgba(26,86,219,.2);border-color:rgba(26,86,219,.4);color:#fff;}
+.shop-cat-icon{font-size:16px;width:20px;text-align:center;}
+.shop-cat-name{font-size:13px;font-weight:700;}
+.shop-main{flex:1;overflow-y:auto;padding:16px 20px;}
+.shop-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.shop-title{font-family:'Exo 2',sans-serif;font-size:22px;font-weight:900;color:#fff;}
+.shop-sub{font-size:12px;color:var(--muted);}
+.shop-refresh{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.section-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08);}
+.featured-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.daily-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.skin-card{background:linear-gradient(135deg,rgba(26,86,219,.15),rgba(124,58,237,.08));border:1px solid rgba(26,86,219,.3);border-radius:14px;padding:12px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;text-align:center;}
+.skin-card:hover{transform:translateY(-3px);border-color:rgba(0,212,255,.5);box-shadow:0 6px 20px rgba(0,150,255,.2);}
+.skin-card.legendary{background:linear-gradient(135deg,rgba(245,197,24,.1),rgba(249,115,22,.08));border-color:rgba(245,197,24,.4);}
+.skin-card.epic{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(79,70,229,.08));border-color:rgba(124,58,237,.4);}
+.skin-card.rare{background:linear-gradient(135deg,rgba(14,165,233,.12),rgba(26,86,219,.08));border-color:rgba(14,165,233,.3);}
+.skin-card img{width:100%;height:110px;object-fit:contain;margin-bottom:8px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5));}
+.skin-card.featured img{height:140px;}
+.sc-rarity{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;}
+.sc-rarity.legendary{color:var(--gold);}
+.sc-rarity.epic{color:#a78bfa;}
+.sc-rarity.rare{color:#38bdf8;}
+.sc-rarity.common{color:var(--muted);}
+.sc-name{font-family:'Exo 2',sans-serif;font-size:13px;font-weight:800;color:#fff;margin-bottom:6px;}
+.sc-price{display:flex;align-items:center;justify-content:center;gap:4px;font-size:13px;font-weight:800;color:#38bdf8;}
+.sc-owned{font-size:10px;color:var(--green);font-weight:700;}
+.free-gift-card{background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(16,185,129,.08));border:1px solid rgba(34,197,94,.4);border-radius:14px;padding:12px;cursor:pointer;text-align:center;}
+.fg-title{font-family:'Exo 2',sans-serif;font-size:12px;font-weight:900;color:var(--green);margin-bottom:4px;}
+.fg-icon{font-size:36px;margin-bottom:6px;}
+.fg-timer{font-size:10px;color:var(--muted);margin-bottom:8px;}
+.fg-claim{background:var(--green);border:none;color:#000;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Exo 2',sans-serif;width:100%;}
 
-/* ── CLUB ── */
-#pane-club{overflow-y:auto;padding:20px 28px;}
-.club-panel{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;margin-bottom:16px;}
-.cp-title{font-size:12px;font-weight:700;letter-spacing:3px;color:rgba(255,255,255,.45);text-transform:uppercase;margin-bottom:12px;}
-.xp-warn{background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.3);border-radius:10px;padding:10px 16px;font-size:13px;color:#f5c518;margin-bottom:12px;text-align:center;}
-.club-inp{width:100%;background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 14px;color:#fff;font-size:13px;font-family:'Rajdhani',sans-serif;outline:none;margin-bottom:8px;}
-.club-btn{background:linear-gradient(135deg,#0080ff,#00c8ff);border:none;color:#000;padding:10px;font-size:14px;font-weight:900;border-radius:12px;cursor:pointer;width:100%;font-family:'Exo 2',sans-serif;}
-.club-hero{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
-.club-icon{width:50px;height:50px;background:linear-gradient(135deg,#ef4444,#7c3aed);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;}
-.club-nm{font-size:18px;font-weight:900;}
-.club-lead{font-size:11px;color:rgba(255,255,255,.5);}
-.club-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,.04);border-radius:9px;margin-bottom:6px;}
-.club-av{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#ef4444,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;}
-.chat-box{height:140px;overflow-y:auto;background:rgba(0,0,0,.2);border-radius:10px;padding:10px;margin-bottom:8px;}
-.cmsg{font-size:12px;color:rgba(255,255,255,.7);margin-bottom:3px;}
+/* ══ BATTLE PASS ══ */
+.bp-wrap{flex:1;overflow-y:auto;padding:20px 24px;}
+.bp-header{display:flex;gap:20px;align-items:flex-start;margin-bottom:20px;}
+.bp-season-icon{width:60px;height:60px;background:linear-gradient(135deg,var(--purple),var(--blue));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+.bp-info{flex:1;}
+.bp-season-tag{font-size:10px;color:var(--purple);letter-spacing:3px;font-weight:700;text-transform:uppercase;}
+.bp-title{font-family:'Exo 2',sans-serif;font-size:24px;font-weight:900;color:#fff;}
+.bp-ends{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.bp-level-row{display:flex;align-items:center;gap:12px;}
+.bp-lvl-badge{background:linear-gradient(135deg,var(--purple),var(--blue));width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Exo 2',sans-serif;font-size:18px;font-weight:900;flex-shrink:0;}
+.bp-xp-wrap{flex:1;}
+.bp-xp-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;}
+.bp-bar{height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;}
+.bp-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--blue));border-radius:4px;transition:width .5s;}
+.bp-reward-img{width:120px;flex-shrink:0;text-align:center;}
+.bp-reward-label{font-size:10px;color:var(--gold);letter-spacing:2px;font-weight:700;text-transform:uppercase;}
+.bp-reward-name{font-family:'Exo 2',sans-serif;font-size:16px;font-weight:900;color:#fff;}
+.bp-reward-tier{font-size:11px;color:var(--gold);}
+.tiers-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-bottom:20px;}
+.tier-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 4px;text-align:center;position:relative;}
+.tier-box.unlocked{border-color:rgba(124,58,237,.5);background:rgba(124,58,237,.08);}
+.tier-box.current{border-color:var(--gold);box-shadow:0 0 12px rgba(245,197,24,.3);background:rgba(245,197,24,.06);}
+.tier-num{font-size:9px;color:var(--muted);margin-bottom:3px;}
+.tier-icon{font-size:20px;}
+.tier-name{font-size:8px;color:var(--muted);margin-top:2px;}
+.tier-pts{font-size:9px;font-weight:700;color:#38bdf8;margin-top:2px;}
+.tier-check{font-size:12px;color:var(--green);}
+.tier-lock{font-size:12px;color:var(--muted);position:absolute;bottom:4px;left:50%;transform:translateX(-50%);}
+.bp-progress-line{display:flex;align-items:center;margin-bottom:20px;}
+.prog-dot{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;font-family:'Exo 2',sans-serif;flex-shrink:0;position:relative;z-index:1;}
+.prog-dot.done{background:var(--purple);border-color:var(--purple);}
+.prog-dot.current{background:var(--gold);border-color:var(--gold);color:#000;box-shadow:0 0 10px rgba(245,197,24,.4);}
+.prog-line{flex:1;height:3px;background:rgba(255,255,255,.08);}
+.prog-line.done{background:var(--purple);}
+.bp-bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.bp-challenges{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;}
+.bpc-item{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.bpc-info{flex:1;}
+.bpc-name{font-size:13px;font-weight:700;}
+.bpc-prog{font-size:11px;color:var(--muted);}
+.bpc-xp{font-size:12px;font-weight:700;color:var(--purple);}
+.claim-btn{width:100%;background:linear-gradient(135deg,var(--gold),#f97316);border:none;color:#000;padding:14px;font-size:18px;font-weight:900;font-family:'Exo 2',sans-serif;letter-spacing:2px;border-radius:12px;cursor:pointer;margin-top:12px;box-shadow:0 4px 20px rgba(245,197,24,.3);}
+.xp-boost-card{background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);border-radius:12px;padding:14px;text-align:center;}
+.xpb-badge{width:44px;height:44px;background:var(--purple);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Exo 2',sans-serif;font-size:16px;font-weight:900;margin:0 auto 8px;}
+.xpb-title{font-size:14px;font-weight:800;color:#fff;margin-bottom:4px;}
+.xpb-desc{font-size:11px;color:var(--muted);margin-bottom:10px;}
+.xpb-btn{background:var(--green);border:none;color:#000;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Exo 2',sans-serif;width:100%;}
+
+/* ══ CLUB ══ */
+.club-wrap{display:grid;grid-template-columns:1fr 1fr;flex:1;overflow:hidden;gap:0;}
+.club-left{padding:16px 20px;overflow-y:auto;border-left:1px solid rgba(255,255,255,.07);}
+.club-right{padding:16px 20px;overflow-y:auto;background:var(--bg2);border-right:1px solid rgba(255,255,255,.07);}
+.club-hero{display:flex;align-items:center;gap:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:14px;padding:14px;margin-bottom:16px;}
+.club-badge-icon{width:52px;height:52px;background:linear-gradient(135deg,#ef4444,var(--purple));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.club-nm{font-family:'Exo 2',sans-serif;font-size:18px;font-weight:900;color:#fff;}
+.club-tag{font-size:11px;color:var(--muted);}
+.club-stats-row{display:flex;gap:16px;margin-top:8px;}
+.cs{text-align:center;}
+.cs-val{font-family:'Exo 2',sans-serif;font-size:16px;font-weight:900;color:#fff;}
+.cs-lbl{font-size:9px;color:var(--muted);}
+.club-actions{display:flex;gap:8px;margin-top:10px;}
+.club-btn-sm{flex:1;background:rgba(0,212,255,.15);border:1px solid rgba(0,212,255,.3);color:var(--cyan);padding:7px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;text-align:center;}
+.club-btn-leave{flex:1;background:transparent;border:1px solid rgba(255,100,100,.3);color:#f87171;padding:7px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'Rajdhani',sans-serif;}
+.lboard-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:8px;margin-bottom:6px;}
+.lb-rank{font-family:'Exo 2',sans-serif;font-size:14px;font-weight:900;width:24px;text-align:center;}
+.lb-rank-1{color:var(--gold);}
+.lb-rank-2{color:#94a3b8;}
+.lb-rank-3{color:#cd7c2e;}
+.lb-av{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;}
+.lb-name{flex:1;font-size:13px;font-weight:700;}
+.lb-pts{font-size:13px;font-weight:800;color:var(--gold);}
+.lb-crown{font-size:14px;}
+.view-lb-btn{width:100%;background:rgba(26,86,219,.2);border:1px solid rgba(26,86,219,.4);color:var(--cyan);padding:9px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;margin-top:8px;}
+.chat-wrap{display:flex;flex-direction:column;height:calc(50vh - 60px);}
+.chat-box{flex:1;overflow-y:auto;background:rgba(0,0,0,.2);border-radius:10px;padding:10px;margin-bottom:8px;min-height:80px;}
+.cmsg{font-size:12px;color:rgba(255,255,255,.7);margin-bottom:4px;line-height:1.4;}
 .cfrom{color:#a78bfa;font-weight:700;}
-.csys{color:rgba(255,255,255,.35);font-style:italic;}
+.csys{color:var(--muted);font-style:italic;}
 .chat-row{display:flex;gap:8px;}
-.chat-inp{flex:1;background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.15);border-radius:8px;padding:8px 12px;color:#fff;font-size:13px;font-family:'Rajdhani',sans-serif;outline:none;}
-.chat-send{background:#7c3aed;border:none;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-family:'Rajdhani',sans-serif;}
-.clubs-list{display:flex;flex-direction:column;gap:8px;}
-.cli-row{display:flex;align-items:center;gap:12px;padding:11px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;}
-.btn-jc{background:linear-gradient(135deg,#00c8ff,#0060ff);border:none;color:#000;padding:7px 16px;border-radius:16px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Exo 2',sans-serif;}
+.chat-inp{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;font-family:'Rajdhani',sans-serif;outline:none;}
+.chat-inp:focus{border-color:var(--cyan);}
+.chat-send{background:var(--blue);border:none;color:#fff;padding:9px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-family:'Rajdhani',sans-serif;font-size:13px;}
+.mission-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;margin-bottom:8px;}
+.m-info{flex:1;}
+.m-name{font-size:13px;font-weight:700;}
+.m-prog{font-size:11px;color:var(--muted);}
+.m-prog-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:4px;}
+.m-prog-fill{height:100%;background:var(--cyan);border-radius:2px;}
+.m-reward{font-size:12px;font-weight:700;color:var(--cyan);}
+.club-no-member{padding:20px;}
+.xp-warn{background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.2);border-radius:10px;padding:12px;font-size:13px;color:var(--gold);margin-bottom:12px;text-align:center;}
+.club-inp{width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 14px;color:#fff;font-size:13px;font-family:'Rajdhani',sans-serif;outline:none;margin-bottom:8px;}
+.big-btn{width:100%;background:linear-gradient(135deg,var(--blue),var(--cyan));border:none;color:#000;padding:11px;font-size:14px;font-weight:900;font-family:'Exo 2',sans-serif;border-radius:10px;cursor:pointer;margin-bottom:8px;}
+.cli-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;margin-bottom:8px;}
 
-/* ── ROOM ── */
-#roomScreen{display:none;align-items:center;justify-content:center;height:100vh;background:radial-gradient(ellipse at 50% 20%,#3a9de8,#0d3fa0);}
-.room-box{background:rgba(8,25,70,.92);border:2px solid rgba(0,200,255,.4);border-radius:24px;padding:28px;width:460px;max-width:95vw;backdrop-filter:blur(20px);}
-.room-ttl{font-size:22px;font-weight:900;margin-bottom:3px;}
-.room-id{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:18px;}
-.rp-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
-.rp-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(0,200,255,.07);border:1px solid rgba(0,200,255,.2);border-radius:10px;}
-.rp-dot{width:8px;height:8px;border-radius:50%;background:#00c8ff;box-shadow:0 0 6px #00c8ff;}
+/* ══ SKIN SELECTOR ══ */
+#skinSelector{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;flex-direction:column;align-items:center;}
+.ss-header{display:flex;align-items:center;width:100%;max-width:900px;padding:20px;gap:12px;}
+.ss-title{font-family:'Exo 2',sans-serif;font-size:22px;font-weight:900;color:#fff;flex:1;}
+.ss-close{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--text);padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;}
+.ss-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%;max-width:900px;padding:0 20px;overflow-y:auto;flex:1;padding-bottom:20px;}
+.ss-card{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);border-radius:14px;padding:12px;cursor:pointer;transition:all .2s;text-align:center;}
+.ss-card:hover{border-color:rgba(0,212,255,.5);background:rgba(0,212,255,.05);}
+.ss-card.selected{border-color:var(--cyan);background:rgba(0,212,255,.1);box-shadow:0 0 16px rgba(0,212,255,.3);}
+.ss-card.locked{opacity:.4;cursor:not-allowed;}
+.ss-card img{width:100%;height:100px;object-fit:contain;margin-bottom:6px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));}
+.ss-name{font-size:12px;font-weight:700;color:#fff;}
+.ss-status{font-size:10px;margin-top:3px;}
+.ss-status.owned{color:var(--green);}
+.ss-status.equipped{color:var(--cyan);font-weight:700;}
+.ss-status.locked{color:var(--muted);}
+
+/* ══ BUY POPUP ══ */
+#buyPopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;align-items:center;justify-content:center;}
+.bp-box{background:var(--bg2);border:2px solid rgba(0,212,255,.3);border-radius:20px;padding:28px;width:420px;max-width:95vw;backdrop-filter:blur(20px);}
+.bp-box-title{font-family:'Exo 2',sans-serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:16px;text-align:center;}
+.bp-skin-row{display:flex;gap:12px;margin-bottom:16px;}
+.bp-skin-item{flex:1;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;text-align:center;cursor:pointer;transition:all .2s;}
+.bp-skin-item:hover{border-color:rgba(0,212,255,.4);}
+.bp-skin-item.selected{border-color:var(--cyan);background:rgba(0,212,255,.08);}
+.bp-skin-item img{width:100%;height:80px;object-fit:contain;margin-bottom:6px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));}
+.bpsi-name{font-size:12px;font-weight:700;color:#fff;}
+.bpsi-price{font-size:13px;font-weight:800;color:#38bdf8;margin-top:3px;}
+.bp-total{text-align:center;margin-bottom:16px;}
+.bp-total-label{font-size:13px;color:var(--muted);}
+.bp-total-price{font-family:'Exo 2',sans-serif;font-size:26px;font-weight:900;color:#38bdf8;}
+.bp-buy-btn{width:100%;background:linear-gradient(135deg,var(--gold),#f97316);border:none;color:#000;padding:13px;font-size:16px;font-weight:900;font-family:'Exo 2',sans-serif;border-radius:12px;cursor:pointer;margin-bottom:8px;}
+.bp-cancel-btn{width:100%;background:transparent;border:1px solid rgba(255,100,100,.3);color:#f87171;padding:10px;font-size:13px;font-weight:700;border-radius:10px;cursor:pointer;font-family:'Rajdhani',sans-serif;}
+
+/* ══ ROOM ══ */
+#roomScreen{display:none;align-items:center;justify-content:center;height:100vh;background:var(--bg);}
+.room-box{background:var(--bg2);border:2px solid rgba(0,212,255,.3);border-radius:20px;padding:28px;width:460px;max-width:95vw;}
+.room-ttl{font-family:'Exo 2',sans-serif;font-size:22px;font-weight:900;margin-bottom:4px;}
+.room-id{font-size:11px;color:var(--muted);margin-bottom:18px;}
+.rp-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.15);border-radius:10px;margin-bottom:8px;}
+.rp-dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan);}
 .rp-nm{flex:1;font-size:14px;font-weight:700;}
-.rp-b{font-size:10px;background:rgba(0,200,255,.15);color:#00c8ff;border-radius:4px;padding:2px 7px;}
+.rp-b{font-size:10px;background:rgba(0,212,255,.12);color:var(--cyan);border-radius:4px;padding:2px 7px;}
 .map-sel{display:none;margin-bottom:14px;}
-.map-ttl{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:2px;font-weight:700;text-transform:uppercase;margin-bottom:8px;}
+.map-ttl{font-size:11px;color:var(--muted);letter-spacing:2px;font-weight:700;text-transform:uppercase;margin-bottom:8px;}
 .map-opts{display:flex;gap:8px;}
-.map-opt{flex:1;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;}
-.map-opt.selected{border-color:#00c8ff;background:rgba(0,200,255,.1);}
-.map-opt-i{font-size:22px;}
-.map-opt-n{font-size:12px;font-weight:700;margin-top:3px;}
-.map-opt-h{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px;}
-.wait-h{text-align:center;font-size:12px;color:rgba(255,255,255,.4);margin-bottom:12px;}
-.start-btn{width:100%;background:linear-gradient(135deg,#f5c518,#f97316);border:none;color:#000;padding:14px;font-size:18px;font-weight:900;font-family:'Exo 2',sans-serif;letter-spacing:2px;border-radius:14px;cursor:pointer;margin-bottom:10px;display:none;box-shadow:0 4px 24px rgba(245,197,24,.4);}
-.back-btn{width:100%;background:transparent;border:1px solid rgba(255,100,100,.4);color:#ff8080;padding:10px;font-size:13px;font-weight:700;border-radius:10px;cursor:pointer;font-family:'Rajdhani',sans-serif;}
+.map-opt{flex:1;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.1);border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:all .2s;}
+.map-opt.selected{border-color:var(--cyan);background:rgba(0,212,255,.08);}
+.map-opt-i{font-size:20px;}
+.map-opt-n{font-size:12px;font-weight:700;margin-top:2px;}
+.wait-h{text-align:center;font-size:12px;color:var(--muted);margin-bottom:12px;}
+.start-btn{width:100%;background:linear-gradient(135deg,var(--gold),#f97316);border:none;color:#000;padding:14px;font-size:17px;font-weight:900;font-family:'Exo 2',sans-serif;border-radius:12px;cursor:pointer;margin-bottom:8px;display:none;}
+.back-btn{width:100%;background:transparent;border:1px solid rgba(255,100,100,.3);color:#f87171;padding:10px;font-size:13px;font-weight:700;border-radius:10px;cursor:pointer;font-family:'Rajdhani',sans-serif;}
 
-/* INVITE */
-#invitePopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:300;align-items:center;justify-content:center;}
-.inv-box{background:rgba(8,25,70,.97);border:2px solid rgba(0,200,255,.4);border-radius:24px;padding:32px;text-align:center;max-width:320px;backdrop-filter:blur(20px);}
-.inv-box h3{font-size:22px;font-weight:900;margin-bottom:8px;}
-.inv-box p{font-size:14px;color:rgba(255,255,255,.55);margin-bottom:24px;}
+/* GROUPS */
+.groups-wrap{flex:1;overflow-y:auto;padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:20px;align-content:start;}
+.gp-box{background:var(--bg2);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;}
+.gp-title{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;}
+.group-inp{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;font-family:'Rajdhani',sans-serif;outline:none;margin-bottom:8px;}
+.group-sel{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;font-family:'Rajdhani',sans-serif;outline:none;margin-bottom:8px;}
+.create-btn{width:100%;background:linear-gradient(135deg,var(--blue),var(--cyan));border:none;color:#000;padding:10px;font-size:14px;font-weight:900;border-radius:10px;cursor:pointer;font-family:'Exo 2',sans-serif;margin-bottom:12px;}
+.g-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,.04);border-radius:8px;margin-bottom:6px;}
+.g-nm{flex:1;font-size:13px;font-weight:700;}
+.g-sub{font-size:10px;color:var(--muted);}
+.g-cnt{font-size:12px;font-weight:700;color:var(--cyan);}
+.g-join{background:linear-gradient(135deg,var(--cyan),var(--blue));border:none;color:#000;padding:5px 12px;border-radius:14px;font-size:11px;font-weight:800;cursor:pointer;font-family:'Exo 2',sans-serif;}
+
+/* POPUPS */
+#invitePopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:center;justify-content:center;}
+.inv-box{background:var(--bg2);border:2px solid rgba(0,212,255,.3);border-radius:20px;padding:32px;text-align:center;max-width:320px;}
+.inv-box h3{font-family:'Exo 2',sans-serif;font-size:20px;font-weight:900;margin-bottom:8px;}
+.inv-box p{font-size:14px;color:var(--muted);margin-bottom:24px;}
 .inv-btns{display:flex;gap:10px;justify-content:center;}
-.btn-acc{background:linear-gradient(135deg,#22c55e,#16a34a);border:none;color:#fff;padding:12px 28px;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;}
-.btn-dec{background:transparent;border:1.5px solid #ef4444;color:#ef4444;padding:12px 28px;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;}
-
-/* DAILY */
-#dailyPopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;align-items:center;justify-content:center;}
-.dp-box{background:rgba(8,25,70,.98);border:2px solid #f5c518;border-radius:24px;padding:40px;text-align:center;max-width:300px;box-shadow:0 0 60px rgba(245,197,24,.3);}
-.dp-box h2{font-size:26px;font-weight:900;color:#f5c518;margin-bottom:6px;}
-.dp-streak{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:16px;}
-.dp-icon{font-size:56px;margin-bottom:8px;}
-.dp-amt{font-size:36px;font-weight:900;color:#f5c518;}
-.dp-sub{font-size:13px;color:rgba(255,255,255,.45);margin:6px 0 20px;}
-.dp-claim{background:linear-gradient(135deg,#f5c518,#f97316);border:none;color:#000;padding:14px 40px;border-radius:24px;font-size:17px;font-weight:900;cursor:pointer;font-family:'Exo 2',sans-serif;}
-
-#toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:rgba(8,25,70,.97);border:2px solid rgba(0,200,255,.5);color:#fff;padding:10px 24px;border-radius:20px;font-size:13px;font-weight:600;z-index:400;display:none;pointer-events:none;backdrop-filter:blur(12px);}
+.btn-acc{background:linear-gradient(135deg,var(--green),#16a34a);border:none;color:#fff;padding:12px 28px;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;}
+.btn-dec{background:transparent;border:1.5px solid var(--red);color:var(--red);padding:12px 28px;border-radius:20px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;}
+#dailyPopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;align-items:center;justify-content:center;}
+.dp-box{background:var(--bg2);border:2px solid var(--gold);border-radius:20px;padding:36px;text-align:center;max-width:300px;box-shadow:0 0 60px rgba(245,197,24,.2);}
+.dp-box h2{font-family:'Exo 2',sans-serif;font-size:24px;font-weight:900;color:var(--gold);margin-bottom:6px;}
+.dp-streak{font-size:13px;color:var(--muted);margin-bottom:14px;}
+.dp-icon{font-size:52px;margin-bottom:8px;}
+.dp-amt{font-family:'Exo 2',sans-serif;font-size:34px;font-weight:900;color:var(--gold);}
+.dp-sub{font-size:13px;color:var(--muted);margin:6px 0 20px;}
+.dp-claim{background:linear-gradient(135deg,var(--gold),#f97316);border:none;color:#000;padding:13px 36px;border-radius:20px;font-size:16px;font-weight:900;cursor:pointer;font-family:'Exo 2',sans-serif;}
+#toast{position:fixed;top:64px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid rgba(0,212,255,.4);color:#fff;padding:10px 22px;border-radius:16px;font-size:13px;font-weight:600;z-index:1000;display:none;pointer-events:none;}
+.empty{color:var(--muted);font-size:12px;text-align:center;padding:16px;}
 ::-webkit-scrollbar{width:4px;height:4px;}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:2px;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
 </style>
 </head>
 <body>
@@ -233,146 +345,261 @@ body{
 <!-- MAIN -->
 <div id="mainScreen">
   <div class="nav">
+    <div style="font-family:'Exo 2',sans-serif;font-size:13px;font-weight:900;color:var(--cyan);letter-spacing:2px;white-space:nowrap;">URBAN FRONTLINE</div>
     <div class="nav-tabs">
-      <button class="ntab active" onclick="switchTab('lobby')">lobby</button>
-      <button class="ntab" onclick="switchTab('shop')">shop</button>
-      <button class="ntab" onclick="switchTab('battlepass')">battle pass</button>
-      <button class="ntab" onclick="switchTab('club')">club</button>
+      <button class="ntab active" id="nt-lobby" onclick="switchTab('lobby')">LOBBY</button>
+      <button class="ntab" id="nt-shop" onclick="switchTab('shop')">SHOP</button>
+      <button class="ntab" id="nt-battlepass" onclick="switchTab('battlepass')">BATTLE PASS</button>
+      <button class="ntab" id="nt-club" onclick="switchTab('club')">CLUB</button>
     </div>
-    <div class="nav-r">
-      <div class="coins-pill"><span style="font-size:22px;">💎</span><span id="navCoins">0</span></div>
-      <div class="streak-orb"><span class="flame">🔥</span><span class="num" id="streakNum">0</span></div>
+    <div class="nav-right">
+      <div class="coins-badge"><span>💎</span><span id="navCoins">0</span></div>
+      <div class="add-btn" onclick="switchTab('shop')">+</div>
     </div>
   </div>
 
   <!-- LOBBY -->
   <div class="pane active" id="pane-lobby">
-    <div class="lobby-stage" id="lobbyStage">
-      <div class="stage-slot" id="friendSlot" style="display:none;">
-        <div class="stage-label" id="friendLabel">חבר</div>
-        <img class="stage-img" id="friendImg" src="" onerror="this.style.opacity=.4">
-      </div>
-      <div class="stage-slot">
-        <div class="stage-label" id="myLabel">אתה</div>
-        <img class="stage-img" id="mySkinImg" src="https://i.imgur.com/bLdd0OJ.png">
-      </div>
-      <div class="stage-slot">
-        <div class="stage-add" onclick="toggleFriends()">+</div>
-      </div>
-    </div>
-    <div class="lobby-bottom">
-      <div class="lb-player">
-        <div class="lb-avatar" id="myAv">?</div>
+    <div class="lobby-wrap">
+      <!-- Left -->
+      <div class="lobby-left">
+        <div class="player-card">
+          <div class="pc-name" id="pcName">-</div>
+          <div class="pc-level">LEVEL <span id="pcLevel">1</span></div>
+          <div class="xp-bar-wrap">
+            <div class="xp-row"><span>XP</span><span><span id="pcXP">0</span> / 500</span></div>
+            <div class="xp-bar"><div class="xp-fill" id="pcXPFill" style="width:0%"></div></div>
+          </div>
+        </div>
         <div>
-          <div class="lb-name" id="myNameLbl">-</div>
-          <div class="lb-level">רמה <span id="myLvl">1</span></div>
-          <div class="lb-xp"><div class="lb-xp-f" id="xpFill" style="width:0%"></div></div>
+          <div class="lb-section-title">DAILY CHALLENGES</div>
+          <div class="challenge-item">
+            <div class="ch-icon">🎮</div>
+            <div class="ch-text"><div class="ch-name">שחק 3 משחקים</div><div class="ch-prog">0 / 3</div><div class="ch-prog-bar"><div class="ch-prog-fill" style="width:0%"></div></div></div>
+            <div class="ch-reward">💎50</div>
+          </div>
+          <div class="challenge-item">
+            <div class="ch-icon">💀</div>
+            <div class="ch-text"><div class="ch-name">השג 5 הרגות</div><div class="ch-prog">0 / 5</div><div class="ch-prog-bar"><div class="ch-prog-fill" style="width:0%"></div></div></div>
+            <div class="ch-reward">💎70</div>
+          </div>
+          <div class="challenge-item">
+            <div class="ch-icon">🏆</div>
+            <div class="ch-text"><div class="ch-name">נצח משחק</div><div class="ch-prog">0 / 1</div><div class="ch-prog-bar"><div class="ch-prog-fill" style="width:0%"></div></div></div>
+            <div class="ch-reward">💎100</div>
+          </div>
+        </div>
+        <div class="lobby-btns">
+          <div class="lobby-btn" onclick="switchTab('groups')">⚔️ LOADOUT</div>
+          <div class="lobby-btn" onclick="switchTab('club')">🏆 CLUB</div>
         </div>
       </div>
-      <div class="lb-stats">
-        <div class="lb-stat"><div class="lb-sv" id="myWinsLbl">0</div><div class="lb-sl">ניצחונות</div></div>
-        <div class="lb-stat"><div class="lb-sv" id="myKillsLbl">0</div><div class="lb-sl">הרגות</div></div>
+      <!-- Center -->
+      <div class="lobby-center">
+        <div class="stage-img-wrap">
+          <div class="stage-slot" id="friendStage" style="display:none;">
+            <div class="stage-label" id="friendStageName">חבר</div>
+            <img class="stage-skin-img" id="friendStageSkin" src="">
+          </div>
+          <div class="stage-slot" onclick="openSkinSelector()">
+            <div class="stage-label" id="myStageLabel">-</div>
+            <img class="stage-skin-img" id="myStageSkin" src="">
+          </div>
+          <div class="add-slot" onclick="switchTab('groups')">
+            <div class="stage-label" style="opacity:.6;">הוסף חבר</div>
+            <div class="add-circle">+</div>
+          </div>
+        </div>
+        <div class="mode-bar">
+          <div class="mode-badge">
+            <div class="mode-title">MODE</div>
+            <div class="mode-val">BATTLE ROYALE</div>
+          </div>
+          <div class="mode-badge">
+            <div class="mode-title">TYPE</div>
+            <div class="mode-val">SOLO</div>
+          </div>
+          <button class="mode-change">CHANGE</button>
+          <button class="play-btn" onclick="switchTab('groups')">PLAY</button>
+        </div>
       </div>
-      <div class="lb-space"></div>
-      <button class="play-btn" onclick="switchTab('groups')">PLAY</button>
+      <!-- Right -->
+      <div class="lobby-right">
+        <div class="lb-section-title">NEWS</div>
+        <div class="news-item"><div class="news-tag">UPDATE</div><div class="news-title">עיר נטושה נוספה למשחק!</div></div>
+        <div class="news-item"><div class="news-tag">EVENT</div><div class="news-title">אירוע חורפי — לוחמי שלג</div></div>
+        <div class="news-item"><div class="news-tag">SHOP</div><div class="news-title">הרלמית זמין לזמן מוגבל</div></div>
+        <button class="nav-icon-btn" onclick="switchTab('shop')">🛒 SHOP</button>
+        <button class="nav-icon-btn" onclick="switchTab('battlepass')">⭐ BATTLE PASS</button>
+        <button class="nav-icon-btn" onclick="switchTab('club')">⚔️ MISSIONS</button>
+      </div>
     </div>
   </div>
 
   <!-- SHOP -->
-  <div class="pane" id="pane-shop" style="overflow-y:auto;height:calc(100vh - 80px);">
-    <div class="shop-scroll" id="shopCards"></div>
-  </div>
-
-  <!-- GROUPS -->
-  <div class="pane" id="pane-groups" style="overflow-y:auto;padding:20px 28px;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:720px;">
-      <div class="club-panel">
-        <div class="cp-title">שחקנים אונליין (<span id="onlineCount">0</span>)</div>
-        <div id="playerList"><div style="color:rgba(255,255,255,.3);font-size:12px;text-align:center;padding:16px;">אין שחקנים...</div></div>
-      </div>
-      <div class="club-panel">
-        <div class="cp-title">קבוצות</div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
-          <input class="club-inp" id="groupNameInp" placeholder="שם הקבוצה">
-          <select style="background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 14px;color:#fff;font-size:13px;font-family:Rajdhani,sans-serif;outline:none;" id="groupMaxInp">
-            <option value="2">2 שחקנים</option><option value="4">4 שחקנים</option>
-            <option value="6">6 שחקנים</option><option value="8">8 שחקנים</option>
-            <option value="10" selected>10 שחקנים</option>
-          </select>
-          <button class="club-btn" onclick="createGroup()">🚀 פתח קבוצה</button>
+  <div class="pane" id="pane-shop">
+    <div class="shop-wrap">
+      <div class="shop-main">
+        <div class="shop-header">
+          <div><div class="shop-title">SHOP</div><div class="shop-sub">BUY SKINS, ITEMS AND MORE!</div></div>
+          <div class="shop-refresh">🕐 SHOP REFRESH IN: <strong>23:45:12</strong></div>
         </div>
-        <div id="groupList"><div style="color:rgba(255,255,255,.3);font-size:12px;text-align:center;padding:16px;">אין קבוצות...</div></div>
+        <div class="section-label">FEATURED</div>
+        <div class="featured-row" id="featuredRow"></div>
+        <div class="section-label">DAILY ITEMS</div>
+        <div class="daily-row" id="dailyRow"></div>
+      </div>
+      <div class="shop-sidebar">
+        <div class="lb-section-title" style="margin-bottom:12px;">CATEGORIES</div>
+        <div class="shop-cat active" onclick="setShopCat('featured')"><div class="shop-cat-icon">⭐</div><div class="shop-cat-name">Featured</div></div>
+        <div class="shop-cat" onclick="setShopCat('skins')"><div class="shop-cat-icon">🧑</div><div class="shop-cat-name">Skins</div></div>
+        <div class="shop-cat" onclick="setShopCat('bundles')"><div class="shop-cat-icon">📦</div><div class="shop-cat-name">Bundles</div></div>
+        <div class="shop-cat" onclick="setShopCat('emotes')"><div class="shop-cat-icon">🎭</div><div class="shop-cat-name">Emotes</div></div>
+        <div class="shop-cat" onclick="setShopCat('offers')"><div class="shop-cat-icon">🎁</div><div class="shop-cat-name">Offers</div></div>
       </div>
     </div>
   </div>
 
   <!-- BATTLE PASS -->
-  <div class="pane" id="pane-battlepass" style="display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:20px 28px;">
-    <div style="text-align:center;">
-      <div style="font-size:80px;">⭐</div>
-      <div style="font-size:32px;font-weight:900;margin:12px 0 8px;">Battle Pass</div>
-      <div style="font-size:16px;color:rgba(255,255,255,.5);">בקרוב...</div>
-      <div style="font-size:13px;color:rgba(255,255,255,.35);margin-top:8px;">Season 1 מתחיל בקרוב!</div>
+  <div class="pane" id="pane-battlepass">
+    <div class="bp-wrap">
+      <div class="bp-header">
+        <div class="bp-season-icon">⭐</div>
+        <div class="bp-info">
+          <div class="bp-season-tag">SEASON 1</div>
+          <div class="bp-title">TROPICAL ASSAULT</div>
+          <div class="bp-ends">⏰ ENDS IN: 45 DAYS</div>
+          <div class="bp-level-row">
+            <div class="bp-lvl-badge" id="bpLvlBadge">0</div>
+            <div class="bp-xp-wrap">
+              <div class="bp-xp-row"><span>LEVEL <span id="bpLvl">0</span></span><span><span id="bpXPVal">0</span> / 1000 XP</span></div>
+              <div class="bp-bar"><div class="bp-fill" id="bpBarFill" style="width:0%"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="bp-reward-img">
+          <div class="bp-reward-label">TIER 10 REWARD</div>
+          <div style="font-size:48px;text-align:center;">🤖</div>
+          <div class="bp-reward-name">CYBER TROOPER</div>
+          <div class="bp-reward-tier">LEGENDARY OUTFIT</div>
+        </div>
+      </div>
+      <div class="tiers-grid" id="tiersGrid"></div>
+      <div class="bp-progress-line" id="bpProgLine"></div>
+      <div class="bp-bottom">
+        <div class="bp-challenges">
+          <div class="lb-section-title" style="margin-bottom:10px;">DAILY CHALLENGES</div>
+          <div class="bpc-item"><div class="ch-icon">🎮</div><div class="bpc-info"><div class="bpc-name">שחק 3 משחקים</div><div class="bpc-prog">2 / 3</div></div><div class="bpc-xp">XP 250</div></div>
+          <div class="bpc-item"><div class="ch-icon">💀</div><div class="bpc-info"><div class="bpc-name">השג 5 הרגות</div><div class="bpc-prog">1 / 5</div></div><div class="bpc-xp">XP 250</div></div>
+          <div class="bpc-item"><div class="ch-icon">🏆</div><div class="bpc-info"><div class="bpc-name">נצח משחק</div><div class="bpc-prog">0 / 1</div></div><div class="bpc-xp">XP 500</div></div>
+          <button class="claim-btn" onclick="toast('בקרוב!','var(--gold)')">CLAIM REWARD!</button>
+        </div>
+        <div class="xp-boost-card">
+          <div class="xpb-badge">XP</div>
+          <div class="xpb-title">XP BOOST</div>
+          <div class="xpb-desc">+10% XP for the next 3 matches</div>
+          <button class="xpb-btn" onclick="toast('XP Boost הופעל!','var(--green)')">ACTIVATE</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- CLUB -->
-  <div class="pane" id="pane-club" style="overflow-y:auto;padding:20px 28px;">
-    <div id="clubNoMember" style="max-width:600px;">
-      <div class="xp-warn" id="clubXPMsg" style="display:none;">צריך 5,000 XP ליצירה/הצטרפות לקלאב</div>
-      <div id="clubCreateArea" class="club-panel" style="display:none;">
-        <div class="cp-title">צור קלאב חדש</div>
+  <div class="pane" id="pane-club">
+    <div id="clubNoMemberView" style="padding:20px;max-width:600px;">
+      <div class="xp-warn" id="clubXPWarn" style="display:none;"></div>
+      <div id="clubCreateArea" style="display:none;margin-bottom:16px;">
+        <div class="lb-section-title" style="margin-bottom:8px;">צור קלאב חדש</div>
         <input class="club-inp" id="clubNameInp" placeholder="שם הקלאב" maxlength="20">
-        <button class="club-btn" onclick="createClub()">➕ צור קלאב</button>
+        <button class="big-btn" onclick="createClub()">➕ צור קלאב</button>
       </div>
-      <div class="club-panel">
-        <div class="cp-title">קלאבים פתוחים</div>
-        <div class="clubs-list" id="clubsList"><div style="color:rgba(255,255,255,.3);font-size:12px;text-align:center;padding:16px;">אין קלאבים...</div></div>
-      </div>
+      <div class="lb-section-title" style="margin-bottom:8px;">קלאבים פתוחים</div>
+      <div id="clubListEl"><div class="empty">אין קלאבים...</div></div>
     </div>
-    <div id="clubMember" style="display:none;max-width:600px;">
-      <div class="club-panel">
+    <div class="club-wrap" id="clubMemberView" style="display:none;">
+      <div class="club-left">
         <div class="club-hero">
-          <div class="club-icon">⚔️</div>
-          <div><div class="club-nm" id="clubNmBig">-</div><div class="club-lead">מנהיג: <span id="clubLdBig">-</span> · <span id="clubCntBig">0</span>/20</div></div>
-          <div style="margin-right:auto;display:flex;gap:8px;">
-            <button id="clubInvBtn" onclick="clubInviteGame()" style="display:none;background:linear-gradient(135deg,#00c8ff,#0060ff);border:none;color:#000;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Exo 2',sans-serif;">🎮 הזמן</button>
-            <button onclick="leaveClub()" style="background:transparent;border:1px solid rgba(255,100,100,.4);color:#ff8080;padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:'Rajdhani',sans-serif;">עזוב</button>
+          <div class="club-badge-icon">⚔️</div>
+          <div style="flex:1;">
+            <div class="club-nm" id="cNm">-</div>
+            <div class="club-tag">מנהיג: <span id="cLd">-</span></div>
+            <div class="club-stats-row">
+              <div class="cs"><div class="cs-val" id="cMems">0</div><div class="cs-lbl">MEMBERS</div></div>
+              <div class="cs"><div class="cs-val" id="cWins">0</div><div class="cs-lbl">TOTAL WINS</div></div>
+              <div class="cs"><div class="cs-val" id="cPts">0</div><div class="cs-lbl">CLUB POINTS</div></div>
+            </div>
+            <div class="club-actions">
+              <button class="club-btn-sm" id="cInvBtn" onclick="clubInviteGame()" style="display:none;">🎮 הזמן</button>
+              <button class="club-btn-leave" onclick="leaveClub()">עזוב</button>
+            </div>
           </div>
         </div>
-        <div id="clubMembersList" style="display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto;margin-bottom:12px;"></div>
-        <div class="cp-title">💬 צ'אט</div>
-        <div class="chat-box" id="clubChat"></div>
-        <div class="chat-row">
-          <input class="chat-inp" id="clubChatInp" placeholder="הודעה..." maxlength="200" onkeydown="if(event.key==='Enter')sendClubChat()">
-          <button class="chat-send" onclick="sendClubChat()">שלח</button>
+        <div class="lb-section-title" style="margin-bottom:8px;">CLUB CHAT</div>
+        <div class="chat-wrap">
+          <div class="chat-box" id="clubChatBox"></div>
+          <div class="chat-row">
+            <input class="chat-inp" id="clubChatInp" placeholder="Type a message..." maxlength="200" onkeydown="if(event.key==='Enter')sendClubChat()">
+            <button class="chat-send" onclick="sendClubChat()">➤</button>
+          </div>
         </div>
+        <div class="lb-section-title" style="margin-top:14px;margin-bottom:8px;">CLUB MISSIONS</div>
+        <div class="mission-item"><div class="m-info"><div class="m-name">שחק 10 משחקים כקלאב</div><div class="m-prog">6 / 10</div><div class="m-prog-bar"><div class="m-prog-fill" style="width:60%"></div></div></div><div class="m-reward">💎100</div></div>
+        <div class="mission-item"><div class="m-info"><div class="m-name">השג 20 הרגות כקלאב</div><div class="m-prog">12 / 20</div><div class="m-prog-bar"><div class="m-prog-fill" style="width:60%"></div></div></div><div class="m-reward">💎150</div></div>
+        <div class="mission-item"><div class="m-info"><div class="m-name">נצח 5 משחקים כקלאב</div><div class="m-prog">2 / 5</div><div class="m-prog-bar"><div class="m-prog-fill" style="width:40%"></div></div></div><div class="m-reward">💎200</div></div>
+      </div>
+      <div class="club-right">
+        <div class="lb-section-title" style="margin-bottom:8px;">CLUB LEADERBOARD</div>
+        <div id="clubLbEl"></div>
+        <button class="view-lb-btn">VIEW FULL LEADERBOARD</button>
+        <div class="lb-section-title" style="margin-top:14px;margin-bottom:8px;">חברי הקלאב</div>
+        <div id="clubMembersEl" style="max-height:200px;overflow-y:auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GROUPS -->
+  <div class="pane" id="pane-groups">
+    <div class="groups-wrap">
+      <div class="gp-box">
+        <div class="gp-title">שחקנים אונליין (<span id="onlineCount">0</span>)</div>
+        <div id="playerList"><div class="empty">אין שחקנים...</div></div>
+      </div>
+      <div class="gp-box">
+        <div class="gp-title">צור/הצטרף לקבוצה</div>
+        <input class="group-inp" id="groupNameInp" placeholder="שם הקבוצה">
+        <select class="group-sel" id="groupMaxInp">
+          <option value="2">2 שחקנים</option><option value="4">4 שחקנים</option>
+          <option value="6">6 שחקנים</option><option value="8">8 שחקנים</option>
+          <option value="10" selected>10 שחקנים</option>
+        </select>
+        <button class="create-btn" onclick="createGroup()">🚀 פתח קבוצה</button>
+        <div class="gp-title" style="margin-top:4px;">קבוצות פתוחות</div>
+        <div id="groupList"><div class="empty">אין קבוצות...</div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- FRIENDS PANEL -->
-<div id="friendsPanel">
-  <div class="fp-title">
-    <span>👥 שחקנים</span>
-    <button class="fp-close" onclick="toggleFriends()">✕</button>
+<!-- SKIN SELECTOR -->
+<div id="skinSelector">
+  <div class="ss-header">
+    <div class="ss-title">🎨 בחר סקין</div>
+    <button class="ss-close" onclick="closeSkinSelector()">← חזור ללובי</button>
   </div>
-  <div class="fp-section">בלובי עכשיו</div>
-  <div class="fp-list" id="fpList"></div>
+  <div class="ss-grid" id="ssGrid"></div>
 </div>
 
-<!-- SKIN DETAIL -->
-<div id="skinDetail">
-  <div class="sd-box">
-    <img class="sd-img" id="sdImg" src="">
-    <div class="sd-name" id="sdName"></div>
-    <div class="sd-rarity" id="sdRarity"></div>
-    <div id="sdOwnedMsg" class="sd-owned" style="display:none;">✅ יש לך את הסקין הזה</div>
-    <div class="sd-price-row" id="sdPriceRow"><span>💎</span><span id="sdPrice"></span></div>
-    <button class="sd-buy" id="sdBuyBtn" onclick="doBuySkin()">קנה עכשיו</button>
-    <button class="sd-equip" id="sdEquipBtn" onclick="doEquipSkin()" style="display:none;">צייד סקין</button>
-    <button class="sd-close" onclick="closeSkinDetail()">← חזור לחנות</button>
+<!-- BUY POPUP -->
+<div id="buyPopup">
+  <div class="bp-box">
+    <div class="bp-box-title" id="bpBoxTitle">קנה סקין</div>
+    <div class="bp-skin-row" id="bpSkinRow"></div>
+    <div class="bp-total">
+      <div class="bp-total-label">סה"כ</div>
+      <div class="bp-total-price"><span>💎</span><span id="bpTotalPrice">0</span></div>
+    </div>
+    <button class="bp-buy-btn" onclick="confirmBuy()">✅ קנה עכשיו</button>
+    <button class="bp-cancel-btn" onclick="closeBuyPopup()">← ביטול</button>
   </div>
 </div>
 
@@ -381,12 +608,12 @@ body{
   <div class="room-box">
     <div class="room-ttl" id="roomTitle">GAME ROOM ⚔️</div>
     <div class="room-id" id="roomSubtitle"></div>
-    <div class="rp-list" id="roomPlayers"></div>
+    <div id="roomPlayers"></div>
     <div class="map-sel" id="mapSelect">
       <div class="map-ttl">בחר מפה</div>
       <div class="map-opts">
-        <div class="map-opt selected" id="mapCity" onclick="selectMap('city')"><div class="map-opt-i">🏙️</div><div class="map-opt-n">העיר</div><div class="map-opt-h">קלאסית</div></div>
-        <div class="map-opt" id="mapAbandoned" onclick="selectMap('abandoned')"><div class="map-opt-i">🏚️</div><div class="map-opt-n">עיר נטושה</div><div class="map-opt-h">מפה גדולה</div></div>
+        <div class="map-opt selected" id="mapCity" onclick="selectMap('city')"><div class="map-opt-i">🏙️</div><div class="map-opt-n">העיר</div></div>
+        <div class="map-opt" id="mapAbandoned" onclick="selectMap('abandoned')"><div class="map-opt-i">🏚️</div><div class="map-opt-n">עיר נטושה</div></div>
       </div>
     </div>
     <div class="wait-h" id="waitHint"></div>
@@ -414,7 +641,7 @@ body{
     <div class="dp-streak" id="dpStreak"></div>
     <div class="dp-icon">💎</div>
     <div class="dp-amt" id="dpAmt">+0</div>
-    <div class="dp-sub">מטבעות נוספו!</div>
+    <div class="dp-sub">יהלומים נוספו!</div>
     <button class="dp-claim" onclick="closeDailyPopup()">תבעו! 🎉</button>
   </div>
 </div>
@@ -426,10 +653,10 @@ body{
 const socket=io();
 let myName='',myCoins=0,myWins=0,myKills=0,mySkin='rookie',myOwnedSkins=['rookie'],myBPXP=0;
 let pendingFrom='',myRoom=null,myClub=null,selectedMap='city';
-let onlinePlayers=[],friendsOpen=false,currentDetailSkin=null;
+let pendingBuyItems=[],currentBundleIdx=-1;
 
 function h(p){let v=0;for(let i=0;i<p.length;i++){v=((v<<5)-v)+p.charCodeAt(i);v|=0;}return Math.abs(v).toString(36);}
-function toast(msg,c){const t=document.getElementById('toast');t.textContent=msg;t.style.borderColor=c||'rgba(0,200,255,.5)';t.style.display='block';setTimeout(()=>t.style.display='none',3000);}
+function toast(msg,c){const t=document.getElementById('toast');t.textContent=msg;t.style.borderColor=c||'rgba(0,212,255,.4)';t.style.display='block';setTimeout(()=>t.style.display='none',3000);}
 function showErr(id,msg){const e=document.getElementById(id);e.textContent=msg;e.style.display='block';setTimeout(()=>e.style.display='none',3000);}
 
 function showTab(t){
@@ -441,32 +668,21 @@ function showTab(t){
 }
 
 function switchTab(t){
-  document.querySelectorAll('.ntab').forEach((b,i)=>b.classList.toggle('active',['lobby','shop','battlepass','club','groups'][i]===t));
-  ['lobby','shop','battlepass','club','groups'].forEach(p=>{
-    const el=document.getElementById('pane-'+p);
-    if(!el)return;
-    el.classList.remove('active');
-    el.style.display='none';
+  ['lobby','shop','battlepass','club','groups'].forEach(n=>{
+    const el=document.getElementById('nt-'+n);
+    if(el)el.classList.toggle('active',n===t);
+    const pe=document.getElementById('pane-'+n);
+    if(pe){pe.classList.remove('active');pe.style.display='none';}
   });
-  const pel=document.getElementById('pane-'+t);
-  if(pel){pel.classList.add('active');pel.style.display=t==='lobby'?'flex':'block';}
+  const pe=document.getElementById('pane-'+t);
+  if(pe){pe.classList.add('active');pe.style.display='flex';}
   if(t==='shop')renderShop();
+  if(t==='battlepass')renderBP();
   if(t==='club'){socket.emit('getClubs');if(myName)socket.emit('getMyClub',{name:myName});}
 }
 
-function doLogin(){
-  const n=document.getElementById('loginName').value.trim(),p=document.getElementById('loginPass').value;
-  if(!n||!p){showErr('loginErr','מלא שם וסיסמה');return;}
-  socket.emit('login',{name:n,passHash:h(p)});
-}
-function doRegister(){
-  const n=document.getElementById('regName').value.trim(),p=document.getElementById('regPass').value,p2=document.getElementById('regPass2').value;
-  if(!n||!p){showErr('regErr','מלא שם וסיסמה');return;}
-  if(n.length<2){showErr('regErr','שם קצר מדי');return;}
-  if(p.length<4){showErr('regErr','סיסמה קצרה מדי');return;}
-  if(p!==p2){showErr('regErr','הסיסמאות לא תואמות');return;}
-  socket.emit('register',{name:n,passHash:h(p)});
-}
+function doLogin(){const n=document.getElementById('loginName').value.trim(),p=document.getElementById('loginPass').value;if(!n||!p){showErr('loginErr','מלא שם וסיסמה');return;}socket.emit('login',{name:n,passHash:h(p)});}
+function doRegister(){const n=document.getElementById('regName').value.trim(),p=document.getElementById('regPass').value,p2=document.getElementById('regPass2').value;if(!n||!p){showErr('regErr','מלא שם וסיסמה');return;}if(n.length<2){showErr('regErr','שם קצר מדי');return;}if(p.length<4){showErr('regErr','סיסמה קצרה מדי');return;}if(p!==p2){showErr('regErr','הסיסמאות לא תואמות');return;}socket.emit('register',{name:n,passHash:h(p)});}
 
 socket.on('authError',msg=>{showErr('loginErr',msg);showErr('regErr',msg);});
 socket.on('authOk',data=>{
@@ -482,143 +698,251 @@ socket.on('authOk',data=>{
 });
 socket.on('statsUpdate',d=>{if(d.coins!==undefined)myCoins=d.coins;if(d.wins!==undefined)myWins=d.wins;if(d.kills!==undefined)myKills=d.kills;if(d.battlePassXP!==undefined)myBPXP=d.battlePassXP;updateHUD();});
 
+// SINGLE SOURCE OF TRUTH for all skins
 const SKINS=[
-  {id:'rookie',name:'Rookie',price:0,rarity:'common',winsReq:0},
-  {id:'street',name:'שחקן רחוב',price:0,rarity:'common',winsReq:5},
-  {id:'commando',name:'חייל קומנדו',price:0,rarity:'common',winsReq:15},
-  {id:'agent',name:'סוכן מיוחד',price:500,rarity:'rare',winsReq:30},
-  {id:'desert',name:'לוחם מדברי',price:800,rarity:'rare',winsReq:50},
-  {id:'snow',name:'לוחם שלג',price:1200,rarity:'epic',winsReq:75},
-  {id:'ninja',name:"נינג'ה",price:1500,rarity:'epic',winsReq:100},
-  {id:'engineer',name:'מהנדס',price:2000,rarity:'epic',winsReq:150},
-  {id:'robot',name:'רובוט',price:3500,rarity:'legendary',winsReq:250},
-  {id:'cyber',name:'סייבר',price:2500,rarity:'epic',winsReq:0},
-  {id:'medic',name:'חובש',price:1800,rarity:'rare',winsReq:0},
-  {id:'firefighter',name:'כבאי',price:2000,rarity:'rare',winsReq:0},
-  {id:'harlimit',name:'🔥 הרלמית',price:10000,rarity:'legendary',winsReq:0,exclusive:true},
+  {id:'rookie',      name:'Rookie',         price:0,    rarity:'common',   winsReq:0,   img:'https://i.imgur.com/bLdd0OJ.png', desc:'הסקין הבסיסי'},
+  {id:'street',      name:'שחקן רחוב',      price:0,    rarity:'common',   winsReq:5,   img:'https://i.imgur.com/QefuNIy.png', desc:'סגנון רחוב'},
+  {id:'commando',    name:'חייל קומנדו',    price:0,    rarity:'common',   winsReq:15,  img:'https://i.imgur.com/3f2ZRyS.png', desc:'לוחם מיומן'},
+  {id:'agent',       name:'סוכן מיוחד',     price:500,  rarity:'rare',     winsReq:30,  img:'https://i.imgur.com/I2gLpSX.png', desc:'סוכן מסתורי'},
+  {id:'desert',      name:'לוחם מדברי',     price:800,  rarity:'rare',     winsReq:50,  img:'https://i.imgur.com/5gnNNb3.png', desc:'לוחם מהמדבר'},
+  {id:'snow',        name:'לוחם שלג',       price:1200, rarity:'epic',     winsReq:75,  img:'https://i.imgur.com/NSkNX0q.png', desc:'אלוף הקרח'},
+  {id:'ninja',       name:"נינג'ה",         price:1500, rarity:'epic',     winsReq:100, img:'https://i.imgur.com/a1lK8Jk.png', desc:'צל חשוך'},
+  {id:'engineer',    name:'מהנדס',          price:2000, rarity:'epic',     winsReq:150, img:'https://i.imgur.com/rnwsFDI.png', desc:'גאון הטכנולוגיה'},
+  {id:'robot',       name:'רובוט',          price:3500, rarity:'legendary',winsReq:250, img:'https://i.imgur.com/xGOx935.png', desc:'מכונת קרב'},
+  {id:'cyber',       name:'סייבר',          price:2500, rarity:'epic',     winsReq:0,   img:'https://i.imgur.com/2aZFdIi.png', desc:'לוחם הסייברספייס'},
+  {id:'medic',       name:'חובש',           price:900,  rarity:'rare',     winsReq:0,   img:'https://i.imgur.com/D9d8Vat.png', desc:'מציל חיים'},
+  {id:'firefighter', name:'כבאי',           price:900,  rarity:'rare',     winsReq:0,   img:'https://i.imgur.com/qiFaFPQ.png', desc:'לוחם אש'},
+  {id:'harlimit',    name:'🔥 הרלמית',      price:10000,rarity:'legendary',winsReq:0,   img:'/skin_default.png',               desc:'הסקין האגדי'},
 ];
-const SKIN_IMGS={rookie:'https://i.imgur.com/bLdd0OJ.png',street:'https://i.imgur.com/QefuNIy.png',commando:'https://i.imgur.com/3f2ZRyS.png',agent:'https://i.imgur.com/I2gLpSX.png',desert:'https://i.imgur.com/5gnNNb3.png',snow:'https://i.imgur.com/NSkNX0q.png',ninja:'https://i.imgur.com/a1lK8Jk.png',engineer:'https://i.imgur.com/rnwsFDI.png',robot:'https://i.imgur.com/xGOx935.png',cyber:'https://i.imgur.com/2aZFdIi.png',medic:'https://i.imgur.com/D9d8Vat.png',firefighter:'https://i.imgur.com/qiFaFPQ.png',harlimit:'/skin_default.png'};
+function getSkin(id){return SKINS.find(s=>s.id===id)||SKINS[0];}
+
+const SHOP_BUNDLES=[
+  {name:'WARRIORS',  ids:['commando','agent','desert'], price:1000,rarity:'rare'},
+  {name:'NINJA',     ids:['snow','ninja'],              price:2000,rarity:'epic'},
+  {name:'WORK PLAYER',ids:['engineer'],                price:800, rarity:'rare'},
+  {name:'THE HOODIE BROS',ids:['street','rookie'],     price:1500,rarity:'epic',bundle:true},
+  {name:'CYBER',     ids:['robot','cyber'],             price:2500,rarity:'legendary'},
+  {name:'MEDICS & RESCUE',ids:['medic','firefighter','engineer'],price:900,rarity:'rare'},
+  {name:'🔥 הרלמית', ids:['harlimit'],                 price:10000,rarity:'legendary'},
+];
 
 function updateHUD(){
   document.getElementById('navCoins').textContent=myCoins.toLocaleString();
-  document.getElementById('streakNum').textContent=myWins;
-  document.getElementById('myNameLbl').textContent=myName;
-  document.getElementById('myAv').textContent=myName?myName[0].toUpperCase():'?';
-  document.getElementById('myWinsLbl').textContent=myWins;
-  document.getElementById('myKillsLbl').textContent=myKills;
+  document.getElementById('pcName').textContent=myName;
   const lvl=Math.floor(myBPXP/500);
-  document.getElementById('myLvl').textContent=lvl+1;
-  document.getElementById('xpFill').style.width=((myBPXP%500)/500*100)+'%';
-  // Update skin in lobby
-  const img=SKIN_IMGS[mySkin]||SKIN_IMGS.rookie;
-  const si=document.getElementById('mySkinImg');
-  if(si)si.src=img;
+  document.getElementById('pcLevel').textContent=lvl+1;
+  document.getElementById('pcXP').textContent=myBPXP%500;
+  document.getElementById('pcXPFill').style.width=((myBPXP%500)/500*100)+'%';
+  document.getElementById('myStageLabel').textContent=myName;
+  const sk=getSkin(mySkin);
+  document.getElementById('myStageSkin').src=sk.img;
 }
 
 function closeDailyPopup(){document.getElementById('dailyPopup').style.display='none';}
 function logout(){myName='';socket.emit('leave');document.getElementById('mainScreen').style.display='none';document.getElementById('authScreen').style.display='flex';}
 
-// FRIENDS PANEL
-function toggleFriends(){
-  friendsOpen=!friendsOpen;
-  document.getElementById('friendsPanel').classList.toggle('open',friendsOpen);
-  renderFriendsList();
-}
-function renderFriendsList(){
-  const list=document.getElementById('fpList');
-  if(!onlinePlayers.length){list.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:12px;text-align:center;padding:16px;">אין שחקנים אחרים...</div>';return;}
-  list.innerHTML=onlinePlayers.filter(n=>n!==myName).map(n=>`
-    <div class="fp-row">
-      <div class="fp-av">${n[0].toUpperCase()}</div>
-      <div class="fp-name">${n}</div>
-      <div class="fp-actions">
-        <button class="fp-btn" onclick="sendInvite('${n}')">🎮 הזמן</button>
-      </div>
-    </div>`).join('')||'<div style="color:rgba(255,255,255,.3);font-size:12px;text-align:center;padding:16px;">אין שחקנים אחרים...</div>';
-}
-
-// SHOP — featured cards like in the design
+// SHOP
 function renderShop(){
-  const bundles=[
-    {name:'WARRIORS',    skins:['commando','agent','desert'], price:1000, col:'light'},
-    {name:'NINJA',       skins:['snow','ninja'],              price:2000, col:'light'},
-    {name:'WORK PLAYER', skins:['engineer'],                  price:800,  col:'light'},
-    {name:'THE HOODIE BROS',skins:['street','rookie'],        price:1500, col:'light'},
-    {name:'CYBER',       skins:['robot','cyber'],             price:2500, col:'purple'},
-    {name:'MEDICS & RESCUE',skins:['medic','firefighter','engineer'],price:900,col:'green'},
-    {name:'🔥 הרלמית',   skins:['harlimit'],                  price:10000,col:'gold'},
-  ];
-  window._shopBundles=bundles;
-  document.getElementById('shopCards').innerHTML=bundles.map((b,i)=>`
-    <div class="scard" onclick="openShopBundle(${i})">
-      <div class="scard-top">
-        <div class="scard-name ${b.col}">${b.name}</div>
-        <div class="scard-gem">💎</div>
+  const fr=document.getElementById('featuredRow');
+  const dr=document.getElementById('dailyRow');
+  // Featured — first 3 bundles
+  fr.innerHTML=SHOP_BUNDLES.slice(0,3).map((b,i)=>{
+    const imgs=b.ids.map(id=>`<img src="${getSkin(id).img}" onerror="this.style.opacity=.3">`).join('');
+    return `<div class="skin-card featured ${b.rarity}" onclick="openBundle(${i})">
+      <div class="sc-rarity ${b.rarity}">${b.rarity.toUpperCase()}</div>
+      <div class="sc-name">${b.name}</div>
+      <div style="display:flex;justify-content:center;gap:6px;margin:8px 0;height:140px;align-items:flex-end;">
+        ${b.ids.map(id=>`<img src="${getSkin(id).img}" style="height:130px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5));" onerror="this.style.opacity=.3">`).join('')}
       </div>
-      <div class="scard-price ${b.col}">${b.price.toLocaleString()}</div>
-      <div class="scard-per">for one skin</div>
-      <div class="scard-imgs">
-        ${b.skins.map(s=>`<img class="scard-img" src="${SKIN_IMGS[s]||''}" onerror="this.style.opacity=.3">`).join('')}
-      </div>
-      <div class="scard-label">for one skin</div>
+      <div class="sc-price"><span>💎</span>${b.price.toLocaleString()}</div>
+    </div>`;
+  }).join('');
+  // Daily — individual skins
+  const daily=SKINS.filter(s=>s.price>0).slice(0,4);
+  dr.innerHTML=daily.map(s=>{
+    const owned=myOwnedSkins.includes(s.id);
+    return `<div class="skin-card ${s.rarity}" onclick="openSingleSkin('${s.id}')">
+      <img src="${s.img}" onerror="this.style.opacity=.3">
+      <div class="sc-rarity ${s.rarity}">${s.rarity.toUpperCase()}</div>
+      <div class="sc-name">${s.name}</div>
+      ${owned?`<div class="sc-owned">✅ יש לך</div>`:`<div class="sc-price"><span>💎</span>${s.price.toLocaleString()}</div>`}
+    </div>`;
+  }).join('');
+  // Free gift
+  dr.innerHTML+=`<div class="free-gift-card" onclick="toast('מתנה יומית נתבעה!','var(--green)')">
+    <div class="fg-title">DAILY FREE GIFT</div>
+    <div class="fg-icon">🎁</div>
+    <div class="fg-timer">⏰ 08:45:12</div>
+    <button class="fg-claim">CLAIM</button>
+  </div>`;
+}
+
+function setShopCat(cat){
+  document.querySelectorAll('.shop-cat').forEach(el=>el.classList.remove('active'));
+  event.target.closest('.shop-cat').classList.add('active');
+}
+
+function openBundle(idx){
+  const b=SHOP_BUNDLES[idx];
+  if(!b)return;
+  if(b.bundle&&b.ids.length>1){
+    // Special bundle with individual choices
+    const title=`קנה - ${b.name}`;
+    document.getElementById('bpBoxTitle').textContent=title;
+    const skinData=b.ids.map(id=>({...getSkin(id),selected:true}));
+    pendingBuyItems=skinData;
+    renderBuyPopup(skinData,b);
+  } else if(b.ids.length===1){
+    openSingleSkin(b.ids[0]);
+  } else {
+    // Multi-skin bundle
+    const title=`קנה - ${b.name}`;
+    document.getElementById('bpBoxTitle').textContent=title;
+    const skinData=b.ids.map(id=>({...getSkin(id),selected:true}));
+    pendingBuyItems=skinData;
+    renderBuyPopup(skinData,b);
+  }
+}
+
+function openSingleSkin(skinId){
+  const s=getSkin(skinId);
+  document.getElementById('bpBoxTitle').textContent=s.name;
+  pendingBuyItems=[{...s,selected:true}];
+  renderBuyPopup([{...s,selected:true}],null);
+}
+
+function renderBuyPopup(items,bundle){
+  const row=document.getElementById('bpSkinRow');
+  row.innerHTML=items.map((s,i)=>`
+    <div class="bp-skin-item ${s.selected?'selected':''}" onclick="toggleBuyItem(${i})" id="bpItem${i}">
+      <img src="${s.img}" onerror="this.style.opacity=.3">
+      <div class="bpsi-name">${s.name}</div>
+      <div class="bpsi-price">💎 ${s.price.toLocaleString()}</div>
+      ${myOwnedSkins.includes(s.id)?'<div style="font-size:10px;color:var(--green);">✅ יש לך</div>':''}
     </div>`).join('');
+  updateBuyTotal();
+  document.getElementById('buyPopup').style.display='flex';
 }
 
-function openShopBundle(idx){
-  const bundle=window._shopBundles[idx];
-  if(!bundle)return;
-  // Open first skin in bundle
-  const skinId=bundle.skins[0];
-  openSkinDetail(skinId);
+function toggleBuyItem(idx){
+  if(pendingBuyItems.length===1)return; // Can't deselect single item
+  pendingBuyItems[idx].selected=!pendingBuyItems[idx].selected;
+  const el=document.getElementById('bpItem'+idx);
+  if(el)el.classList.toggle('selected',pendingBuyItems[idx].selected);
+  updateBuyTotal();
 }
 
-function openSkinDetail(skinId){
-  const s=SKINS.find(x=>x.id===skinId);
-  if(!s)return;
-  currentDetailSkin=s;
-  const owned=myOwnedSkins.includes(s.id)||(s.price===0&&myWins>=(s.winsReq||0));
-  const equipped=mySkin===s.id;
-  document.getElementById('sdImg').src=SKIN_IMGS[s.id]||'';
-  document.getElementById('sdName').textContent=s.name;
-  document.getElementById('sdRarity').textContent=s.rarity.toUpperCase();
-  document.getElementById('sdRarity').className='sd-rarity '+s.rarity;
-  document.getElementById('sdPrice').textContent=s.price.toLocaleString();
-  document.getElementById('sdPriceRow').style.display=owned?'none':'flex';
-  document.getElementById('sdOwnedMsg').style.display=owned?'block':'none';
-  document.getElementById('sdBuyBtn').style.display=owned||s.price===0?'none':'block';
-  document.getElementById('sdEquipBtn').style.display=owned&&!equipped?'block':'none';
-  if(equipped)document.getElementById('sdEquipBtn').textContent='✅ מצויד';
-  document.getElementById('skinDetail').style.display='flex';
+function updateBuyTotal(){
+  const total=pendingBuyItems.filter(s=>s.selected&&!myOwnedSkins.includes(s.id)).reduce((a,s)=>a+s.price,0);
+  document.getElementById('bpTotalPrice').textContent=total.toLocaleString();
 }
-function closeSkinDetail(){document.getElementById('skinDetail').style.display='none';currentDetailSkin=null;}
-function doBuySkin(){if(!currentDetailSkin)return;socket.emit('buySkin',{name:myName,skinId:currentDetailSkin.id,price:currentDetailSkin.price});}
-function doEquipSkin(){if(!currentDetailSkin)return;socket.emit('equipSkin',{name:myName,skinId:currentDetailSkin.id});}
 
-socket.on('buyResult',d=>{if(d.ok){myCoins=d.coins;myOwnedSkins=d.ownedSkins;updateHUD();if(currentDetailSkin)openSkinDetail(currentDetailSkin.id);toast('✅ הסקין נרכש!','#22c55e');}else toast('❌ '+d.msg,'#ef4444');});
-socket.on('equipResult',d=>{if(d.ok){mySkin=d.skin;localStorage.setItem('uf_skin_'+myName,mySkin);updateHUD();if(currentDetailSkin)openSkinDetail(currentDetailSkin.id);toast('✅ סקין מצויד!');}});
+function closeBuyPopup(){document.getElementById('buyPopup').style.display='none';pendingBuyItems=[];}
+
+function confirmBuy(){
+  const toBuy=pendingBuyItems.filter(s=>s.selected&&!myOwnedSkins.includes(s.id));
+  if(!toBuy.length){toast('כבר יש לך את הסקינים האלה!','var(--muted)');return;}
+  const total=toBuy.reduce((a,s)=>a+s.price,0);
+  if(myCoins<total){toast('אין מספיק יהלומים!','var(--red)');return;}
+  // Buy each skin
+  toBuy.forEach(s=>socket.emit('buySkin',{name:myName,skinId:s.id,price:s.price}));
+  closeBuyPopup();
+}
+
+socket.on('buyResult',d=>{
+  if(d.ok){myCoins=d.coins;myOwnedSkins=d.ownedSkins;updateHUD();renderShop();toast('✅ סקין נרכש!','var(--green)');}
+  else toast('❌ '+d.msg,'var(--red)');
+});
+socket.on('equipResult',d=>{
+  if(d.ok){mySkin=d.skin;localStorage.setItem('uf_skin_'+myName,mySkin);updateHUD();toast('✅ סקין מצויד!');}
+});
+function equipSkin(id){socket.emit('equipSkin',{name:myName,skinId:id});}
+
+// SKIN SELECTOR
+function openSkinSelector(){
+  const grid=document.getElementById('ssGrid');
+  grid.innerHTML=SKINS.map(s=>{
+    const owned=myOwnedSkins.includes(s.id)||(s.price===0&&myWins>=(s.winsReq||0));
+    const equipped=mySkin===s.id;
+    const locked=s.winsReq>0&&myWins<s.winsReq&&!myOwnedSkins.includes(s.id);
+    let cls='ss-card'+(equipped?' selected':'')+(locked?' locked':'');
+    let status=equipped?'<div class="ss-status equipped">✅ מצויד</div>':owned?'<div class="ss-status owned">יש לך</div>':locked?`<div class="ss-status locked">🔒 ${s.winsReq} ניצחונות</div>`:`<div class="ss-status" style="color:#38bdf8;">💎 ${s.price.toLocaleString()}</div>`;
+    const action=locked?'':(owned||s.price===0)?`onclick="selectAndEquip('${s.id}')"`:` onclick="openSingleSkin('${s.id}')"`;
+    return `<div class="${cls}" ${locked?'':(owned||s.price===0)?`onclick="selectAndEquip('${s.id}')"`:`onclick="openSingleSkin('${s.id}')"`}>
+      <img src="${s.img}" onerror="this.style.opacity=.3">
+      <div class="ss-name">${s.name}</div>
+      ${status}
+    </div>`;
+  }).join('');
+  document.getElementById('skinSelector').style.display='flex';
+}
+
+function selectAndEquip(id){
+  equipSkin(id);
+  closeSkinSelector();
+}
+
+function closeSkinSelector(){
+  document.getElementById('skinSelector').style.display='none';
+}
+
+// BATTLE PASS
+const BP_TIERS=[
+  {t:1,icon:'💎',name:'100 Diamonds',pts:100},
+  {t:2,icon:'🎨',name:'Spray',pts:200},
+  {t:3,icon:'🧑',name:'Builder Skin',pts:300},
+  {t:4,icon:'💎',name:'300 Diamonds',pts:300},
+  {t:5,icon:'🔫',name:'Green Camo Wrap',pts:500},
+  {t:6,icon:'💎',name:'500 Diamonds',pts:500},
+  {t:7,icon:'🥷',name:'Ninja Skin',pts:500},
+  {t:8,icon:'💎',name:'500 Diamonds',pts:500},
+  {t:9,icon:'💎',name:'500 Diamonds',pts:500},
+  {t:10,icon:'🤖',name:'Cyber Trooper',pts:1000,legendary:true},
+];
+function renderBP(){
+  const lvl=Math.floor(myBPXP/1000);
+  const xpInLvl=myBPXP%1000;
+  document.getElementById('bpLvlBadge').textContent=lvl;
+  document.getElementById('bpLvl').textContent=lvl;
+  document.getElementById('bpXPVal').textContent=xpInLvl;
+  document.getElementById('bpBarFill').style.width=(xpInLvl/1000*100)+'%';
+  // Tiers
+  document.getElementById('tiersGrid').innerHTML=BP_TIERS.map(t=>{
+    const done=lvl>=t.t;
+    const cur=lvl===t.t-1;
+    return `<div class="tier-box${done?' unlocked':''}${cur?' current':''}">
+      <div class="tier-num">TIER ${t.t}</div>
+      <div class="tier-icon">${t.icon}</div>
+      <div class="tier-name">${t.name}</div>
+      <div class="tier-pts">💎${t.pts}</div>
+      ${done?'<div class="tier-check">✓</div>':'<div class="tier-lock">🔒</div>'}
+    </div>`;
+  }).join('');
+  // Progress dots
+  document.getElementById('bpProgLine').innerHTML=BP_TIERS.flatMap((t,i)=>[
+    `<div class="prog-dot${lvl>i?' done':''}${lvl===i?' current':''}">${t.t}</div>`,
+    i<BP_TIERS.length-1?`<div class="prog-line${lvl>i?' done':''}"></div>`:''
+  ]).join('');
+}
 
 // PLAYERS
 socket.on('lobbyPlayers',players=>{
-  onlinePlayers=players;
   document.getElementById('onlineCount').textContent=players.length;
-  const list=document.getElementById('playerList');
-  list.innerHTML=players.map(n=>`<div class="club-row" style="cursor:default">
-    <div class="club-av">${n[0].toUpperCase()}</div>
-    <div style="flex:1;font-size:13px;font-weight:700;">${n}</div>
-    ${n===myName?'<span style="font-size:10px;background:rgba(0,200,255,.15);color:#00c8ff;border-radius:4px;padding:2px 6px;">אתה</span>':`<button class="fp-btn" onclick="sendInvite('${n}')">🎮 הזמן</button>`}
-  </div>`).join('')||'<div style="color:rgba(255,255,255,.3);font-size:12px;text-align:center;padding:16px;">אין שחקנים...</div>';
-  if(friendsOpen)renderFriendsList();
+  document.getElementById('playerList').innerHTML=players.map(n=>`
+    <div class="g-row">
+      <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;">${n[0].toUpperCase()}</div>
+      <div style="flex:1;"><div class="g-nm">${n}</div><div class="g-sub">${n===myName?'אתה':'אונליין'}</div></div>
+      ${n!==myName?`<button class="g-join" onclick="sendInvite('${n}')">הזמן</button>`:''}
+    </div>`).join('')||'<div class="empty">אין שחקנים...</div>';
 });
-
 socket.on('roomsList',rooms=>{
-  const list=document.getElementById('groupList');
-  list.innerHTML=rooms.map(r=>`<div class="club-row">
-    <div style="flex:1"><div style="font-size:13px;font-weight:700;">⚔️ ${r.name}</div><div style="font-size:11px;color:rgba(255,255,255,.4);">מארח: ${r.host}</div></div>
-    <span style="font-size:12px;color:#00c8ff;margin-left:8px;">${r.count}/${r.max}</span>
-    <button class="btn-jc" onclick="joinGroup('${r.id}')" ${r.count>=r.max?'disabled':''}>הצטרף</button>
-  </div>`).join('')||'<div style="color:rgba(255,255,255,.3);font-size:12px;text-align:center;padding:16px;">אין קבוצות...</div>';
+  document.getElementById('groupList').innerHTML=rooms.map(r=>`
+    <div class="g-row">
+      <div style="flex:1;"><div class="g-nm">⚔️ ${r.name}</div><div class="g-sub">מארח: ${r.host}</div></div>
+      <div class="g-cnt">${r.count}/${r.max}</div>
+      <button class="g-join" onclick="joinGroup('${r.id}')" ${r.count>=r.max?'disabled':''}>הצטרף</button>
+    </div>`).join('')||'<div class="empty">אין קבוצות...</div>';
 });
-
 function sendInvite(t){socket.emit('invite',t);toast('הזמנה נשלחה ל-'+t);}
 function createGroup(){const n=document.getElementById('groupNameInp').value.trim()||myName+"'s Group";const m=document.getElementById('groupMaxInp').value;socket.emit('createGroup',{groupName:n,maxPlayers:parseInt(m)});}
 function joinGroup(id){socket.emit('joinGroup',{roomId:id});}
@@ -626,8 +950,9 @@ function joinGroup(id){socket.emit('joinGroup',{roomId:id});}
 socket.on('invited',({from})=>{pendingFrom=from;document.getElementById('inviteMsg').textContent=from+' מזמין אותך!';document.getElementById('invitePopup').style.display='flex';});
 function acceptInvite(){document.getElementById('invitePopup').style.display='none';socket.emit('acceptInvite',{from:pendingFrom});}
 function declineInvite(){document.getElementById('invitePopup').style.display='none';socket.emit('declineInvite',{from:pendingFrom});}
-socket.on('inviteDeclined',({by})=>toast(by+' דחה','#ef4444'));
+socket.on('inviteDeclined',({by})=>toast(by+' דחה','var(--red)'));
 
+// ROOM
 socket.on('enterRoom',({roomId,players,host,roomName})=>{
   myRoom=roomId;
   document.getElementById('roomTitle').textContent=roomName||'GAME ROOM';
@@ -638,8 +963,7 @@ socket.on('enterRoom',({roomId,players,host,roomName})=>{
   toast('נכנסת לחדר!');
 });
 socket.on('roomUpdate',({players,host,roomName})=>{if(roomName)document.getElementById('roomTitle').textContent=roomName;renderRoom(players,host);});
-socket.on('playerLeft',n=>toast(n+' עזב','#ef4444'));
-
+socket.on('playerLeft',n=>toast(n+' עזב','var(--muted)'));
 function renderRoom(players,host){
   document.getElementById('roomPlayers').innerHTML=players.map(n=>`<div class="rp-row"><div class="rp-dot"></div><div class="rp-nm">${n}</div><span class="rp-b">${n===host?'👑 מארח':n===myName?'אתה':'מחובר'}</span></div>`).join('');
   const btn=document.getElementById('startBtn'),hint=document.getElementById('waitHint'),mapSel=document.getElementById('mapSelect');
@@ -649,49 +973,74 @@ function renderRoom(players,host){
 function selectMap(m){selectedMap=m;document.getElementById('mapCity').classList.toggle('selected',m==='city');document.getElementById('mapAbandoned').classList.toggle('selected',m==='abandoned');}
 function leaveRoom(){socket.emit('leaveRoom');myRoom=null;document.getElementById('roomScreen').style.display='none';document.getElementById('mainScreen').style.display='flex';}
 function startGame(){socket.emit('startGame',{roomId:myRoom,map:selectedMap});}
-socket.on('gameStarted',({roomId,players,map})=>{window.location.href='/game?'+new URLSearchParams({room:roomId,name:myName,players:players.join(','),skin:mySkin,map:map||'city'}).toString();});
+socket.on('gameStarted',({roomId,players,map})=>{
+  window.location.href='/game?'+new URLSearchParams({room:roomId,name:myName,players:players.join(','),skin:mySkin,map:map||'city',returnRoom:roomId}).toString();
+});
 
 // CLUB
 socket.on('clubJoined',club=>{
   myClub=club;
   if(club)renderClub(club);
-  else{document.getElementById('clubNoMember').style.display='block';document.getElementById('clubMember').style.display='none';}
+  else{document.getElementById('clubNoMemberView').style.display='block';document.getElementById('clubMemberView').style.display='none';}
   updateClubXP();
 });
 socket.on('clubUpdate',club=>{myClub=club;renderClub(club);});
 socket.on('clubMessage',msg=>{
-  const box=document.getElementById('clubChat');if(!box)return;
+  const box=document.getElementById('clubChatBox');if(!box)return;
   const d=document.createElement('div');d.className='cmsg'+(msg.system?' csys':'');
-  d.innerHTML=msg.system?msg.text:'<span class="cfrom">'+msg.from+':</span> '+msg.text;
+  d.innerHTML=msg.system?msg.text:`<span class="cfrom">${msg.from}:</span> ${msg.text}`;
   box.appendChild(d);box.scrollTop=box.scrollHeight;
 });
 socket.on('clubsList',list=>{
-  const el=document.getElementById('clubsList');if(!el)return;
-  el.innerHTML=list.map(c=>`<div class="cli-row"><div style="flex:1"><div style="font-size:14px;font-weight:700;">⚔️ ${c.name}</div><div style="font-size:11px;color:rgba(255,255,255,.4);">מנהיג: ${c.leader}</div></div><span style="font-size:12px;color:#00c8ff;">${c.count}/20</span><button class="btn-jc" onclick="joinClub('${c.id}')">הצטרף</button></div>`).join('')||'<div style="color:rgba(255,255,255,.3);font-size:12px;text-align:center;padding:16px;">אין קלאבים...</div>';
+  const el=document.getElementById('clubListEl');if(!el)return;
+  el.innerHTML=list.map(c=>`<div class="cli-row">
+    <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#ef4444,var(--purple));display:flex;align-items:center;justify-content:center;font-size:16px;">⚔️</div>
+    <div style="flex:1;"><div style="font-size:13px;font-weight:700;">${c.name}</div><div style="font-size:10px;color:var(--muted);">מנהיג: ${c.leader} · ${c.count}/20</div></div>
+    <button class="g-join" onclick="joinClub('${c.id}')">הצטרף</button>
+  </div>`).join('')||'<div class="empty">אין קלאבים...</div>';
 });
-socket.on('clubError',msg=>toast('❌ '+msg,'#ef4444'));
+socket.on('clubError',msg=>toast('❌ '+msg,'var(--red)'));
 socket.on('clubGameInvite',({from})=>{pendingFrom=from;document.getElementById('inviteMsg').textContent=from+' מזמין את הקלאב!';document.getElementById('invitePopup').style.display='flex';});
 
-function updateClubXP(){const has=myBPXP>=5000;document.getElementById('clubXPMsg').style.display=has?'none':'block';document.getElementById('clubCreateArea').style.display=has?'block':'none';}
-function renderClub(c){
-  document.getElementById('clubNoMember').style.display='none';
-  document.getElementById('clubMember').style.display='block';
-  document.getElementById('clubNmBig').textContent=c.name;
-  document.getElementById('clubLdBig').textContent=c.leader;
-  document.getElementById('clubCntBig').textContent=c.members.length;
-  document.getElementById('clubMembersList').innerHTML=c.members.map(m=>`<div class="club-row"><div class="club-av">${m[0].toUpperCase()}</div><div style="flex:1;font-size:13px;font-weight:700;">${m}</div>${m===c.leader?'<span style="color:#f5c518;">👑</span>':''}</div>`).join('');
-  const b=document.getElementById('clubInvBtn');if(b)b.style.display=myName===c.leader&&myRoom?'block':'none';
+function updateClubXP(){
+  const has=myBPXP>=5000;
+  document.getElementById('clubXPWarn').style.display=has?'none':'block';
+  document.getElementById('clubXPWarn').textContent='צריך 5,000 XP (יש לך '+myBPXP+' XP)';
+  document.getElementById('clubCreateArea').style.display=has?'block':'none';
 }
-function createClub(){const n=document.getElementById('clubNameInp').value.trim();if(!n){toast('כתוב שם','#ef4444');return;}socket.emit('createClub',{name:myName,clubName:n});}
+function renderClub(c){
+  document.getElementById('clubNoMemberView').style.display='none';
+  document.getElementById('clubMemberView').style.display='grid';
+  document.getElementById('cNm').textContent=c.name;
+  document.getElementById('cLd').textContent=c.leader;
+  document.getElementById('cMems').textContent=c.members.length+'/20';
+  document.getElementById('cWins').textContent=c.members.length*5;
+  document.getElementById('cPts').textContent=c.members.length*350;
+  // Leaderboard
+  document.getElementById('clubLbEl').innerHTML=c.members.slice(0,5).map((m,i)=>`
+    <div class="lboard-item">
+      <div class="lb-rank lb-rank-${i+1}">${i===0?'👑':i+1}</div>
+      <div class="lb-av">${m[0].toUpperCase()}</div>
+      <div class="lb-name">${m}</div>
+      <div class="lb-pts">${(1250-i*150).toLocaleString()}</div>
+    </div>`).join('');
+  document.getElementById('clubMembersEl').innerHTML=c.members.map(m=>`
+    <div class="lboard-item">
+      <div class="lb-av">${m[0].toUpperCase()}</div>
+      <div class="lb-name">${m}</div>
+      ${m===c.leader?'<span class="lb-crown">👑</span>':''}
+    </div>`).join('');
+  const b=document.getElementById('cInvBtn');if(b)b.style.display=myName===c.leader&&myRoom?'block':'none';
+}
+function createClub(){const n=document.getElementById('clubNameInp').value.trim();if(!n){toast('כתוב שם','var(--red)');return;}socket.emit('createClub',{name:myName,clubName:n});}
 function joinClub(id){socket.emit('joinClub',{name:myName,clubId:id});}
 function leaveClub(){socket.emit('leaveClub',{name:myName});myClub=null;}
 function sendClubChat(){const i=document.getElementById('clubChatInp');const t=i.value.trim();if(!t)return;socket.emit('clubChat',{name:myName,text:t});i.value='';}
-function clubInviteGame(){if(!myRoom||!myClub)return;socket.emit('clubInviteGame',{name:myName,roomId:myRoom});toast('הזמנה נשלחה!','#a78bfa');}
+function clubInviteGame(){if(!myRoom||!myClub)return;socket.emit('clubInviteGame',{name:myName,roomId:myRoom});toast('הזמנה נשלחה!','var(--purple)');}
 
 // CHEAT
-let sb='';
-document.addEventListener('keydown',e=>{sb+=e.key;if(sb.length>10)sb=sb.slice(-10);if(sb.includes('192013')&&myName){sb='';socket.emit('cheatCode',{name:myName,code:'192013'});toast('🔓 קוד סודי!','#f5c518');}});
-socket.on('cheatResult',d=>{myCoins=d.coins;myWins=d.wins;myOwnedSkins=d.ownedSkins;updateHUD();renderShop();toast('✅ 99,999 + כל הסקינים!','#f5c518');});
+let sb='';document.addEventListener('keydown',e=>{sb+=e.key;if(sb.length>10)sb=sb.slice(-10);if(sb.includes('192013')&&myName){sb='';socket.emit('cheatCode',{name:myName,code:'192013'});}});
+socket.on('cheatResult',d=>{myCoins=d.coins;myWins=d.wins;myOwnedSkins=d.ownedSkins;updateHUD();renderShop();toast('✅ 99,999 + כל הסקינים!','var(--gold)');});
 </script>
 </body>
 </html>
