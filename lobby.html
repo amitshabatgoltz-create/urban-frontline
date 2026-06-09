@@ -126,15 +126,15 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;mi
 .shop-refresh{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;}
 .section-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
 .section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08);}
-.featured-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
-.daily-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
-.skin-card{background:linear-gradient(135deg,rgba(26,86,219,.15),rgba(124,58,237,.08));border:1px solid rgba(26,86,219,.3);border-radius:14px;padding:12px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;text-align:center;}
-.skin-card:hover{transform:translateY(-3px);border-color:rgba(0,212,255,.5);box-shadow:0 6px 20px rgba(0,150,255,.2);}
-.skin-card.legendary{background:linear-gradient(135deg,rgba(245,197,24,.1),rgba(249,115,22,.08));border-color:rgba(245,197,24,.4);}
-.skin-card.epic{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(79,70,229,.08));border-color:rgba(124,58,237,.4);}
-.skin-card.rare{background:linear-gradient(135deg,rgba(14,165,233,.12),rgba(26,86,219,.08));border-color:rgba(14,165,233,.3);}
-.skin-card img{width:100%;height:110px;object-fit:contain;margin-bottom:8px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5));}
-.skin-card.featured img{height:140px;}
+.featured-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:20px;}
+.daily-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:20px;}
+.skin-card{background:linear-gradient(160deg,rgba(26,86,219,.25),rgba(124,58,237,.15));border:1px solid rgba(26,86,219,.35);border-radius:16px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;text-align:center;display:flex;flex-direction:column;align-items:center;padding:0 0 14px 0;}
+.skin-card:hover{transform:translateY(-4px);border-color:rgba(0,212,255,.6);box-shadow:0 8px 28px rgba(0,150,255,.25);}
+.skin-card.legendary{background:linear-gradient(160deg,rgba(245,197,24,.18),rgba(249,115,22,.12));border-color:rgba(245,197,24,.5);}
+.skin-card.epic{background:linear-gradient(160deg,rgba(124,58,237,.22),rgba(79,70,229,.14));border-color:rgba(124,58,237,.5);}
+.skin-card.rare{background:linear-gradient(160deg,rgba(14,165,233,.18),rgba(26,86,219,.12));border-color:rgba(14,165,233,.4);}
+.skin-card img{width:100%;height:180px;object-fit:contain;margin-bottom:8px;filter:drop-shadow(0 6px 16px rgba(0,0,0,.6));}
+.skin-card.featured img{height:200px;}
 .sc-rarity{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;}
 .sc-rarity.legendary{color:var(--gold);}
 .sc-rarity.epic{color:#a78bfa;}
@@ -420,7 +420,8 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;mi
           </div>
           <div class="stage-slot" onclick="openSkinSelector()">
             <div class="stage-label" id="myStageLabel">-</div>
-            <img class="stage-skin-img" id="myStageSkin" src="">
+            <canvas id="mySkinCanvas" width="120" height="240" style="height:240px;image-rendering:pixelated;cursor:pointer;filter:drop-shadow(0 10px 30px rgba(0,0,0,.6));"></canvas>
+            <img class="stage-skin-img" id="myStageSkin" src="" style="display:none;">
           </div>
           <div class="add-slot" onclick="toggleFriendsPanel()">
             <div class="stage-label" style="opacity:.6;">הוסף חבר</div>
@@ -742,11 +743,11 @@ const SKINS=[
   {id:'medic',       name:'חובש',           price:900,  rarity:'rare',     winsReq:0,   img:'https://i.imgur.com/D9d8Vat.png', desc:'מציל חיים'},
   {id:'firefighter', name:'כבאי',           price:900,  rarity:'rare',     winsReq:0,   img:'https://i.imgur.com/qiFaFPQ.png', desc:'לוחם אש'},
   {id:'harlimit',    name:'🔥 הרלמית',      price:10000,rarity:'legendary',winsReq:0,   img:'/skin_default.png',               desc:'הסקין האגדי'},
-  {id:'backrooms',   name:'Backrooms',      price:0,    rarity:'common',   winsReq:0,   img:'/skins/backrooms.png',             desc:'ברוך הבא לחדרים'},
-  {id:'spider',      name:'Spider',         price:0,    rarity:'common',   winsReq:0,   img:'/skins/senpai-spider.png',         desc:'עכביש מסוכן'},
-  {id:'blueboy',     name:'Blue Boy',       price:0,    rarity:'common',   winsReq:0,   img:'/skins/minecraft-skin-blue-boy.png',desc:'הנער הכחול'},
-  {id:'michel',      name:'Michel',         price:0,    rarity:'common',   winsReq:0,   img:'/skins/yuskito-michel-correction.png',desc:'מישל'},
-  {id:'soldier',     name:'Soldier',        price:0,    rarity:'common',   winsReq:0,   img:'/skins/2026_06_08_american-civil-war-union-soldier-24107638.png', desc:'חייל מלחמת האזרחים'},
+  {id:'backrooms',   name:'Backrooms',      price:0,    rarity:'common',   winsReq:0,   img:'/backrooms.png',             desc:'ברוך הבא לחדרים'},
+  {id:'spider',      name:'Spider',         price:0,    rarity:'common',   winsReq:0,   img:'/senpai-spider.png',         desc:'עכביש מסוכן'},
+  {id:'blueboy',     name:'Blue Boy',       price:0,    rarity:'common',   winsReq:0,   img:'/minecraft-skin-blue-boy .png',desc:'הנער הכחול'},
+  {id:'michel',      name:'Michel',         price:0,    rarity:'common',   winsReq:0,   img:'/yuskito-michel-correction (2).png',desc:'מישל'},
+  {id:'soldier',     name:'Soldier',        price:0,    rarity:'common',   winsReq:0,   img:'/2026_06_08_american-civil-war-union-soldier-24107638.png', desc:'חייל מלחמת האזרחים'},
 ];
 function getSkin(id){return SKINS.find(s=>s.id===id)||SKINS[0];}
 
@@ -770,6 +771,43 @@ function updateHUD(){
   document.getElementById('myStageLabel').textContent=myName;
   const sk=getSkin(mySkin);
   document.getElementById('myStageSkin').src=sk.img;
+  drawMinecraftSkinCanvas(sk.img, document.getElementById('mySkinCanvas'));
+}
+
+function drawMinecraftSkinCanvas(url, canvas){
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const img = new Image();
+  img.crossOrigin='anonymous';
+  img.onload = () => {
+    ctx.imageSmoothingEnabled = false;
+    const W=canvas.width, H=canvas.height;
+    const S=W/20; // scale factor
+    // Draw Minecraft skin parts from 64x64 skin layout
+    function drawPart(sx,sy,sw,sh, dx,dy,dw,dh){
+      ctx.drawImage(img, sx,sy,sw,sh, dx,dy,dw,dh);
+    }
+    // Head front: UV [8,8,16,16]
+    drawPart(8,8,8,8, W/2-S*4,S*0,S*8,S*8);
+    // Head overlay: UV [40,8,48,16]
+    drawPart(40,8,8,8, W/2-S*4,S*0,S*8,S*8);
+    // Body front: UV [20,20,28,32]
+    drawPart(20,20,8,12, W/2-S*4,S*8,S*8,S*12);
+    // Right arm front: UV [44,20,48,32]
+    drawPart(44,20,4,12, W/2-S*8,S*8,S*4,S*12);
+    // Left arm front: UV [36,52,40,64]
+    drawPart(36,52,4,12, W/2+S*4,S*8,S*4,S*12);
+    // Right leg front: UV [4,20,8,32]
+    drawPart(4,20,4,12, W/2-S*4,S*20,S*4,S*12);
+    // Left leg front: UV [20,52,24,64]
+    drawPart(20,52,4,12, W/2,S*20,S*4,S*12);
+  };
+  img.onerror = () => {
+    // fallback: draw colored blocks
+    ctx.fillStyle='#555'; ctx.fillRect(canvas.width/2-30,0,60,60);
+    ctx.fillStyle='#444'; ctx.fillRect(canvas.width/2-25,60,50,70);
+  };
+  img.src = url;
 }
 
 function closeDailyPopup(){document.getElementById('dailyPopup').style.display='none';}
