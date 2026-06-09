@@ -847,13 +847,11 @@ const fbxLoader = new THREE.FBXLoader ? new THREE.FBXLoader() : null;
 const fbxCache = {};
 const mixers = {};
 
-const FBX_CHARACTER = 'https://drive.google.com/uc?export=download&id=1zU83WM_1STI9XXvMpcX4KqZEO-LYv2pu';
+const FBX_CHARACTER = '/fbx/T-Pose.fbx';
 const FBX_ANIMS = {
-  idle:     'https://drive.google.com/uc?export=download&id=1B27_uISYVgKURH0Za2oy1PpOIbp8Fc8U',
-  run:      'https://drive.google.com/uc?export=download&id=1gCVZB-uF5E4c818Hfc_M-kmCBbYjbDid',
-  runBack:  'https://drive.google.com/uc?export=download&id=1xCPcgRUBcmqBDP-aGLglH3OiikV8TohJ',
-  rifleWalk:'https://drive.google.com/uc?export=download&id=1kUq8tbeAaZlE-c4nyaVFdraG_uX8vN6S',
-  fire:     'https://drive.google.com/uc?export=download&id=1XcxrMLOlrrWKDgbXExnd6Vj5H_T4sE3a',
+  idle:     '/fbx/Breathing_Idle.fbx',
+  run:      '/fbx/Running.fbx',
+  fire:     '/fbx/Firing_Rifle.fbx',
 };
 
 function loadFBX(url, cb){
