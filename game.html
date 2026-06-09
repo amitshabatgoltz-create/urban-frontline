@@ -847,6 +847,7 @@ const fbxLoader = new THREE.FBXLoader ? new THREE.FBXLoader() : null;
 const fbxCache = {};
 const mixers = {};
 
+const FBX_CHARACTER = 'https://drive.google.com/uc?export=download&id=1zU83WM_1STI9XXvMpcX4KqZEO-LYv2pu';
 const FBX_ANIMS = {
   idle:     'https://drive.google.com/uc?export=download&id=1B27_uISYVgKURH0Za2oy1PpOIbp8Fc8U',
   run:      'https://drive.google.com/uc?export=download&id=1gCVZB-uF5E4c818Hfc_M-kmCBbYjbDid',
@@ -869,38 +870,34 @@ function makePeerMesh(name, skinId){
   root.userData = {walkT:Math.random()*Math.PI*2, fbx:false};
   scene.add(root);
 
-  // Try FBX first
-  loadFBX(FBX_ANIMS.idle, fbxObj => {
-    if(fbxObj){
-      fbxObj.scale.set(0.012, 0.012, 0.012);
-      fbxObj.traverse(c => {
-        if(c.isMesh){
-          c.castShadow = true;
-          c.receiveShadow = true;
+  // Load character model
+  loadFBX(FBX_CHARACTER, charObj => {
+    if(charObj){
+      charObj.scale.set(0.012, 0.012, 0.012);
+      charObj.traverse(c => {
+        if(c.isMesh){ c.castShadow=true; c.receiveShadow=true; }
+      });
+      root.add(charObj);
+      root.userData.fbx = true;
+      root.userData.fbxObj = charObj;
+
+      // Load idle animation and apply to character
+      loadFBX(FBX_ANIMS.idle, idleObj => {
+        if(idleObj && idleObj.animations.length > 0){
+          const mixer = new THREE.AnimationMixer(charObj);
+          mixers[name] = mixer;
+          root.userData.mixer = mixer;
+          root.userData.idleClip = idleObj.animations[0];
+          const action = mixer.clipAction(idleObj.animations[0]);
+          action.play();
+          root.userData.idleAction = action;
         }
       });
-      root.add(fbxObj);
-      root.userData.fbx = true;
-      root.userData.fbxObj = fbxObj;
-
-      // Setup animation mixer
-      const mixer = new THREE.AnimationMixer(fbxObj);
-      mixers[name] = mixer;
-      if(fbxObj.animations && fbxObj.animations.length > 0){
-        const action = mixer.clipAction(fbxObj.animations[0]);
-        action.play();
-        root.userData.mixer = mixer;
-        root.userData.idleAction = action;
-      }
 
       // Load run animation
       loadFBX(FBX_ANIMS.run, runObj => {
         if(runObj && runObj.animations.length > 0){
-          const runMixer = mixers[name] || new THREE.AnimationMixer(fbxObj);
-          mixers[name] = runMixer;
-          root.userData.mixer = runMixer;
           root.userData.runClip = runObj.animations[0];
-          root.userData.idleClip = fbxObj.animations[0];
         }
       });
 
