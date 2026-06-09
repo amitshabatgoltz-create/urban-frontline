@@ -250,21 +250,25 @@ body{background:radial-gradient(ellipse at 65% 35%,#2196f3 0%,#1565c0 45%,#0d47a
 .cli-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;margin-bottom:8px;}
 
 /* ══ SKIN SELECTOR ══ */
-#skinSelector{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:300;flex-direction:column;align-items:center;}
-.ss-header{display:flex;align-items:center;width:100%;max-width:900px;padding:20px;gap:12px;}
-.ss-title{font-family:'Exo 2',sans-serif;font-size:22px;font-weight:900;color:#fff;flex:1;}
-.ss-close{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--text);padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Rajdhani',sans-serif;}
-.ss-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;width:100%;max-width:900px;padding:0 20px;overflow-y:auto;flex:1;padding-bottom:20px;}
-.ss-card{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.1);border-radius:14px;padding:12px;cursor:pointer;transition:all .2s;text-align:center;}
-.ss-card:hover{border-color:rgba(0,212,255,.5);background:rgba(0,212,255,.05);}
-.ss-card.selected{border-color:var(--cyan);background:rgba(0,212,255,.1);box-shadow:0 0 16px rgba(0,212,255,.3);}
+#skinSelector{display:none;position:fixed;inset:0;background:radial-gradient(ellipse at 65% 35%,#2196f3 0%,#1565c0 45%,#0d47a1 100%);z-index:300;flex-direction:row;}
+.ss-header{display:none;}
+.ss-left{width:320px;background:rgba(255,255,255,.92);border-radius:20px;margin:20px 0 20px 20px;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
+.ss-left-top{padding:16px;border-bottom:1px solid rgba(0,0,0,.08);display:flex;align-items:center;gap:10px;}
+.ss-hanger{font-size:36px;}
+.ss-back-btn{background:none;border:none;color:#1a56db;font-size:14px;font-weight:700;cursor:pointer;font-family:'Exo 2',sans-serif;margin-right:auto;}
+.ss-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px;overflow-y:auto;flex:1;}
+.ss-card{background:rgba(26,86,219,.08);border:2px solid transparent;border-radius:14px;padding:8px;cursor:pointer;transition:all .2s;text-align:center;position:relative;}
+.ss-card:hover{background:rgba(26,86,219,.15);}
+.ss-card.selected{border-color:#22c55e;background:rgba(34,197,94,.08);}
 .ss-card.locked{opacity:.4;cursor:not-allowed;}
-.ss-card img{width:100%;height:100px;object-fit:contain;margin-bottom:6px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));}
-.ss-name{font-size:12px;font-weight:700;color:#fff;}
-.ss-status{font-size:10px;margin-top:3px;}
-.ss-status.owned{color:var(--green);}
-.ss-status.equipped{color:var(--cyan);font-weight:700;}
-.ss-status.locked{color:var(--muted);}
+.ss-card img{width:100%;height:80px;object-fit:contain;filter:drop-shadow(0 3px 8px rgba(0,0,0,.3));}
+.ss-name{font-size:11px;font-weight:700;color:#1a3a6b;margin-top:4px;}
+.ss-check{position:absolute;top:4px;right:4px;color:#22c55e;font-size:14px;font-weight:900;}
+.ss-right{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;}
+.ss-preview-name{font-family:'Exo 2',sans-serif;font-size:32px;font-weight:900;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.4);margin-bottom:20px;}
+.ss-preview-img{height:380px;object-fit:contain;filter:drop-shadow(0 20px 50px rgba(0,0,0,.5));transition:all .3s;}
+.ss-equip-btn{margin-top:30px;background:linear-gradient(135deg,#f5c518,#f97316);border:none;color:#000;padding:16px 60px;font-size:22px;font-weight:900;font-family:'Exo 2',sans-serif;letter-spacing:3px;border-radius:14px;cursor:pointer;box-shadow:0 6px 24px rgba(245,197,24,.5);}
+.ss-equip-btn:hover{transform:scale(1.05);}
 
 /* ══ BUY POPUP ══ */
 #buyPopup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;align-items:center;justify-content:center;}
@@ -620,11 +624,18 @@ body{background:radial-gradient(ellipse at 65% 35%,#2196f3 0%,#1565c0 45%,#0d47a
 
 <!-- SKIN SELECTOR -->
 <div id="skinSelector">
-  <div class="ss-header">
-    <div class="ss-title">🎨 בחר סקין</div>
-    <button class="ss-close" onclick="closeSkinSelector()">← חזור ללובי</button>
+  <div class="ss-left">
+    <div class="ss-left-top">
+      <div class="ss-hanger">🪝</div>
+      <button class="ss-back-btn" onclick="closeSkinSelector()">← חזור</button>
+    </div>
+    <div class="ss-grid" id="ssGrid"></div>
   </div>
-  <div class="ss-grid" id="ssGrid"></div>
+  <div class="ss-right">
+    <div class="ss-preview-name" id="ssPreviewName"></div>
+    <img class="ss-preview-img" id="ssPreviewImg" src="">
+    <button class="ss-equip-btn" id="ssEquipBtn" onclick="equipSelected()">EQUIP</button>
+  </div>
 </div>
 
 <!-- BUY POPUP -->
@@ -950,22 +961,49 @@ socket.on('equipResult',d=>{
 function equipSkin(id){socket.emit('equipSkin',{name:myName,skinId:id});}
 
 // SKIN SELECTOR
+let selectedSkinId = null;
+
 function openSkinSelector(){
   const grid=document.getElementById('ssGrid');
-  grid.innerHTML=SKINS.map(s=>{
-    const owned=myOwnedSkins.includes(s.id)||(s.price===0&&myWins>=(s.winsReq||0));
+  const ownedSkins=SKINS.filter(s=>myOwnedSkins.includes(s.id)||(s.price===0&&myWins>=(s.winsReq||0)));
+  grid.innerHTML=ownedSkins.map(s=>{
     const equipped=mySkin===s.id;
-    const locked=s.winsReq>0&&myWins<s.winsReq&&!myOwnedSkins.includes(s.id);
-    let cls='ss-card'+(equipped?' selected':'')+(locked?' locked':'');
-    let status=equipped?'<div class="ss-status equipped">✅ מצויד</div>':owned?'<div class="ss-status owned">יש לך</div>':locked?`<div class="ss-status locked">🔒 ${s.winsReq} ניצחונות</div>`:`<div class="ss-status" style="color:#38bdf8;">💎 ${s.price.toLocaleString()}</div>`;
-    const action=locked?'':(owned||s.price===0)?`onclick="selectAndEquip('${s.id}')"`:` onclick="openSingleSkin('${s.id}')"`;
-    return `<div class="${cls}" ${locked?'':(owned||s.price===0)?`onclick="selectAndEquip('${s.id}')"`:`onclick="openSingleSkin('${s.id}')"`}>
-      <img src="${s.img}" onerror="this.style.opacity=.3">
+    return `<div class="ss-card${equipped?' selected':''}" onclick="previewSkin('${s.id}')">
+      <img src="${s.img}" onerror="this.src='/skin_default.png'">
       <div class="ss-name">${s.name}</div>
-      ${status}
+      ${equipped?'<div class="ss-check">✓</div>':''}
     </div>`;
   }).join('');
+  // Preview current skin
+  previewSkin(mySkin);
   document.getElementById('skinSelector').style.display='flex';
+}
+
+function previewSkin(id){
+  selectedSkinId=id;
+  const s=getSkin(id);
+  document.getElementById('ssPreviewName').textContent=s.name;
+  document.getElementById('ssPreviewImg').src=s.img;
+  // Update selected state
+  document.querySelectorAll('.ss-card').forEach(el=>el.classList.remove('selected'));
+  document.querySelectorAll('.ss-card .ss-check').forEach(el=>el.remove());
+  // Find and highlight
+  document.querySelectorAll('.ss-card').forEach(el=>{
+    if(el.querySelector('img')?.src?.includes(s.img.replace('/','')||s.id)){
+      el.classList.add('selected');
+    }
+  });
+  // Show EQUIP or EQUIPPED
+  const btn=document.getElementById('ssEquipBtn');
+  btn.textContent=mySkin===id?'✅ מצויד':'EQUIP';
+}
+
+function equipSelected(){
+  if(!selectedSkinId)return;
+  equipSkin(selectedSkinId);
+  mySkin=selectedSkinId;
+  updateHUD();
+  closeSkinSelector();
 }
 
 function selectAndEquip(id){
