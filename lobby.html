@@ -110,30 +110,49 @@ body{background:radial-gradient(ellipse at 65% 35%,#2196f3 0%,#1565c0 45%,#0d47a
 .shop-title{font-family:'Exo 2',sans-serif;font-size:22px;font-weight:900;color:#fff;}
 .shop-sub{font-size:12px;color:var(--muted);}
 .shop-refresh{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;}
-.section-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
-.section-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08);}
-.featured-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:20px;}
-.daily-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:20px;}
-.skin-card{background:linear-gradient(160deg,rgba(26,86,219,.25),rgba(124,58,237,.15));border:1px solid rgba(26,86,219,.35);border-radius:16px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;text-align:center;display:flex;flex-direction:column;align-items:center;padding:0 0 14px 0;}
-.skin-card:hover{transform:translateY(-4px);border-color:rgba(0,212,255,.6);box-shadow:0 8px 28px rgba(0,150,255,.25);}
-.skin-card.legendary{background:linear-gradient(160deg,rgba(245,197,24,.18),rgba(249,115,22,.12));border-color:rgba(245,197,24,.5);}
-.skin-card.epic{background:linear-gradient(160deg,rgba(124,58,237,.22),rgba(79,70,229,.14));border-color:rgba(124,58,237,.5);}
-.skin-card.rare{background:linear-gradient(160deg,rgba(14,165,233,.18),rgba(26,86,219,.12));border-color:rgba(14,165,233,.4);}
-.skin-card img{width:100%;height:180px;object-fit:contain;margin-bottom:8px;filter:drop-shadow(0 6px 16px rgba(0,0,0,.6));}
-.skin-card.featured img{height:200px;}
-.sc-rarity{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;}
-.sc-rarity.legendary{color:var(--gold);}
-.sc-rarity.epic{color:#a78bfa;}
-.sc-rarity.rare{color:#38bdf8;}
-.sc-rarity.common{color:var(--muted);}
-.sc-name{font-family:'Exo 2',sans-serif;font-size:13px;font-weight:800;color:#fff;margin-bottom:6px;}
-.sc-price{display:flex;align-items:center;justify-content:center;gap:4px;font-size:13px;font-weight:800;color:#38bdf8;}
-.sc-owned{font-size:10px;color:var(--green);font-weight:700;}
-.free-gift-card{background:linear-gradient(135deg,rgba(34,197,94,.15),rgba(16,185,129,.08));border:1px solid rgba(34,197,94,.4);border-radius:14px;padding:12px;cursor:pointer;text-align:center;}
-.fg-title{font-family:'Exo 2',sans-serif;font-size:12px;font-weight:900;color:var(--green);margin-bottom:4px;}
-.fg-icon{font-size:36px;margin-bottom:6px;}
-.fg-timer{font-size:10px;color:var(--muted);margin-bottom:8px;}
-.fg-claim{background:var(--green);border:none;color:#000;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Exo 2',sans-serif;width:100%;}
+.section-label{display:none;}
+.featured-row{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:24px;}
+.daily-row{display:none;}
+.free-gift-card{display:none;}
+.shop-sidebar{display:none;}
+.shop-main{padding:20px 24px;overflow-y:auto;flex:1;}
+.shop-header{margin-bottom:20px;}
+
+/* Bundle cards — big like screenshots */
+.skin-card{background:rgba(255,255,255,.92);border:none;border-radius:20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;display:flex;flex-direction:row;align-items:center;padding:18px 20px;gap:16px;box-shadow:0 4px 20px rgba(0,0,0,.15);}
+.skin-card:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.25);}
+.skin-card.legendary{background:rgba(255,248,220,.95);}
+.skin-card.epic{background:rgba(240,235,255,.95);}
+.skin-card.rare{background:rgba(230,244,255,.95);}
+.skin-card-imgs{display:flex;align-items:flex-end;gap:8px;flex-shrink:0;}
+.skin-card-imgs img{height:130px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,.3));}
+.skin-card-info{flex:1;display:flex;flex-direction:column;gap:6px;}
+.skin-card-name{font-family:'Exo 2',sans-serif;font-size:22px;font-weight:900;color:#1a56db;}
+.skin-card-price{display:flex;align-items:center;gap:6px;font-size:20px;font-weight:900;color:#1a56db;}
+.skin-card-sub{font-size:12px;color:#666;font-weight:600;}
+.sc-rarity{display:none;}
+.sc-name{display:none;}
+.sc-price{display:none;}
+.sc-owned{display:none;}
+
+/* Bundle inner screen */
+#bundleScreen{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;align-items:center;justify-content:center;}
+#bundleScreen.open{display:flex;}
+.bundle-box{background:rgba(230,244,255,.97);border-radius:24px;padding:28px;max-width:680px;width:90%;display:flex;gap:24px;position:relative;}
+.bundle-box-imgs{display:flex;align-items:flex-end;gap:10px;flex-shrink:0;}
+.bundle-box-imgs img{height:200px;object-fit:contain;filter:drop-shadow(0 6px 20px rgba(0,0,0,.35));}
+.bundle-box-right{flex:1;display:flex;flex-direction:column;gap:10px;}
+.bundle-box-title{font-family:'Exo 2',sans-serif;font-size:28px;font-weight:900;color:#1a56db;}
+.bundle-option{display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 0;}
+.bundle-option-name{font-family:'Exo 2',sans-serif;font-size:17px;font-weight:800;flex:1;}
+.bundle-option-name.owned{color:#22c55e;}
+.bundle-option-price{display:flex;align-items:center;gap:5px;font-size:16px;font-weight:800;color:#1a56db;}
+.bundle-checkbox{width:24px;height:24px;border:3px solid #1a56db;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;background:#fff;transition:all .15s;}
+.bundle-checkbox.checked{background:#22c55e;border-color:#22c55e;color:#fff;}
+.bundle-box-divider{height:1px;background:rgba(0,0,0,.1);margin:4px 0;}
+.bundle-buy-btn{background:linear-gradient(135deg,#22c55e,#16a34a);border:none;color:#fff;padding:14px;font-size:20px;font-weight:900;font-family:'Exo 2',sans-serif;letter-spacing:2px;border-radius:14px;cursor:pointer;margin-top:6px;box-shadow:0 4px 16px rgba(34,197,94,.4);}
+.bundle-buy-btn:hover{transform:scale(1.03);}
+.bundle-close{position:absolute;top:12px;right:14px;background:rgba(0,0,0,.12);border:none;color:#333;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 
 /* ══ BATTLE PASS ══ */
 .bp-wrap{flex:1;overflow-y:auto;padding:20px 24px;}
@@ -622,6 +641,20 @@ body{background:radial-gradient(ellipse at 65% 35%,#2196f3 0%,#1565c0 45%,#0d47a
   </div>
 </div>
 
+<!-- BUNDLE SCREEN -->
+<div id="bundleScreen">
+  <div class="bundle-box">
+    <button class="bundle-close" onclick="closeBundleScreen()">✕</button>
+    <div class="bundle-box-imgs" id="bundleBoxImgs"></div>
+    <div class="bundle-box-right">
+      <div class="bundle-box-title" id="bundleBoxTitle"></div>
+      <div id="bundleOptions"></div>
+      <div class="bundle-box-divider"></div>
+      <button class="bundle-buy-btn" onclick="confirmBundleBuy()">BUY</button>
+    </div>
+  </div>
+</div>
+
 <!-- ROOM -->
 <div id="roomScreen">
   <div class="room-box">
@@ -768,37 +801,20 @@ function logout(){myName='';socket.emit('leave');document.getElementById('mainSc
 // SHOP
 function renderShop(){
   const fr=document.getElementById('featuredRow');
-  const dr=document.getElementById('dailyRow');
-  // Featured — first 3 bundles
-  fr.innerHTML=SHOP_BUNDLES.slice(0,3).map((b,i)=>{
-    const imgs=b.ids.map(id=>`<img src="${getSkin(id).img}" onerror="this.style.opacity=.3">`).join('');
-    return `<div class="skin-card featured ${b.rarity}" onclick="openBundle(${i})">
-      <div class="sc-rarity ${b.rarity}">${b.rarity.toUpperCase()}</div>
-      <div class="sc-name">${b.name}</div>
-      <div style="display:flex;justify-content:center;gap:6px;margin:8px 0;height:140px;align-items:flex-end;">
-        ${b.ids.map(id=>`<img src="${getSkin(id).img}" style="height:130px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5));" onerror="this.style.opacity=.3">`).join('')}
+  fr.innerHTML=SHOP_BUNDLES.map((b,i)=>{
+    const imgs=b.ids.map(id=>`<img src="${getSkin(id).img}" style="height:130px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,.3));" onerror="this.src='/skin_default.png'">`).join('');
+    const totalOwned=b.ids.every(id=>myOwnedSkins.includes(id));
+    return `<div class="skin-card ${b.rarity}" onclick="openBundleScreen(${i})">
+      <div class="skin-card-imgs">${imgs}</div>
+      <div class="skin-card-info">
+        <div class="skin-card-name">${b.name}</div>
+        ${totalOwned
+          ? `<div style="color:#22c55e;font-weight:900;font-size:16px;">✅ יש לך</div>`
+          : `<div class="skin-card-price">💎 ${b.price.toLocaleString()}</div>`}
+        <div class="skin-card-sub">for one skin</div>
       </div>
-      <div class="sc-price"><span>💎</span>${b.price.toLocaleString()}</div>
     </div>`;
   }).join('');
-  // Daily — individual skins
-  const daily=SKINS.filter(s=>s.price>0).slice(0,4);
-  dr.innerHTML=daily.map(s=>{
-    const owned=myOwnedSkins.includes(s.id);
-    return `<div class="skin-card ${s.rarity}" onclick="openSingleSkin('${s.id}')">
-      <img src="${s.img}" onerror="this.style.opacity=.3">
-      <div class="sc-rarity ${s.rarity}">${s.rarity.toUpperCase()}</div>
-      <div class="sc-name">${s.name}</div>
-      ${owned?`<div class="sc-owned">✅ יש לך</div>`:`<div class="sc-price"><span>💎</span>${s.price.toLocaleString()}</div>`}
-    </div>`;
-  }).join('');
-  // Free gift
-  dr.innerHTML+=`<div class="free-gift-card" onclick="toast('מתנה יומית נתבעה!','var(--green)')">
-    <div class="fg-title">DAILY FREE GIFT</div>
-    <div class="fg-icon">🎁</div>
-    <div class="fg-timer">⏰ 08:45:12</div>
-    <button class="fg-claim">CLAIM</button>
-  </div>`;
 }
 
 function setShopCat(cat){
@@ -806,26 +822,77 @@ function setShopCat(cat){
   event.target.closest('.shop-cat').classList.add('active');
 }
 
-function openBundle(idx){
+let bundleItems=[];
+
+function openBundleScreen(idx){
   const b=SHOP_BUNDLES[idx];
   if(!b)return;
-  if(b.bundle&&b.ids.length>1){
-    // Special bundle with individual choices
-    const title=`קנה - ${b.name}`;
-    document.getElementById('bpBoxTitle').textContent=title;
-    const skinData=b.ids.map(id=>({...getSkin(id),selected:true}));
-    pendingBuyItems=skinData;
-    renderBuyPopup(skinData,b);
-  } else if(b.ids.length===1){
-    openSingleSkin(b.ids[0]);
-  } else {
-    // Multi-skin bundle
-    const title=`קנה - ${b.name}`;
-    document.getElementById('bpBoxTitle').textContent=title;
-    const skinData=b.ids.map(id=>({...getSkin(id),selected:true}));
-    pendingBuyItems=skinData;
-    renderBuyPopup(skinData,b);
+  bundleItems=b.ids.map(id=>({...getSkin(id),selected:!myOwnedSkins.includes(id)}));
+  document.getElementById('bundleBoxTitle').textContent=b.name;
+  // Images
+  document.getElementById('bundleBoxImgs').innerHTML=b.ids.map(id=>`<img src="${getSkin(id).img}" style="height:200px;object-fit:contain;filter:drop-shadow(0 6px 20px rgba(0,0,0,.35));" onerror="this.src='/skin_default.png'">`).join('');
+  // Options
+  renderBundleOptions();
+  document.getElementById('bundleScreen').classList.add('open');
+}
+
+function renderBundleOptions(){
+  const b_total=bundleItems.filter(s=>!myOwnedSkins.includes(s.id)).reduce((a,s)=>a+s.price,0);
+  const all_price=bundleItems.reduce((a,s)=>a+s.price,0);
+  let html='';
+  bundleItems.forEach((s,i)=>{
+    const owned=myOwnedSkins.includes(s.id);
+    const checked=s.selected&&!owned;
+    html+=`<div class="bundle-option" onclick="toggleBundleItem(${i})">
+      <div class="bundle-option-name ${owned?'owned':''}">${s.name}${owned?' ✅':''}</div>
+      <div class="bundle-option-price">💎 ${s.price.toLocaleString()}</div>
+      <div class="bundle-checkbox ${checked?'checked':''}">
+        ${checked?'✓':''}
+      </div>
+    </div>`;
+  });
+  // Both option if multiple skins
+  if(bundleItems.length>1){
+    const allSelected=bundleItems.filter(s=>!myOwnedSkins.includes(s.id)).every(s=>s.selected);
+    html+=`<div class="bundle-box-divider"></div>
+    <div class="bundle-option" onclick="selectAllBundleItems()">
+      <div class="bundle-option-name">BOTH ${SHOP_BUNDLES.find(b=>b.ids.includes(bundleItems[0].id))?.name||''}</div>
+      <div class="bundle-option-price">💎 ${all_price.toLocaleString()}</div>
+      <div class="bundle-checkbox ${allSelected?'checked':''}">
+        ${allSelected?'✓':''}
+      </div>
+    </div>`;
   }
+  document.getElementById('bundleOptions').innerHTML=html;
+}
+
+function toggleBundleItem(i){
+  if(myOwnedSkins.includes(bundleItems[i].id))return;
+  bundleItems[i].selected=!bundleItems[i].selected;
+  renderBundleOptions();
+}
+
+function selectAllBundleItems(){
+  bundleItems.forEach(s=>{if(!myOwnedSkins.includes(s.id))s.selected=true;});
+  renderBundleOptions();
+}
+
+function closeBundleScreen(){
+  document.getElementById('bundleScreen').classList.remove('open');
+  bundleItems=[];
+}
+
+function confirmBundleBuy(){
+  const toBuy=bundleItems.filter(s=>s.selected&&!myOwnedSkins.includes(s.id));
+  if(!toBuy.length){toast('כבר יש לך את הסקינים האלה!','var(--muted)');return;}
+  const total=toBuy.reduce((a,s)=>a+s.price,0);
+  if(myCoins<total){toast('אין מספיק יהלומים!','var(--red)');return;}
+  toBuy.forEach(s=>socket.emit('buySkin',{name:myName,skinId:s.id,price:s.price}));
+  closeBundleScreen();
+}
+
+function openBundle(idx){
+  openBundleScreen(idx);
 }
 
 function openSingleSkin(skinId){
