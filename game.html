@@ -154,6 +154,8 @@ canvas{display:block;width:100vw;height:100vh;}
 .btn-back:hover{background:rgba(0,200,255,0.1);}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
 
 <script src="/socket.io/socket.io.js"></script>
 </head>
@@ -840,32 +842,90 @@ const SKIN_URLS = {
   soldier:'/2026_06_08_american-civil-war-union-soldier-24107638.png',
 };
 
+// ── FBX PLAYER SYSTEM ──
+const fbxLoader = new THREE.FBXLoader ? new THREE.FBXLoader() : null;
+const fbxCache = {};
+const mixers = {};
+
+const FBX_ANIMS = {
+  idle:     '/fbx/Idle.fbx',
+  run:      '/fbx/Running.fbx',
+  runBack:  '/fbx/Running_Backward.fbx',
+  rifleWalk:'/fbx/Rifle_Walk.fbx',
+  fire:     '/fbx/Firing_Rifle.fbx',
+};
+
+function loadFBX(url, cb){
+  if(fbxCache[url]){ cb(fbxCache[url].clone()); return; }
+  if(!fbxLoader){ cb(null); return; }
+  fbxLoader.load(url, obj => {
+    fbxCache[url] = obj;
+    cb(obj.clone());
+  }, undefined, () => cb(null));
+}
+
 function makePeerMesh(name, skinId){
   const root = new THREE.Group();
-  root.userData = {walkT:Math.random()*Math.PI*2};
+  root.userData = {walkT:Math.random()*Math.PI*2, fbx:false};
   scene.add(root);
 
-  const sk = SKIN_COLORS[skinId||'rookie']||SKIN_COLORS.rookie;
-  const url = SKIN_URLS[skinId||'rookie']||null;
+  // Try FBX first
+  loadFBX(FBX_ANIMS.idle, fbxObj => {
+    if(fbxObj){
+      fbxObj.scale.set(0.012, 0.012, 0.012);
+      fbxObj.traverse(c => {
+        if(c.isMesh){
+          c.castShadow = true;
+          c.receiveShadow = true;
+        }
+      });
+      root.add(fbxObj);
+      root.userData.fbx = true;
+      root.userData.fbxObj = fbxObj;
 
-  // Try to load skin texture
-  if(url){
-    loadSkinTexture(url, sd => {
-      const mesh = buildMinecraftMesh(sd, sk);
-      mesh.scale.set(0.85,0.85,0.85);
-      // Name label
-      addNameLabel(root, name, sd ? 1.8 : 1.8);
-      root.add(mesh);
-      // Copy userData
-      if(mesh.userData.lArm) root.userData = {...mesh.userData, walkT:Math.random()*Math.PI*2};
-    });
-  } else {
-    const mesh = buildMinecraftMesh(null, sk);
-    mesh.scale.set(0.85,0.85,0.85);
-    root.add(mesh);
-    addNameLabel(root, name, 1.8);
-    if(mesh.userData.lArm) root.userData = {...mesh.userData, walkT:Math.random()*Math.PI*2};
-  }
+      // Setup animation mixer
+      const mixer = new THREE.AnimationMixer(fbxObj);
+      mixers[name] = mixer;
+      if(fbxObj.animations && fbxObj.animations.length > 0){
+        const action = mixer.clipAction(fbxObj.animations[0]);
+        action.play();
+        root.userData.mixer = mixer;
+        root.userData.idleAction = action;
+      }
+
+      // Load run animation
+      loadFBX(FBX_ANIMS.run, runObj => {
+        if(runObj && runObj.animations.length > 0){
+          const runMixer = mixers[name] || new THREE.AnimationMixer(fbxObj);
+          mixers[name] = runMixer;
+          root.userData.mixer = runMixer;
+          root.userData.runClip = runObj.animations[0];
+          root.userData.idleClip = fbxObj.animations[0];
+        }
+      });
+
+      addNameLabel(root, name, 1.8);
+    } else {
+      // Fallback to Minecraft mesh
+      const sk = SKIN_COLORS[skinId||'rookie']||SKIN_COLORS.rookie;
+      const url = SKIN_URLS[skinId||'rookie']||null;
+      if(url){
+        loadSkinTexture(url, sd => {
+          const mesh = buildMinecraftMesh(sd, sk);
+          mesh.scale.set(0.85,0.85,0.85);
+          addNameLabel(root, name, 1.8);
+          root.add(mesh);
+          if(mesh.userData.lArm) root.userData = {...mesh.userData, walkT:Math.random()*Math.PI*2, fbx:false};
+        });
+      } else {
+        const mesh = buildMinecraftMesh(null, sk);
+        mesh.scale.set(0.85,0.85,0.85);
+        root.add(mesh);
+        addNameLabel(root, name, 1.8);
+        if(mesh.userData.lArm) root.userData = {...mesh.userData, walkT:Math.random()*Math.PI*2, fbx:false};
+      }
+    }
+  });
 
   return root;
 }
@@ -1204,6 +1264,8 @@ canvas.addEventListener('click',()=>{
 const clock = new THREE.Clock();
 function update(){
   const dt=Math.min(clock.getDelta(),0.05);
+  // Update FBX mixers
+  Object.values(mixers).forEach(m => m.update(dt));
   if(!gameActive)return;
   const eHeld=!!(keys['KeyE']||keys['e']);
   const eJustPressed=eHeld&&!ePrevHeld;ePrevHeld=eHeld;
