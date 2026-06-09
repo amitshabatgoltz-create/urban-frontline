@@ -344,7 +344,7 @@ io.on('connection', socket => {
 
   socket.on('cheatCode', async ({ name, code }) => {
     if (code !== '192013') return;
-    const allSkinIds = ['rookie','street','commando','agent','desert','snow','ninja','engineer','robot','cyber','medic','firefighter'];
+    const allSkinIds = ['rookie','street','commando','agent','desert','snow','ninja','engineer','robot','cyber','medic','firefighter','harlimit','backrooms','spider','blueboy','michel','soldier'];
     await db.collection('users').updateOne({ name }, {
       $set: { coins: 99999, wins: 500, ownedSkins: allSkinIds }
     });
